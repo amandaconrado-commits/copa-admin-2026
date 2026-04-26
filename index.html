@@ -1,0 +1,1359 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Copa Admin 2026 · liveSEO</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;900&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-storage-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--or:#FC9801;--dk:#101820;--ow:#F4F5FA;--ol:#FFF3DC;--om:#FFD080;--wh:#fff;--bd:#E2E5F0;--mu:#6B7A8D;--tx:#1A202C;--green:#1D9E75;--blue:#2E75B6;--red:#A32D2D;--purple:#534AB7;--gold:#B8860B}
+body{font-family:'Barlow',sans-serif;background:var(--ow);color:var(--tx);min-height:100vh}
+a{color:var(--blue)}
+/* LOGIN */
+.login-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;background:var(--dk);padding:20px}
+.login-box{background:var(--wh);border-radius:16px;padding:32px;width:100%;max-width:400px;text-align:center}
+.login-logo{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:30px;color:var(--dk);margin-bottom:4px}
+.login-logo span{color:var(--or)}
+.login-sub{font-size:12px;color:var(--mu);margin-bottom:24px}
+.login-select{width:100%;padding:10px 12px;border:0.5px solid var(--bd);border-radius:8px;font-size:13px;font-family:'Barlow',sans-serif;color:var(--tx);background:var(--wh);outline:none;margin-bottom:14px;cursor:pointer}
+.login-btn{width:100%;background:var(--or);color:var(--dk);font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:15px;padding:12px;border:none;border-radius:8px;cursor:pointer}
+.login-btn:hover{opacity:.88}
+.google-btn-style{transition:background .15s}
+.google-btn-style:hover{background:#F8F9FA!important}
+/* TOPBAR */
+.topbar{background:var(--dk);padding:0 16px;height:50px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:200}
+.logo{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:19px;color:#fff}
+.logo span{color:var(--or)}
+.logo sub{font-size:9px;color:#8A9AB0;font-weight:400;margin-left:5px}
+.ldot{width:6px;height:6px;border-radius:50%;background:var(--green);display:inline-block;margin-left:6px;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+.top-user{display:flex;align-items:center;gap:7px;cursor:pointer}
+.top-av{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600}
+.top-name{font-size:11px;color:#8A9AB0}
+.admin-badge{font-size:9px;background:var(--or);color:var(--dk);padding:2px 6px;border-radius:20px;font-weight:700}
+/* NAV */
+.nav{background:var(--wh);border-bottom:0.5px solid var(--bd);display:flex;overflow-x:auto;position:sticky;top:50px;z-index:100}
+.nb{padding:10px 12px;font-size:11px;font-weight:500;color:var(--mu);border:none;background:none;cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap}
+.nb.on{color:var(--or);border-bottom-color:var(--or);font-weight:600}
+/* MAIN */
+.main{max-width:1020px;margin:0 auto;padding:16px 12px}
+.page{display:none}.page.on{display:block}
+/* HERO */
+.hero{background:var(--dk);border-radius:12px;padding:20px 22px;margin-bottom:15px;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;right:-20px;top:-20px;width:150px;height:150px;border-radius:50%;background:var(--or);opacity:.07}
+.htag{display:inline-block;background:var(--or);color:var(--dk);font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:9px;letter-spacing:2px;padding:2px 8px;border-radius:3px;margin-bottom:7px}
+.hero h1{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:28px;color:#fff;line-height:1;margin-bottom:3px}
+.hero h1 span{color:var(--or)}
+.hero p{color:#8A9AB0;font-size:11px;margin-bottom:12px}
+.hdates{display:flex;gap:8px;flex-wrap:wrap}
+.hdp{background:rgba(255,255,255,.06);border:0.5px solid rgba(255,255,255,.1);border-radius:5px;padding:5px 10px}
+.hdp strong{display:block;font-weight:700;font-size:14px;color:var(--or)}
+.hdp span{font-size:9px;color:#8A9AB0}
+/* SECTION */
+.stag{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:9px;letter-spacing:2px;color:var(--or);margin-bottom:9px;text-transform:uppercase}
+.sh2{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:21px;color:var(--dk);margin-bottom:13px}
+/* GRIDS */
+.g4{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:8px;margin-bottom:14px}
+.g3{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:9px;margin-bottom:14px}
+.g2{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;margin-bottom:14px}
+/* STAT CARDS */
+.ms{background:var(--wh);border:0.5px solid var(--bd);border-radius:10px;padding:12px;text-align:center}
+.ms .v{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:24px;color:var(--tx);margin-bottom:1px}
+.ms .v.or{color:var(--or)}.ms .v.gold{color:var(--gold)}
+.ms .l{font-size:10px;color:var(--mu)}
+/* NOTICE */
+.notice{background:var(--ol);border:0.5px solid var(--om);border-radius:8px;padding:9px 12px;font-size:12px;color:#854F0B;margin-bottom:12px}
+.notice strong{font-weight:600}
+.notice.info{background:#E6F1FB;border-color:#B5D4F4;color:#0C447C}
+.notice.green{background:#E1F5EE;border-color:#9FE1CB;color:#085041}
+.notice.red{background:#FCEBEB;border-color:#F7C1C1;color:#791F1F}
+.notice.purple{background:#EEEDFE;border-color:#AFA9EC;color:#3C3489}
+/* RULES */
+.rg{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:8px;margin-bottom:14px}
+.rc{background:var(--wh);border:0.5px solid var(--bd);border-radius:9px;padding:12px}
+.rc.hl{background:var(--ol);border-color:var(--om)}
+.rc h4{font-size:12px;font-weight:600;color:var(--dk);margin-bottom:4px}
+.rc p{font-size:11px;color:var(--mu);line-height:1.45}
+.fml{font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;color:var(--or);margin-top:5px}
+/* TABLE */
+.tw{overflow-x:auto;border-radius:9px;border:0.5px solid var(--bd);background:var(--wh);margin-bottom:14px}
+table{width:100%;border-collapse:collapse}
+thead th{padding:8px 10px;font-size:10px;font-weight:600;color:var(--mu);text-align:left;background:var(--ow);border-bottom:0.5px solid var(--bd);white-space:nowrap}
+tbody tr{border-bottom:0.5px solid var(--bd)}
+tbody tr:last-child{border-bottom:none}
+tbody tr:hover{background:#FAFBFE}
+tbody tr.me{background:#FFFBF0}
+tbody td{padding:8px 10px;font-size:12px;color:var(--tx);vertical-align:middle}
+.rb{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600}
+.r1{background:#FFF3DC;color:#854F0B}.r2{background:#F1EFE8;color:#444}.r3{background:#FAECE7;color:#712B13}.rn{background:var(--ow);color:var(--mu)}
+.nc{display:flex;align-items:center;gap:6px}
+.av{width:27px;height:27px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;flex-shrink:0}
+.ni strong{display:block;font-size:12px;font-weight:500}
+.ni span{font-size:10px;color:var(--mu)}
+.tpill{font-size:9px;font-weight:600;padding:2px 7px;border-radius:20px;white-space:nowrap}
+.bbar{background:var(--ow);border-radius:3px;height:5px;width:65px;overflow:hidden}
+.bfill{height:5px;border-radius:3px;background:var(--or)}
+.pbr{display:flex;align-items:center;gap:5px}
+.pbg{flex:1;background:var(--ow);border-radius:3px;height:6px;min-width:50px;overflow:hidden}
+.pfill{height:6px;border-radius:3px}
+.ppct{font-size:10px;color:var(--mu);min-width:26px;text-align:right}
+/* FORM */
+.fc{background:var(--wh);border:0.5px solid var(--bd);border-radius:11px;padding:17px;margin-bottom:13px}
+.fc h3{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:15px;color:var(--dk);margin-bottom:12px}
+.fr{margin-bottom:11px}
+.fr label{display:block;font-size:10px;font-weight:600;color:var(--mu);margin-bottom:4px;text-transform:uppercase;letter-spacing:.5px}
+.fr select,.fr input,.fr textarea{width:100%;padding:8px 10px;border:0.5px solid var(--bd);border-radius:7px;font-size:13px;font-family:'Barlow',sans-serif;color:var(--tx);background:var(--wh);outline:none;transition:border .15s}
+.fr select:focus,.fr input:focus,.fr textarea:focus{border-color:var(--or)}
+.fr textarea{resize:vertical;min-height:80px;line-height:1.5}
+.btn{background:var(--or);color:var(--dk);font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:13px;padding:9px 20px;border:none;border-radius:7px;cursor:pointer}
+.btn:hover{opacity:.88}.btn:disabled{opacity:.4;cursor:not-allowed}
+.btn-sec{background:var(--wh);border:0.5px solid var(--bd);color:var(--dk);font-family:'Barlow Condensed',sans-serif;font-weight:600;font-size:12px;padding:8px 16px;border-radius:7px;cursor:pointer}
+.btn-sm{font-size:11px;padding:4px 10px;border-radius:5px;border:0.5px solid var(--bd);background:var(--wh);color:var(--mu);cursor:pointer;font-family:'Barlow',sans-serif}
+.btn-ok{background:#E1F5EE;color:#085041;border-color:#9FE1CB}
+.btn-rej{background:#FCEBEB;color:#791F1F;border-color:#F09595}
+/* CHALLENGES */
+.ctabs{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:11px}
+.ct{background:var(--wh);border:0.5px solid var(--bd);border-radius:5px;padding:4px 10px;font-size:11px;font-weight:500;color:var(--mu);cursor:pointer}
+.ct.on{background:var(--or);color:var(--dk);border-color:var(--or);font-weight:600}
+.chl{display:flex;flex-direction:column;gap:5px;margin-bottom:14px}
+.ch{background:var(--wh);border:0.5px solid var(--bd);border-radius:7px;padding:9px 11px;display:flex;align-items:flex-start;gap:8px}
+.ch.conj{background:var(--ol);border-color:var(--om)}
+.ch.rule{background:#EEEDFE;border-color:#AFA9EC}
+.chm{flex:1}
+.chm strong{font-size:12px;font-weight:600;color:var(--dk);display:block;line-height:1.3}
+.chm .desc{font-size:11px;color:var(--mu);line-height:1.45;margin-top:2px}
+.chr{display:flex;flex-direction:column;align-items:flex-end;gap:2px;flex-shrink:0;min-width:70px}
+.chp{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:14px;color:var(--or);white-space:nowrap}
+.jtag{font-size:9px;background:var(--or);color:var(--dk);padding:1px 6px;border-radius:20px;font-weight:700;white-space:nowrap}
+.btag{font-size:9px;background:var(--dk);color:var(--or);padding:1px 6px;border-radius:20px;font-weight:700;white-space:nowrap}
+/* SEG */
+.seg{display:flex;border:0.5px solid var(--bd);border-radius:6px;overflow:hidden;margin-bottom:13px;width:fit-content}
+.sb{padding:6px 13px;font-size:11px;font-weight:500;background:var(--wh);color:var(--mu);border:none;cursor:pointer;border-right:0.5px solid var(--bd)}
+.sb:last-child{border-right:none}
+.sb.on{background:var(--or);color:var(--dk);font-weight:600}
+.fbar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;align-items:center}
+.fbar label{font-size:11px;color:var(--mu)}
+.fbar select{font-size:11px;padding:5px 9px;border-radius:5px;border:0.5px solid var(--bd);background:var(--wh);color:var(--tx);cursor:pointer}
+/* STICKERS */
+.skgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px;margin-bottom:15px}
+.sk{background:var(--wh);border:0.5px solid var(--bd);border-radius:9px;padding:11px;position:relative}
+.sk::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--c);border-radius:9px 9px 0 0}
+.skb{position:absolute;top:8px;right:7px;background:var(--c);color:#fff;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:8px;padding:2px 5px;border-radius:20px;white-space:nowrap}
+.sks{font-size:11px;margin-bottom:2px;color:var(--c)}
+.sk h4{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:12px;color:var(--dk);margin-bottom:2px}
+.sk p{font-size:10px;color:var(--mu);line-height:1.3}
+.skpts{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:12px;margin-top:5px;color:var(--c)}
+.coin-req{font-size:9px;color:var(--gold);font-weight:600;margin-top:2px}
+/* THERMO */
+.thermo-wrap{background:var(--wh);border:0.5px solid var(--bd);border-radius:10px;padding:16px;margin-bottom:14px}
+.thermo-bar-bg{background:var(--ow);border-radius:6px;height:16px;position:relative;overflow:hidden;margin:5px 0 3px}
+.thermo-bar-fill{height:16px;border-radius:6px;transition:width .5s}
+.mc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:8px;margin-top:12px}
+.mc-row{background:var(--ow);border-radius:8px;padding:9px 11px;display:flex;flex-direction:column;gap:5px}
+.mc-bar-bg{flex:1;background:var(--bd);border-radius:3px;height:4px;overflow:hidden}
+.mc-bar-fill{height:4px;border-radius:3px;background:var(--or)}
+/* ALBUM */
+.album-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(90px,1fr));gap:7px;margin-bottom:14px}
+.alb-slot{border:1.5px dashed var(--bd);border-radius:8px;padding:10px 6px;text-align:center;background:var(--ow);position:relative}
+.alb-slot.locked{opacity:.35}
+.alb-slot.unlocked{border-style:solid;border-color:var(--or);background:var(--ol)}
+.alb-slot.placed{border-style:solid;border-color:var(--green);background:#E1F5EE}
+.alb-icon{font-size:22px;margin-bottom:3px}
+.alb-name{font-size:9px;font-weight:600;color:var(--dk);line-height:1.2}
+.alb-coins{font-size:9px;color:var(--mu);margin-top:2px}
+.alb-check{position:absolute;top:4px;right:4px;width:13px;height:13px;border-radius:50%;background:var(--green);display:none;align-items:center;justify-content:center;font-size:8px;color:#fff}
+.alb-slot.unlocked .alb-check,.alb-slot.placed .alb-check{display:flex}
+/* SUBMISSIONS */
+.sub{background:var(--wh);border:0.5px solid var(--bd);border-radius:9px;padding:12px;margin-bottom:7px}
+.sub-h{display:flex;justify-content:space-between;align-items:flex-start;gap:6px;margin-bottom:6px}
+.sub-t{font-size:12px;font-weight:600;color:var(--dk)}
+.sub-m{font-size:10px;color:var(--mu);margin-top:1px}
+.stpill{font-size:9px;font-weight:600;padding:2px 7px;border-radius:20px;white-space:nowrap;flex-shrink:0}
+.st-pend{background:#FFF3DC;color:#854F0B}
+.st-ok{background:#E1F5EE;color:#085041}
+.st-rej{background:#FCEBEB;color:#791F1F}
+.st-ai{background:#EEEDFE;color:#3C3489}
+.sub-body{font-size:11px;color:var(--mu);border-top:0.5px solid var(--bd);padding-top:6px;margin-top:5px;line-height:1.5}
+.ai-flag{display:inline-flex;align-items:center;gap:3px;font-size:10px;background:#FCEBEB;color:#791F1F;padding:2px 7px;border-radius:20px;font-weight:600;margin-top:4px}
+/* AI WARN */
+.ai-warn{background:var(--ol);border:0.5px solid var(--om);border-radius:7px;padding:9px 12px;font-size:11px;color:#854F0B;margin-top:7px;display:none}
+.ai-warn.show{display:block}
+.ai-meter{height:4px;background:var(--ow);border-radius:3px;margin:4px 0}
+.ai-fill{height:4px;border-radius:3px;transition:width .3s}
+/* PRIZES */
+.pgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px;margin-bottom:15px}
+.pc{background:var(--wh);border:0.5px solid var(--bd);border-radius:9px;padding:13px;text-align:center}
+.pc.g{border-top:3px solid #FC9801;background:var(--ol)}
+.pc.s{border-top:3px solid #A0A0A0}
+.pc.b{border-top:3px solid #CD7F32}
+.pm{font-size:22px;margin-bottom:5px}
+.pc h4{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:13px;color:var(--dk);margin-bottom:2px}
+.pc p{font-size:11px;color:var(--mu);line-height:1.4}
+/* ADMIN */
+.admin-box{background:#EEEDFE;border:1px solid #AFA9EC;border-radius:10px;padding:14px;margin-bottom:14px}
+.admin-box h3{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:14px;color:#3C3489;margin-bottom:10px}
+/* PHOTOS */
+.photo-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px;margin-bottom:14px}
+.photo-card{background:var(--wh);border:0.5px solid var(--bd);border-radius:10px;overflow:hidden}
+.photo-card img{width:100%;height:130px;object-fit:cover;display:block}
+.photo-caption{padding:8px 10px;font-size:11px;color:var(--mu);line-height:1.4}
+.photo-caption strong{display:block;font-size:12px;color:var(--dk);margin-bottom:2px}
+/* AGENDA */
+.agenda-card{background:var(--wh);border:0.5px solid var(--bd);border-radius:10px;padding:14px;margin-bottom:8px}
+.agenda-card.active{border-color:var(--green);border-left:3px solid var(--green)}
+.agenda-head{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:8px}
+.agenda-title{font-size:13px;font-weight:600;color:var(--dk)}
+.agenda-meta{font-size:11px;color:var(--mu);margin-top:2px}
+.agenda-body{font-size:12px;color:var(--mu);border-top:0.5px solid var(--bd);padding-top:8px;margin-top:6px;line-height:1.5}
+.attend-chip{display:inline-block;font-size:10px;background:var(--ow);border:0.5px solid var(--bd);border-radius:20px;padding:2px 8px;margin:2px;color:var(--tx)}
+.attend-chip.confirmed{background:#E1F5EE;border-color:#9FE1CB;color:#085041}
+/* TEMPLATE CARDS */
+.tmpl-card{background:var(--wh);border:0.5px solid var(--bd);border-radius:10px;overflow:hidden;margin-bottom:10px}
+.tmpl-img{width:100%;height:140px;background:linear-gradient(135deg,var(--ow),var(--bd));display:flex;align-items:center;justify-content:center;font-size:48px}
+.tmpl-body{padding:12px}
+.tmpl-body h4{font-size:13px;font-weight:600;color:var(--dk);margin-bottom:4px}
+.tmpl-body p{font-size:11px;color:var(--mu);line-height:1.45;margin-bottom:8px}
+.tmpl-tag{display:inline-block;font-size:9px;background:var(--ow);border:0.5px solid var(--bd);border-radius:20px;padding:2px 8px;color:var(--mu);margin-right:4px}
+/* TREINAMENTO REGRAS BOX */
+.train-rules{background:linear-gradient(135deg,#1D2837,#101820);border-radius:10px;padding:16px;margin-bottom:12px;color:#fff}
+.train-rules h4{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:16px;color:var(--or);margin-bottom:12px}
+.train-rule-item{display:flex;align-items:flex-start;gap:10px;margin-bottom:10px;padding-bottom:10px;border-bottom:0.5px solid rgba(255,255,255,.1)}
+.train-rule-item:last-child{border-bottom:none;margin-bottom:0;padding-bottom:0}
+.train-rule-icon{font-size:18px;flex-shrink:0;margin-top:1px}
+.train-rule-text strong{display:block;font-size:12px;font-weight:600;color:#fff;margin-bottom:2px}
+.train-rule-text span{font-size:11px;color:#8A9AB0;line-height:1.4}
+.coin-badge{display:inline-block;background:var(--or);color:var(--dk);font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:11px;padding:2px 8px;border-radius:20px;margin-left:6px}
+/* MODAL / POPUP */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:9998;display:none;align-items:center;justify-content:center;padding:20px}
+.modal-overlay.show{display:flex}
+.modal-box{background:var(--wh);border-radius:12px;padding:24px;max-width:400px;width:100%;text-align:center}
+.modal-icon{font-size:40px;margin-bottom:12px}
+.modal-title{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:18px;color:var(--dk);margin-bottom:8px}
+.modal-msg{font-size:13px;color:var(--mu);line-height:1.5;margin-bottom:16px}
+/* TOAST */
+.toast{position:fixed;bottom:20px;right:20px;background:var(--dk);color:#fff;padding:10px 17px;border-radius:7px;font-size:12px;font-weight:500;z-index:9999;transform:translateY(80px);opacity:0;transition:all .3s;border-left:3px solid var(--or)}
+.toast.show{transform:translateY(0);opacity:1}
+.loading{text-align:center;padding:28px;color:var(--mu);font-size:12px}
+.spinner{width:22px;height:22px;border:2px solid var(--bd);border-top-color:var(--or);border-radius:50%;animation:spin .7s linear infinite;margin:0 auto 8px}
+@keyframes spin{to{transform:rotate(360deg)}}
+.divider{height:0.5px;background:var(--bd);margin:14px 0}
+.empty{font-size:12px;color:var(--mu);padding:6px 0}
+</style>
+</head>
+<body>
+<!-- MODAL POPUP -->
+<div class="modal-overlay" id="modal-overlay">
+  <div class="modal-box">
+    <div class="modal-icon" id="modal-icon">⚠️</div>
+    <div class="modal-title" id="modal-title">Atenção</div>
+    <div class="modal-msg" id="modal-msg"></div>
+    <button class="btn" onclick="closeModal()">Entendi</button>
+  </div>
+</div>
+<!-- LOGIN -->
+<div id="login-screen" class="login-wrap">
+  <div class="login-box">
+    <div class="login-logo">live<span>SEO</span></div>
+    <p class="login-sub">Copa Administrativa 2026</p>
+    <button class="login-btn" id="google-login-btn" onclick="doGoogleLogin()" style="display:flex;align-items:center;justify-content:center;gap:10px;background:var(--wh);color:var(--tx);border:1px solid var(--bd);margin-bottom:10px">
+      <svg width="18" height="18" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.08 17.74 9.5 24 9.5z"/><path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/><path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/><path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.18 1.48-4.97 2.31-8.16 2.31-6.26 0-11.57-3.59-13.46-8.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/></svg>
+      Entrar com Google (@liveseo.com.br)
+    </button>
+    <p id="login-error" style="font-size:11px;color:var(--red);display:none">Acesso permitido apenas para emails @liveseo.com.br</p>
+    <p style="font-size:11px;color:var(--mu);margin-top:8px">Acesso exclusivo para o time administrativo liveSEO</p>
+  </div>
+</div>
+<!-- APP -->
+<div id="app-screen" style="display:none">
+  <div class="topbar">
+    <div style="display:flex;align-items:center">
+      <span class="logo">live<span>SEO</span><sub>COPA 2026</sub></span>
+      <span class="ldot"></span>
+    </div>
+    <div class="top-user" onclick="doLogout()">
+      <div class="top-av" id="top-av"></div>
+      <span class="top-name" id="top-name"></span>
+      <span id="admin-badge" class="admin-badge" style="display:none">ADMIN</span>
+    </div>
+  </div>
+  <div class="nav">
+    <button class="nb on" onclick="goPage('home',this)">Início</button>
+    <button class="nb" onclick="goPage('submit',this)">Registrar</button>
+    <button class="nb" onclick="goPage('ranking',this)">Ranking</button>
+    <button class="nb" onclick="goPage('desafios',this)">Desafios</button>
+    <button class="nb" onclick="goPage('album',this)">Álbum</button>
+    <button class="nb" onclick="goPage('agenda',this)">Agenda</button>
+    <button class="nb" onclick="goPage('fotos',this)">Fotos</button>
+    <button class="nb" onclick="goPage('regulamento',this)">Regulamento</button>
+    <button class="nb" onclick="goPage('premiacao',this)">Premiação</button>
+    <button class="nb admin-only" style="display:none" onclick="goPage('admin',this)">Admin ⚙️</button>
+  </div>
+  <div class="main">
+    <!-- HOME -->
+    <div id="page-home" class="page on">
+      <div class="hero">
+        <div class="htag">liveSEO · Copa Administrativa 2026</div>
+        <h1>Copa do <span>Admin</span> 2026</h1>
+        <p>Competição individual + Placar de times · Moedas · Álbum de figurinhas</p>
+        <div class="hdates">
+          <div class="hdp"><strong>28 Abr</strong><span>Início</span></div>
+          <div class="hdp"><strong>07 Ago</strong><span>Encerramento</span></div>
+          <div class="hdp"><strong>A definir</strong><span>Premiação</span></div>
+        </div>
+      </div>
+      <div class="stag">seus números</div>
+      <div class="g4" id="my-stats"><div class="loading"><div class="spinner"></div></div></div>
+      <div class="stag">como funciona</div>
+      <div class="rg">
+        <div class="rc hl"><h4>🪙 Moedas</h4><p>Cada atividade aprovada gera moedas. Moedas definem seu ranking e desbloqueiam figurinhas.</p><div class="fml">atividade → moedas</div></div>
+        <div class="rc"><h4>🎁 Bônus de time</h4><p>Quando colega do seu time pontua, você recebe +2 moedas automaticamente.</p><div class="fml">+2 moedas/ação do time</div></div>
+        <div class="rc"><h4>⚡ Ação conjunta</h4><p>Quem <strong>lidera</strong> ganha +5 extras. Quem <strong>participa</strong> ganha +3 extras além do valor base.</p><div class="fml">líder +5 · part. +3</div></div>
+        <div class="rc"><h4>🏅 Times</h4><p>Soma das moedas individuais dos membros define o placar de times.</p><div class="fml">soma moedas ind.</div></div>
+      </div>
+    </div>
+    <!-- REGISTRAR -->
+    <div id="page-submit" class="page">
+      <div class="sh2">Registrar atividade</div>
+
+      <div class="fc">
+        <h3>Nova atividade</h3>
+        <div class="fr"><label>Categoria</label>
+          <select id="f-cat" onchange="onCatChange()">
+            <option value="">Selecione...</option>
+            <option value="automacao">Automação de processo</option>
+            <option value="curso">Curso</option>
+            <option value="evento">Evento externo</option>
+            <option value="indicador">Indicador criado</option>
+            <option value="livro">Leitura de livro</option>
+            <option value="treinamento">Treinamento</option>
+          </select>
+        </div>
+        <!-- LIVRO -->
+        <div class="fr" id="f-book-row" style="display:none"><label>Qual livro?</label>
+          <select id="f-book" onchange="onBookChange()">
+            <option value="">Selecione...</option>
+            <option>O Código da Cultura — Daniel Coyle</option>
+            <option>Equipes Brilhantes — Daniel Coyle</option>
+            <option>Líderes se Servem por Último — Simon Sinek</option>
+            <option>A Coragem para Liderar — Brené Brown</option>
+            <option>A Coragem de Ser Você Mesmo — Brené Brown</option>
+            <option>Princípios — Ray Dalio</option>
+            <option>Hábitos Atômicos — James Clear</option>
+            <option>O Poder do Hábito — Charles Duhigg</option>
+            <option>Os 7 Hábitos — Stephen Covey</option>
+            <option>O Milagre da Manhã — Hal Elrod</option>
+            <option>A Tríade do Tempo — Christian Barbosa</option>
+            <option>A Sutil Arte de Ligar o F*da-se — Mark Manson</option>
+            <option>Viva com Entusiasmo — Dale Carnegie</option>
+            <option>Cem Dias Entre o Céu e o Mar</option>
+            <option>Como Fazer Amigos e Influenciar Pessoas — Dale Carnegie</option>
+            <option>Como Falar em Público — Dale Carnegie</option>
+            <option>Como Evitar Preocupações — Dale Carnegie</option>
+            <option>Fale Mais Eficazmente — Dale Carnegie</option>
+            <option>Marketing de Relacionamento — Regis McKenna</option>
+            <option>Preciso Saber se Estou Indo Bem — Richard Williams</option>
+            <option>Eneagrama — Uranio Paes</option>
+            <option>Descubra Seus Pontos Fortes 2.0 — Tom Rath</option>
+            <option>A Psicologia Financeira — Morgan Housel</option>
+            <option>O Mesmo de Sempre — Morgan Housel</option>
+            <option>Rápido e Devagar — Daniel Kahneman</option>
+            <option>O Erro de Descartes — António Damásio</option>
+            <option>O Poder do Subconsciente — Joseph Murphy</option>
+            <option>Homo Deus — Yuval Noah Harari</option>
+            <option>IA: Superpoderes Humanos — Kai-Fu Lee</option>
+            <option>A Era da IA — Henry Kissinger, Eric Schmidt</option>
+            <option>Sprint — Jake Knapp</option>
+            <option>A Arte de Fazer Acontecer — David Allen</option>
+            <option>Administração de Projetos — Menezes</option>
+            <option>Organizações Exponenciais — Salim Ismail</option>
+            <option>Arte da Guerra — Sun Tzu</option>
+            <option>A Meta — Eliyahu Goldratt</option>
+            <option>Kaizen — Masaaki Imai</option>
+            <option>Excelência no Secretariado</option>
+            <option>Cerimonial para Executivos</option>
+            <option>O Futuro do Secretariado</option>
+            <option>Liderança — James MacGregor Burns</option>
+            <option>O Universo do SEO</option>
+            <option value="outro-livro">Outro livro...</option>
+          </select>
+        </div>
+        <div class="fr" id="f-outro-livro-row" style="display:none"><label>Nome do livro</label>
+          <input type="text" id="f-outro-livro" placeholder="Título e autor">
+        </div>
+        <!-- CURSO -->
+        <div id="f-curso-rows" style="display:none">
+          <div class="fr"><label>Qual curso?</label>
+            <select id="f-course" onchange="onCourseChange()">
+              <option value="">Selecione...</option>
+              <option>Desenvolvimento Profissional — Fundação Bradesco (ev.org.br)</option>
+              <option>Organização Pessoal — Fundação Bradesco (ev.org.br)</option>
+              <option>Excel na Prática — Fundação Bradesco (ev.org.br)</option>
+              <option>Introdução à Gestão de Projetos — Fundação Bradesco (ev.org.br)</option>
+              <option>Fundamentos da Administração — FGV Online</option>
+              <option>LGPD na Prática — FGV Online</option>
+              <option>Finanças para não financeiros — FGV Online</option>
+              <option>Neurociência para Líderes — FGV Online</option>
+              <option>Gestão Financeira — Sebrae</option>
+              <option>Melhoria Contínua (Lean/Kaizen) — Sebrae</option>
+              <option>Indicadores de Desempenho (KPI) — Sebrae</option>
+              <option>Facilities Management Básico — Sebrae</option>
+              <option>Gestão de Pessoas — Escola Virtual Gov</option>
+              <option>Compliance e Ética — Escola Virtual Gov</option>
+              <option>Gestão da Mudança — Escola Virtual Gov</option>
+              <option>Departamento Pessoal — Prime Cursos</option>
+              <option>Comunicação Assertiva — Prime Cursos</option>
+              <option>Assessoria Executiva Moderna — Prime Cursos</option>
+              <option>Scrum Fundamentals Certified — ScrumStudy</option>
+              <option>Google Looker Studio — Google Skillshop</option>
+              <option>IA para Todos — DeepLearning.AI / Coursera</option>
+              <option>Introdução ao ChatGPT — Coursera</option>
+              <option>Google Gemini no Trabalho — Google Skillshop</option>
+              <option>Claude para Produtividade — Anthropic / YouTube</option>
+              <option>n8n — Automação sem código</option>
+              <option>Gestão Ágil (Scrum/Kanban) — Coursera</option>
+              <option>Comunicação Profissional — Prime Cursos</option>
+              <option>Jurídico Básico para não Juristas — EVG</option>
+              <option>Segurança do Trabalho (NR) — Senai EAD</option>
+              <option value="outro-curso">Outro curso...</option>
+            </select>
+          </div>
+          <div class="fr" id="f-outro-curso-row" style="display:none"><label>Nome do curso</label>
+            <input type="text" id="f-outro-curso" placeholder="Nome, plataforma e tem certificado?">
+          </div>
+        </div>
+        <!-- TREINAMENTO -->
+        <div id="f-treinamento-rows" style="display:none">
+          <div class="train-rules">
+            <h4>📅 Regras do treinamento</h4>
+            <div class="train-rule-item">
+              <div class="train-rule-icon">🗓️</div>
+              <div class="train-rule-text"><strong>Horário fixo: toda sexta-feira das 13h às 13h30</strong><span>O sistema valida automaticamente. A data também deve ser até <strong>07/08/2026</strong> (último dia da Copa). Fora desses critérios, o registro não será aceito.</span></div>
+            </div>
+            <div class="train-rule-item">
+              <div class="train-rule-icon">🎙️</div>
+              <div class="train-rule-text"><strong>Quem ministra ganha <span class="coin-badge">50 🪙</span></strong><span>Você registra aqui com os links da agenda e slides. Após aprovação, o treinamento aparece na aba Agenda.</span></div>
+            </div>
+            <div class="train-rule-item">
+              <div class="train-rule-icon">👥</div>
+              <div class="train-rule-text"><strong>Quem participa ganha <span class="coin-badge">15 🪙</span></strong><span>Após o treinamento, você acessa a Agenda e confirma quem esteve presente. Só então os participantes recebem as moedas.</span></div>
+            </div>
+          </div>
+          <div class="fr"><label>Link da agenda (Google Calendar) *</label>
+            <input type="url" id="f-agenda-link" placeholder="https://calendar.google.com/..." oninput="validateAgendaTime()">
+            <div id="f-agenda-warning" style="display:none;font-size:11px;color:var(--red);margin-top:4px">⚠️ A agenda deve ser uma sexta-feira das 13h às 13h30</div>
+          </div>
+          <div class="fr"><label>Link dos slides / material *</label>
+            <input type="url" id="f-slide-link" placeholder="https://docs.google.com/presentation/...">
+          </div>
+          <div class="fr"><label>Tema do treinamento *</label>
+            <input type="text" id="f-training-tema" placeholder="Ex: Google Sheets para iniciantes">
+          </div>
+          <div class="fr"><label>Data do treinamento *</label>
+            <input type="date" id="f-training-date" onchange="validateTrainingDate()">
+            <div id="f-date-warning" style="display:none;font-size:11px;color:var(--red);margin-top:4px">⚠️ O treinamento deve ser numa sexta-feira</div>
+          </div>
+        </div>
+        <!-- TÍTULO (indicador, automação, evento) -->
+        <div class="fr" id="f-title-row" style="display:none"><label>Título / descrição breve</label>
+          <input type="text" id="f-title" placeholder="Ex: Criei painel automático de chamados">
+        </div>
+        <!-- RESUMO -->
+        <div class="fr" id="f-resumo-row" style="display:none">
+          <label>Resumo / reflexão <span style="color:var(--or);font-size:9px">· mín. 150 palavras · análise de IA</span></label>
+          <textarea id="f-resumo" rows="5" placeholder="Escreva com suas próprias palavras os principais aprendizados e como pretende aplicar no trabalho..." oninput="analyzeText()"></textarea>
+          <div class="ai-warn" id="ai-warning">
+            <div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:3px">
+              <strong>Análise de autenticidade</strong><span style="font-weight:700" id="ai-score">-</span>
+            </div>
+            <div class="ai-meter"><div class="ai-fill" id="ai-fill" style="width:0%"></div></div>
+            <div id="ai-msg" style="font-size:10px;margin-top:2px"></div>
+          </div>
+        </div>
+        <!-- COMPROVANTE (não aparece no treinamento) -->
+        <div class="fr" id="f-proof-row">
+          <label>Comprovante — link do certificado, curso ou material *</label>
+          <input type="text" id="f-proof" placeholder="Cole o link do certificado, dashboard ou material..." oninput="checkDriveReminder(this.value)">
+          <div style="font-size:11px;color:var(--mu);margin-top:4px">📌 Em caso de <strong>livro lido/escutado</strong> ou <strong>curso concluído sem link</strong>, é obrigatório anexar uma imagem do livro ou certificado abaixo.</div>
+        </div>
+        <div id="drive-reminder" style="display:none;background:#EEEDFE;border:0.5px solid #AFA9EC;border-radius:7px;padding:9px 12px;font-size:12px;color:#3C3489;margin-bottom:10px">
+          📤 <strong>Lembrete:</strong> Você está inserindo um link de documento, planilha, slide ou dashboard. Por favor, <strong>compartilhe o arquivo com amanda.conrado@liveseo.com.br</strong> antes de enviar.
+        </div>
+        <div class="fr">
+          <label>📷 Imagem comprobatória <span id="img-required-label" style="color:var(--red);display:none">*</span></label>
+          <input type="file" id="f-image" accept="image/*" style="padding:6px;font-size:12px">
+          <div style="font-size:11px;color:var(--mu);margin-top:3px">A imagem será enviada automaticamente ao Drive da Copa. Obrigatória para livros e cursos sem link, e para ações conjuntas.</div>
+        </div>
+        <!-- AÇÃO CONJUNTA -->
+        <div style="margin-bottom:11px">
+          <label style="display:flex;align-items:center;gap:8px;cursor:pointer;padding:8px 11px;background:var(--ol);border:0.5px solid var(--om);border-radius:7px;font-size:13px">
+            <input type="checkbox" id="f-joint" onchange="onJointChange()" style="width:16px;height:16px;cursor:pointer">
+            🤝 Esta foi uma ação conjunta (com colaboradores de outros times)
+          </label>
+        </div>
+        <div id="f-joint-rows" style="display:none">
+          <div class="fr"><label>Participantes</label>
+            <select id="f-participants" multiple style="height:90px"></select>
+            <div style="font-size:10px;color:var(--mu);margin-top:3px">Ctrl/Cmd para selecionar vários</div>
+          </div>
+          <div class="fr"><label>Quem liderou?</label>
+            <select id="f-leader"><option value="">Selecione...</option></select>
+          </div>
+          <div class="notice info" style="font-size:11px">Líder: +5 moedas extras · Participante: +3 moedas extras</div>
+          <div class="fr">
+            <label>📷 Foto dos participantes na ação conjunta *</label>
+            <input type="file" id="f-joint-image" accept="image/*" style="padding:6px;font-size:12px">
+            <div style="font-size:11px;color:var(--mu);margin-top:3px">Obrigatório para ações conjuntas. Envie uma foto dos participantes durante a atividade. A imagem vai para o Drive da Copa.</div>
+          </div>
+        </div>
+        <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:4px">
+          <button class="btn" id="f-submit-btn" onclick="submitActivity()">Enviar para aprovação</button>
+          <span id="f-pts-preview" style="font-family:'Barlow Condensed',sans-serif;font-size:14px;color:var(--or);font-weight:700"></span>
+        </div>
+      </div>
+      <div class="stag">minhas atividades</div>
+      <div id="my-submissions"><div class="loading"><div class="spinner"></div></div></div>
+    </div>
+    <!-- RANKING -->
+    <div id="page-ranking" class="page">
+      <div class="sh2">Placar</div>
+      <div class="seg">
+        <button class="sb on" onclick="rv('ind',this)">🏆 Individual</button>
+        <button class="sb" onclick="rv('team',this)">🏅 Times</button>
+      </div>
+      <div id="rank-ind">
+        <div class="fbar">
+          <label>Time:</label>
+          <select id="rank-filter" onchange="renderRank()">
+            <option value="">Todos</option>
+            <option value="FINANCEIRO">Financeiro</option>
+            <option value="RECURSOS HUMANOS">Rec. Humanos</option>
+            <option value="DEPARTAMENTO PESSOAL">Dep. Pessoal</option>
+            <option value="FACILITIES">Facilities</option>
+            <option value="JURÍDICO">Jurídico</option>
+            <option value="ESTRATÉGICO">Estratégico</option>
+          </select>
+          <label>Ordenar:</label>
+          <select id="rank-sort" onchange="renderRank()">
+            <option value="total">Total</option>
+            <option value="ind">Ind.</option>
+            <option value="bonus">Bônus</option>
+          </select>
+        </div>
+        <div class="tw"><table>
+          <thead><tr><th style="width:30px">#</th><th>Colaborador</th><th>Cargo</th><th>Time</th>
+            <th style="text-align:right">🪙 Ind.</th><th style="text-align:right">🎁 Bônus</th>
+            <th style="text-align:right">💰 Total</th><th style="width:70px">Barra</th></tr></thead>
+          <tbody id="rank-tbody"><tr><td colspan="8"><div class="loading"><div class="spinner"></div></div></td></tr></tbody>
+        </table></div>
+      </div>
+      <div id="rank-team" style="display:none">
+        <div class="tw"><table>
+          <thead><tr><th style="width:30px">#</th><th>Time</th>
+            <th style="text-align:right">🪙 Soma</th><th style="text-align:right">Membros</th>
+            <th style="text-align:right">Média</th><th style="width:90px">Barra</th></tr></thead>
+          <tbody id="team-tbody"></tbody>
+        </table></div>
+      </div>
+    </div>
+    <!-- DESAFIOS -->
+    <div id="page-desafios" class="page">
+      <div class="sh2">Desafios & moedas</div>
+      <div class="notice"><strong>🪙 Moedas:</strong> Líder de ação conjunta +5 extras · Participante +3 extras · Bônus automático +2 para todos do time a cada ação de colega.</div>
+      <div class="ctabs" id="cat-tabs"></div>
+      <div id="cat-content"></div>
+    </div>
+    <!-- ÁLBUM -->
+    <div id="page-album" class="page">
+      <div class="sh2">Álbum de figurinhas</div>
+      <div class="thermo-wrap">
+        <div style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:15px;color:var(--dk);margin-bottom:4px">📸 Termômetro — Foto do Time</div>
+        <p style="font-size:11px;color:var(--mu);margin-bottom:14px">Duas condições precisam ser cumpridas por <strong>todos</strong> do seu time:</p>
+        <div style="margin-bottom:12px">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+            <span style="font-size:11px;font-weight:600;color:var(--dk)">✅ Condição 1 — Ao menos 1 atividade aprovada</span>
+            <span style="font-size:11px;font-weight:700;color:var(--blue)" id="thermo-act-pct">0%</span>
+          </div>
+          <div class="thermo-bar-bg"><div class="thermo-bar-fill" id="thermo-act-fill" style="width:0%;background:linear-gradient(90deg,#2E75B6,#1D9E75)"></div></div>
+          <div style="font-size:10px;color:var(--mu);margin-top:2px" id="thermo-act-label">0 de 0 membros com atividade aprovada</div>
+        </div>
+        <div style="margin-bottom:14px">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+            <span style="font-size:11px;font-weight:600;color:var(--dk)">🪙 Condição 2 — 100+ moedas acumuladas</span>
+            <span style="font-size:11px;font-weight:700;color:var(--or)" id="thermo-coin-pct">0%</span>
+          </div>
+          <div class="thermo-bar-bg"><div class="thermo-bar-fill" id="thermo-coin-fill" style="width:0%;background:linear-gradient(90deg,var(--or),var(--gold))"></div></div>
+          <div style="font-size:10px;color:var(--mu);margin-top:2px" id="thermo-coin-label">0 de 0 membros com 100+ moedas</div>
+        </div>
+        <div style="background:var(--ow);border-radius:8px;padding:10px 12px;margin-bottom:12px">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
+            <span style="font-size:11px;font-weight:700;color:var(--dk)">🏆 Progresso combinado (ambas as condições)</span>
+            <span style="font-size:12px;font-weight:700;color:var(--green)" id="thermo-pct">0%</span>
+          </div>
+          <div class="thermo-bar-bg"><div class="thermo-bar-fill" id="thermo-fill" style="width:0%;background:linear-gradient(90deg,var(--green),var(--or))"></div></div>
+          <div style="font-size:10px;color:var(--mu);margin-top:2px" id="thermo-left">0 de 0 membros prontos</div>
+        </div>
+        <div class="mc-grid" id="member-coins"></div>
+      </div>
+      <div class="stag">raridade & custo em moedas</div>
+      <div class="skgrid">
+        <div class="sk" style="--c:#8A9AB0"><div class="skb" style="background:#8A9AB0">Comum</div><div class="sks">★☆☆☆☆</div><h4>Menor Aprendiz</h4><p>1ª atividade aprovada</p><div class="skpts">🪙 60</div><div class="coin-req">Requer 60 moedas</div></div>
+        <div class="sk" style="--c:#2E75B6"><div class="skb" style="background:#2E75B6">Incomum</div><div class="sks">★★☆☆☆</div><h4>Estagiário(a)</h4><p>Curso ou treinamento</p><div class="skpts">🪙 120</div><div class="coin-req">Requer 120 moedas</div></div>
+        <div class="sk" style="--c:#1D9E75"><div class="skb" style="background:#1D9E75">Rara</div><div class="sks">★★★☆☆</div><h4>Analista</h4><p>Indicador ou automação aprovados</p><div class="skpts">🪙 220</div><div class="coin-req">Requer 220 moedas</div></div>
+        <div class="sk" style="--c:#FC9801"><div class="skb" style="background:#FC9801;color:#0D0D0D">Épica</div><div class="sks" style="color:#FC9801">★★★★☆</div><h4>Coordenação</h4><p>Liderou ação conjunta aprovada</p><div class="skpts">🪙 380</div><div class="coin-req">Requer 380 moedas</div></div>
+        <div class="sk" style="--c:#534AB7"><div class="skb" style="background:#534AB7">Lendária</div><div class="sks" style="color:#534AB7">★★★★★</div><h4>Gestora / Sócia</h4><p>350 moedas + projeto estratégico</p><div class="skpts">🪙 520</div><div class="coin-req">Requer 520 moedas</div></div>
+        <div class="sk" style="--c:#B8860B;border:1.5px solid var(--or)"><div class="skb" style="background:#B8860B">DOURADA</div><div class="sks" style="color:#B8860B">✦✦✦✦✦</div><h4>Julia & Tumtum 🐾</h4><p>1 livro/curso + 3 ações conjuntas distintas</p><div class="skpts" style="color:#B8860B">🪙 Especial</div></div>
+        <div class="sk" style="--c:#A32D2D;border:1.5px solid var(--or)"><div class="skb" style="background:#A32D2D">ULTRA RARA</div><div class="sks" style="color:var(--or)">✦✦✦✦✦</div><h4>Foto do Time</h4><p>Todos com 100+ moedas + 1 atividade</p><div class="skpts" style="color:var(--or)">🪙 400</div></div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px">
+        <div><div class="stag">figurinhas conquistadas</div><div class="album-grid" id="stickers-owned"></div></div>
+        <div><div class="stag">meu álbum</div><p style="font-size:11px;color:var(--mu);margin-bottom:8px">Figurinhas aparecem ao atingir as moedas necessárias.</p><div class="album-grid" id="album-slots"></div></div>
+      </div>
+    </div>
+    <!-- AGENDA -->
+    <div id="page-agenda" class="page">
+      <div class="sh2">Agenda de treinamentos</div>
+      <div class="notice info">📅 Treinamentos acontecem toda <strong>sexta-feira das 13h às 13h30</strong>. Após aprovação da Amanda, o treinamento aparece aqui e todos podem confirmar participação.</div>
+      <div id="agenda-list"><div class="loading"><div class="spinner"></div></div></div>
+    </div>
+    <!-- FOTOS -->
+    <div id="page-fotos" class="page">
+      <div class="sh2">Galeria de fotos</div>
+      <div class="notice info">📸 Fotos dos momentos da Copa Admin 2026. Envie suas fotos para <strong>amanda.conrado@liveseo.com.br</strong> com uma legenda.</div>
+      <div class="photo-grid" id="photo-grid"><div class="loading"><div class="spinner"></div></div></div>
+    </div>
+    <!-- REGULAMENTO -->
+    <div id="page-regulamento" class="page">
+      <div class="sh2">Regulamento</div>
+      <div class="stag">sistema de moedas</div>
+      <div class="rg">
+        <div class="rc hl"><h4>🪙 Moedas individuais</h4><p>Cada atividade aprovada gera moedas. Definem o ranking individual e desbloqueiam figurinhas.</p><div class="fml">atividade → moedas</div></div>
+        <div class="rc"><h4>🎁 Bônus de time (+2)</h4><p>Quando qualquer membro do seu time tem atividade aprovada, todos do time recebem +2 moedas automaticamente.</p><div class="fml">+2 por ação do time</div></div>
+        <div class="rc"><h4>🤝 Ação conjunta</h4><p>Líder: +5 moedas extras. Participante: +3 extras. Ambos ganham o valor base da atividade também.</p><div class="fml">líder +5 · part. +3</div></div>
+        <div class="rc"><h4>🏅 Placar de times</h4><p>Soma das moedas individuais (sem bônus) de todos os membros. Competição paralela.</p><div class="fml">soma moedas ind.</div></div>
+      </div>
+      <div class="stag">tabela de moedas</div>
+      <div class="tw"><table>
+        <thead><tr><th>Atividade</th><th style="text-align:right">🪙 Moedas</th><th>Observação</th></tr></thead>
+        <tbody>
+          <tr><td>📚 Leitura de livro + resumo</td><td style="text-align:right;font-weight:600;color:var(--or)">30</td><td style="font-size:11px;color:var(--mu)">Resumo mín. 150 palavras, verificação de IA</td></tr>
+          <tr><td>🎓 Curso com certificado</td><td style="text-align:right;font-weight:600;color:var(--or)">25</td><td style="font-size:11px;color:var(--mu)">Certificado obrigatório</td></tr>
+          <tr><td>🎙️ Treinamento ministrado</td><td style="text-align:right;font-weight:600;color:var(--or)">50</td><td style="font-size:11px;color:var(--mu)">Sextas 13h–13h30 · Agenda + slides obrigatórios</td></tr>
+          <tr><td>👥 Participar de treinamento</td><td style="text-align:right;font-weight:600;color:var(--or)">15</td><td style="font-size:11px;color:var(--mu)">Confirmado pelo ministrador na Agenda</td></tr>
+          <tr><td>📊 Indicador nível 1</td><td style="text-align:right;font-weight:600;color:var(--or)">35</td><td style="font-size:11px;color:var(--mu)">1 métrica automática · apresentação ao vivo</td></tr>
+          <tr><td>📊 Indicador nível 2</td><td style="text-align:right;font-weight:600;color:var(--or)">60</td><td style="font-size:11px;color:var(--mu)">3+ métricas · dashboard automático</td></tr>
+          <tr><td>📊 Indicador nível 3</td><td style="text-align:right;font-weight:600;color:var(--or)">90</td><td style="font-size:11px;color:var(--mu)">Integração entre ferramentas + alertas</td></tr>
+          <tr><td>📊 Indicador no SG&A</td><td style="text-align:right;font-weight:600;color:var(--or)">+50</td><td style="font-size:11px;color:var(--mu)">Bônus adicional · aprovação prévia da Amanda</td></tr>
+          <tr><td>⚙️ Mapeamento + automação do gargalo</td><td style="text-align:right;font-weight:600;color:var(--or)">70</td><td style="font-size:11px;color:var(--mu)">As duas etapas juntas obrigatórias</td></tr>
+          <tr><td>⚙️ Automação de processo</td><td style="text-align:right;font-weight:600;color:var(--or)">45</td><td style="font-size:11px;color:var(--mu)">Script ou fluxo documentado</td></tr>
+          <tr><td>⭐ Evento externo</td><td style="text-align:right;font-weight:600;color:var(--or)">15</td><td style="font-size:11px;color:var(--mu)">Resumo 150+ palavras obrigatório</td></tr>
+          <tr><td>🤝 Entrega conjunta entre times</td><td style="text-align:right;font-weight:600;color:var(--or)">50</td><td style="font-size:11px;color:var(--mu)">Projeto co-criado documentado</td></tr>
+          <tr style="background:#E1F5EE"><td>🎁 Bônus de time (por ação de colega)</td><td style="text-align:right;font-weight:600;color:var(--green)">+2</td><td style="font-size:11px;color:var(--mu)">Automático</td></tr>
+          <tr style="background:#E1F5EE"><td>⚡ Bônus líder de ação conjunta</td><td style="text-align:right;font-weight:600;color:var(--green)">+5</td><td style="font-size:11px;color:var(--mu)">Adicional ao valor base</td></tr>
+          <tr style="background:#E1F5EE"><td>⚡ Bônus participante de ação conjunta</td><td style="text-align:right;font-weight:600;color:var(--green)">+3</td><td style="font-size:11px;color:var(--mu)">Adicional ao valor base</td></tr>
+        </tbody>
+      </table></div>
+      <div class="notice"><strong>Vigência:</strong> 28/04/2026 a 07/08/2026. Atividades fora desse período não são válidas. Todas precisam de aprovação da Amanda para gerar moedas.</div>
+    </div>
+    <!-- PREMIAÇÃO -->
+    <div id="page-premiacao" class="page">
+      <div class="sh2">Premiação</div>
+      <div class="notice green">🎉 A premiação acontecerá após o encerramento em 07/08/2026. Data e local a confirmar!</div>
+      <div class="stag">categorias</div>
+      <div class="pgrid">
+        <div class="pc g"><div class="pm">🥇</div><h4>1º lugar individual</h4><p>Troféu personalizado + surpresa a revelar</p></div>
+        <div class="pc s"><div class="pm">🥈</div><h4>2º lugar individual</h4><p>Troféu personalizado + surpresa a revelar</p></div>
+        <div class="pc b"><div class="pm">🥉</div><h4>3º lugar individual</h4><p>Troféu personalizado + surpresa a revelar</p></div>
+        <div class="pc" style="border-top:3px solid var(--blue)"><div class="pm">🏆</div><h4>Time campeão</h4><p>Troféu de time + celebração coletiva</p></div>
+        <div class="pc" style="border-top:3px solid var(--gold)"><div class="pm">📚</div><h4>Álbum completo</h4><p>Brinde especial para quem completar o álbum</p></div>
+        <div class="pc" style="border-top:3px solid var(--purple)"><div class="pm">💡</div><h4>Melhor inovação</h4><p>Votação de todos · gestão desempata · troféu</p></div>
+      </div>
+      <div class="notice info">Os prêmios individuais ainda estão sendo definidos. Fique ligado! 👀</div>
+    </div>
+    <!-- ADMIN -->
+    <div id="page-admin" class="page">
+      <div class="sh2">Painel Admin</div>
+      <div class="notice red">Área restrita · amanda.conrado@liveseo.com.br</div>
+      <div class="admin-box"><h3>⏳ Aguardando aprovação</h3><div id="admin-pending"><div class="loading"><div class="spinner"></div></div></div></div>
+      <div class="admin-box"><h3>📸 Upload de foto para galeria</h3>
+        <div class="fr"><label>URL da foto</label><input type="url" id="admin-photo-url" placeholder="https://..."></div>
+        <div class="fr"><label>Legenda da foto</label><input type="text" id="admin-photo-caption" placeholder="Ex: Treinamento de Sheets — 23/05/2026"></div>
+        <button class="btn" onclick="addPhoto()">Adicionar foto</button>
+      </div>
+      <div class="admin-box"><h3>📊 Pontuação resumida por atividade</h3>
+        <div class="tw"><table>
+          <thead><tr><th>Atividade</th><th style="text-align:right">🪙 Base</th><th>+ Bônus possíveis</th></tr></thead>
+          <tbody>
+            <tr><td>📚 Livro + resumo</td><td style="text-align:right;color:var(--or);font-weight:600">30</td><td style="font-size:11px;color:var(--mu)">+2 time / +3 ou +5 se conjunto</td></tr>
+            <tr><td>🎓 Curso</td><td style="text-align:right;color:var(--or);font-weight:600">25</td><td style="font-size:11px;color:var(--mu)">+2 time</td></tr>
+            <tr><td>🎙️ Treinamento ministrado</td><td style="text-align:right;color:var(--or);font-weight:600">50</td><td style="font-size:11px;color:var(--mu)">+2 time</td></tr>
+            <tr><td>👥 Participar de treinamento</td><td style="text-align:right;color:var(--or);font-weight:600">15</td><td style="font-size:11px;color:var(--mu)">Creditado após confirmação na Agenda</td></tr>
+            <tr><td>📊 Indicador nível 1</td><td style="text-align:right;color:var(--or);font-weight:600">35</td><td style="font-size:11px;color:var(--mu)">+50 se apresentado no SG&A</td></tr>
+            <tr><td>📊 Indicador nível 2</td><td style="text-align:right;color:var(--or);font-weight:600">60</td><td style="font-size:11px;color:var(--mu)">+50 se apresentado no SG&A</td></tr>
+            <tr><td>📊 Indicador nível 3</td><td style="text-align:right;color:var(--or);font-weight:600">90</td><td style="font-size:11px;color:var(--mu)">+50 se apresentado no SG&A</td></tr>
+            <tr><td>📊 Dashboard 2 times</td><td style="text-align:right;color:var(--or);font-weight:600">120</td><td style="font-size:11px;color:var(--mu)">Cada participante</td></tr>
+            <tr><td>⚙️ Mapeamento + automação</td><td style="text-align:right;color:var(--or);font-weight:600">70</td><td style="font-size:11px;color:var(--mu)">Obrigatório as duas etapas</td></tr>
+            <tr><td>⚙️ Automação avulsa</td><td style="text-align:right;color:var(--or);font-weight:600">45</td><td style="font-size:11px;color:var(--mu)">+70 se adotada por outro time</td></tr>
+            <tr><td>⭐ Evento externo</td><td style="text-align:right;color:var(--or);font-weight:600">15</td><td style="font-size:11px;color:var(--mu)">+2 time</td></tr>
+            <tr><td>🤝 Entrega conjunta times</td><td style="text-align:right;color:var(--or);font-weight:600">50</td><td style="font-size:11px;color:var(--mu)">Cada envolvido</td></tr>
+            <tr style="background:#FFF3DC"><td>🎁 Bônus time (automático)</td><td style="text-align:right;color:var(--green);font-weight:600">+2</td><td style="font-size:11px;color:var(--mu)">Por cada ação de colega do time</td></tr>
+            <tr style="background:#FFF3DC"><td>⚡ Bônus líder conjunto</td><td style="text-align:right;color:var(--green);font-weight:600">+5</td><td style="font-size:11px;color:var(--mu)">Adicional ao valor base</td></tr>
+            <tr style="background:#FFF3DC"><td>⚡ Bônus participante conjunto</td><td style="text-align:right;color:var(--green);font-weight:600">+3</td><td style="font-size:11px;color:var(--mu)">Adicional ao valor base</td></tr>
+          </tbody>
+        </table></div>
+      </div>
+      <div class="admin-box"><h3>🎓 Treinamentos para confirmar presença</h3><div id="admin-agenda"></div></div>
+      <div class="admin-box"><h3>📋 Todas as pontuações</h3><div id="admin-scores"></div></div>
+      <div class="admin-box"><h3>📋 Todas as atividades</h3><div id="admin-subs"></div></div>
+    </div>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+<script>
+const firebaseConfig={apiKey:"AIzaSyB1-56bQBIw7no1eGrq3qYwj9kqnIbOt84",authDomain:"copa-admin-2026-a3432.firebaseapp.com",projectId:"copa-admin-2026-a3432",storageBucket:"copa-admin-2026-a3432.firebasestorage.app",messagingSenderId:"456339489099",appId:"1:456339489099:web:780b56ae753d22f9ab68ce"};
+firebase.initializeApp(firebaseConfig);
+const db=firebase.firestore();
+
+const PEOPLE=[
+  {name:'Adriana Lucia Stall Viriato Ribeiro',short:'Adriana Ribeiro',team:'FINANCEIRO',cargo:'Analista'},
+  {name:'André Xavier Camacho',short:'André Camacho',team:'JURÍDICO',cargo:'Estagiário'},
+  {name:'Arieska Meurer',short:'Arieska Meurer',team:'ESTRATÉGICO',cargo:'Analista'},
+  {name:'Barbara Arantes Tavares',short:'Barbara Tavares',team:'FACILITIES',cargo:'Menor Aprendiz'},
+  {name:'Bruna Aparecida Gomes Alves Martins',short:'Bruna Martins',team:'JURÍDICO',cargo:'Coordenação'},
+  {name:'Eduardo Vilas Boas',short:'Eduardo Vilas Boas',team:'FINANCEIRO',cargo:'Analista'},
+  {name:'Esther Rebola',short:'Esther Rebola',team:'RECURSOS HUMANOS',cargo:'Estagiária'},
+  {name:'João Pedro Trizotti Apolonio',short:'João Apolonio',team:'FACILITIES',cargo:'Menor Aprendiz'},
+  {name:'Laís Pereira',short:'Laís Pereira',team:'FACILITIES',cargo:'Analista'},
+  {name:'Luana Rohling',short:'Luana Rohling',team:'RECURSOS HUMANOS',cargo:'Gestora'},
+  {name:'Marcela Pauka',short:'Marcela Pauka',team:'FINANCEIRO',cargo:'Analista'},
+  {name:'Michele Yamada',short:'Michele Yamada',team:'ESTRATÉGICO',cargo:'Analista'},
+  {name:'Sara Vitoria Glatz',short:'Sara Glatz',team:'JURÍDICO',cargo:'Analista'},
+  {name:'Tais da Silva Santarem',short:'Tais Santarem',team:'DEPARTAMENTO PESSOAL',cargo:'Estagiária'},
+  {name:'Vanessa Panont',short:'Vanessa Panont',team:'DEPARTAMENTO PESSOAL',cargo:'Coordenação'},
+  {name:'Yasmin Conceição Santos',short:'Yasmin Santos',team:'RECURSOS HUMANOS',cargo:'Estagiária'},
+  {name:'Amanda Conrado',short:'Amanda Conrado',team:'ADMIN',cargo:'Sócia'},
+];
+const TC={
+  'FINANCEIRO':{color:'#FC9801',bg:'#FFF3DC',txt:'#854F0B',icon:'💰',label:'Financeiro'},
+  'RECURSOS HUMANOS':{color:'#2E75B6',bg:'#E6F1FB',txt:'#0C447C',icon:'👥',label:'Rec. Humanos'},
+  'DEPARTAMENTO PESSOAL':{color:'#1D9E75',bg:'#E1F5EE',txt:'#085041',icon:'📋',label:'Dep. Pessoal'},
+  'FACILITIES':{color:'#A32D2D',bg:'#FCEBEB',txt:'#791F1F',icon:'🏢',label:'Facilities'},
+  'JURÍDICO':{color:'#534AB7',bg:'#EEEDFE',txt:'#3C3489',icon:'⚖️',label:'Jurídico'},
+  'ESTRATÉGICO':{color:'#B8860B',bg:'#FFF8E1',txt:'#7B5800',icon:'🌟',label:'Estratégico'},
+  'ADMIN':{color:'#101820',bg:'#F4F5FA',txt:'#101820',icon:'⚙️',label:'Admin'},
+};
+const CAT_COINS={livro:30,curso:25,treinamento:50,indicador:35,automacao:45,evento:15};
+const BONUS={team:2,lider:5,part:3};
+
+const CHALLENGES={
+  livros:{label:'📚 Livros',items:[
+    {t:'📱 Dica: Wellhub + Storytell',d:'Quem tem plano <strong>Wellhub</strong> pode acessar gratuitamente o app <strong>Storytell</strong>, que tem audiobooks de vários livros dessa lista e muito mais. Vale verificar se seu plano inclui! Disponível para iOS e Android.',c:0,rule:true},
+    {t:'O Código da Cultura — Daniel Coyle',d:'🎧 <a href="https://www.youtube.com/results?search_query=codigo+da+cultura+daniel+coyle+audiobook+portugues" target="_blank">Audiobook YouTube</a> · <a href="https://www.amazon.com.br/dp/8550804606" target="_blank">Kindle</a>. Resumo + 3 aprendizados aplicáveis.',c:30},
+    {t:'Equipes Brilhantes — Daniel Coyle',d:'🎧 <a href="https://www.youtube.com/results?search_query=equipes+brilhantes+coyle+audiobook" target="_blank">Audiobook YouTube</a> · <a href="https://www.amazon.com.br/s?k=equipes+brilhantes+coyle" target="_blank">Kindle</a>.',c:30},
+    {t:'Líderes se Servem por Último — Simon Sinek',d:'🎧 <a href="https://www.youtube.com/results?search_query=lideres+servem+ultimo+sinek+audiobook+portugues" target="_blank">Audiobook YouTube</a> · <a href="https://www.amazon.com.br/dp/8576843870" target="_blank">Kindle</a>.',c:30},
+    {t:'A Coragem para Liderar — Brené Brown',d:'🎧 <a href="https://www.youtube.com/results?search_query=coragem+para+liderar+brene+brown+audiobook" target="_blank">Audiobook YouTube</a> · <a href="https://www.amazon.com.br/dp/8568014364" target="_blank">Kindle</a>.',c:30},
+    {t:'A Coragem de Ser Você Mesmo — Brené Brown',d:'🎧 <a href="https://www.youtube.com/results?search_query=brene+brown+coragem+ser+voce+mesmo+audiobook" target="_blank">Audiobook YouTube</a> · <a href="https://www.amazon.com.br/s?k=coragem+ser+voce+mesmo" target="_blank">Kindle</a>.',c:30},
+    {t:'Princípios — Ray Dalio',d:'🎧 <a href="https://www.youtube.com/results?search_query=principios+ray+dalio+audiobook+portugues" target="_blank">Audiobook YouTube</a> · Resumo gratuito: <a href="https://www.principles.com" target="_blank">principles.com</a> · <a href="https://www.amazon.com.br/dp/8551003429" target="_blank">Kindle</a>.',c:30},
+    {t:'Hábitos Atômicos — James Clear',d:'🎧 <a href="https://www.youtube.com/results?search_query=habitos+atomicos+james+clear+audiobook" target="_blank">Audiobook YouTube</a> · <a href="https://www.amazon.com.br/dp/8550807095" target="_blank">Kindle</a>. Descreva 1 hábito a implementar.',c:30},
+    {t:'O Poder do Hábito — Charles Duhigg',d:'🎧 <a href="https://www.youtube.com/results?search_query=poder+do+habito+charles+duhigg+audiobook" target="_blank">Audiobook YouTube</a> · <a href="https://www.amazon.com.br/dp/8539004119" target="_blank">Kindle</a>.',c:30},
+    {t:'Os 7 Hábitos — Stephen Covey',d:'🎧 <a href="https://www.youtube.com/results?search_query=7+habitos+covey+audiobook+portugues" target="_blank">Audiobook YouTube</a> · <a href="https://www.amazon.com.br/dp/8576840626" target="_blank">Kindle</a>.',c:30},
+    {t:'O Milagre da Manhã — Hal Elrod',d:'🎧 <a href="https://www.youtube.com/results?search_query=milagre+da+manha+hal+elrod+audiobook" target="_blank">Audiobook YouTube</a> · <a href="https://www.amazon.com.br/dp/8568014135" target="_blank">Kindle</a>.',c:30},
+    {t:'A Tríade do Tempo — Christian Barbosa',d:'🎧 <a href="https://www.youtube.com/results?search_query=triade+do+tempo+christian+barbosa+audiobook" target="_blank">Audiobook YouTube</a> · <a href="https://www.amazon.com.br/dp/8576844338" target="_blank">Kindle</a>.',c:30},
+    {t:'A Sutil Arte de Ligar o F*da-se — Mark Manson',d:'🎧 <a href="https://www.youtube.com/results?search_query=sutil+arte+ligar+foda+se+audiobook" target="_blank">Audiobook YouTube</a> · <a href="https://www.amazon.com.br/dp/8543104459" target="_blank">Kindle</a>.',c:30},
+    {t:'Viva com Entusiasmo — Dale Carnegie',d:'🎧 <a href="https://www.youtube.com/results?search_query=viva+com+entusiasmo+carnegie+audiobook" target="_blank">Audiobook YouTube</a> · <a href="https://www.amazon.com.br/s?k=viva+entusiasmo+carnegie" target="_blank">Kindle</a>.',c:30},
+    {t:'Cem Dias Entre o Céu e o Mar',d:'🎧 <a href="https://www.youtube.com/results?search_query=cem+dias+ceu+mar+audiobook" target="_blank">Audiobook YouTube</a> · <a href="https://www.amazon.com.br/s?k=cem+dias+ceu+mar" target="_blank">Kindle</a>.',c:30},
+    {t:'Como Fazer Amigos e Influenciar Pessoas — Dale Carnegie',d:'🎧 <a href="https://www.youtube.com/results?search_query=como+fazer+amigos+dale+carnegie+audiobook" target="_blank">Audiobook YouTube</a> · <a href="https://www.amazon.com.br/dp/8504018024" target="_blank">Kindle</a>.',c:30},
+    {t:'Como Falar em Público — Dale Carnegie',d:'🎧 <a href="https://www.youtube.com/results?search_query=como+falar+publico+dale+carnegie+audiobook" target="_blank">Audiobook YouTube</a> · <a href="https://www.amazon.com.br/dp/8504018768" target="_blank">Kindle</a>.',c:30},
+    {t:'Como Evitar Preocupações — Dale Carnegie',d:'🎧 <a href="https://www.youtube.com/results?search_query=evitar+preocupacoes+carnegie+audiobook" target="_blank">Audiobook YouTube</a> · <a href="https://www.amazon.com.br/dp/8504018318" target="_blank">Kindle</a>.',c:30},
+    {t:'Fale Mais Eficazmente — Dale Carnegie',d:'🎧 <a href="https://www.youtube.com/results?search_query=fale+mais+eficazmente+carnegie+audiobook" target="_blank">Audiobook YouTube</a> · <a href="https://www.amazon.com.br/s?k=fale+mais+eficazmente" target="_blank">Kindle</a>.',c:30},
+    {t:'Marketing de Relacionamento — Regis McKenna',d:'🎧 <a href="https://www.youtube.com/results?search_query=marketing+relacionamento+mckenna+audiobook" target="_blank">Audiobook YouTube</a> · <a href="https://www.amazon.com.br/s?k=marketing+relacionamento+mckenna" target="_blank">Kindle</a>.',c:30},
+    {t:'Preciso Saber se Estou Indo Bem — Richard Williams',d:'🎧 <a href="https://www.youtube.com/results?search_query=preciso+saber+indo+bem+audiobook" target="_blank">Audiobook YouTube</a> · <a href="https://www.amazon.com.br/s?k=preciso+saber+indo+bem" target="_blank">Kindle</a>.',c:30},
+    {t:'Eneagrama — Uranio Paes',d:'🎧 <a href="https://www.youtube.com/results?search_query=eneagrama+uranio+paes+audiobook" target="_blank">Audiobook YouTube</a> · <a href="https://www.eneagramabrasil.com.br" target="_blank">Material gratuito</a> · <a href="https://www.amazon.com.br/dp/8576843595" target="_blank">Kindle</a>.',c:30},
+    {t:'Descubra Seus Pontos Fortes 2.0 — Tom Rath',d:'🎧 <a href="https://www.youtube.com/results?search_query=descubra+pontos+fortes+audiobook" target="_blank">Audiobook YouTube</a> · <a href="https://www.amazon.com.br/dp/8535229604" target="_blank">Kindle</a>.',c:30},
+    {t:'A Psicologia Financeira — Morgan Housel',d:'🎧 <a href="https://www.youtube.com/results?search_query=psicologia+financeira+morgan+housel+audiobook" target="_blank">Audiobook YouTube</a> · <a href="https://www.amazon.com.br/dp/6556350183" target="_blank">Kindle</a>.',c:30},
+    {t:'O Mesmo de Sempre — Morgan Housel',d:'🎧 <a href="https://www.youtube.com/results?search_query=o+mesmo+de+sempre+housel+audiobook" target="_blank">Audiobook YouTube</a> · <a href="https://www.amazon.com.br/s?k=o+mesmo+de+sempre+housel" target="_blank">Kindle</a>.',c:30},
+    {t:'Rápido e Devagar — Daniel Kahneman',d:'🎧 <a href="https://www.youtube.com/results?search_query=rapido+devagar+kahneman+audiobook+portugues" target="_blank">Audiobook YouTube</a> · <a href="https://www.amazon.com.br/dp/8535236066" target="_blank">Kindle</a>. Neurociência da decisão.',c:30},
+    {t:'O Erro de Descartes — António Damásio',d:'🎧 <a href="https://www.youtube.com/results?search_query=erro+descartes+damasio+audiobook" target="_blank">Audiobook YouTube</a> · <a href="https://www.amazon.com.br/s?k=erro+de+descartes+damasio" target="_blank">Kindle</a>.',c:30},
+    {t:'O Poder do Subconsciente — Joseph Murphy',d:'🎧 <a href="https://www.youtube.com/results?search_query=poder+subconsciente+joseph+murphy+audiobook" target="_blank">Audiobook YouTube</a> · <a href="https://www.amazon.com.br/s?k=poder+subconsciente+murphy" target="_blank">Kindle</a>.',c:30},
+    {t:'Homo Deus — Yuval Noah Harari',d:'🎧 <a href="https://www.youtube.com/results?search_query=homo+deus+harari+audiobook+portugues" target="_blank">Audiobook YouTube</a> · <a href="https://www.amazon.com.br/dp/8535928685" target="_blank">Kindle</a>. Futuro da humanidade e IA.',c:30},
+    {t:'IA: Superpoderes Humanos — Kai-Fu Lee',d:'🎧 <a href="https://www.youtube.com/results?search_query=kai-fu+lee+inteligencia+artificial+audiobook" target="_blank">Audiobook YouTube</a> · <a href="https://www.amazon.com.br/s?k=kai-fu+lee+ia" target="_blank">Kindle</a>. IA e o futuro do trabalho.',c:30},
+    {t:'A Era da IA — Henry Kissinger e Eric Schmidt',d:'🎧 <a href="https://www.youtube.com/results?search_query=era+da+ia+kissinger+schmidt+audiobook" target="_blank">Audiobook YouTube</a> · <a href="https://www.amazon.com.br/s?k=era+da+ia+kissinger" target="_blank">Kindle</a>.',c:30},
+    {t:'Sprint — Jake Knapp',d:'🎧 <a href="https://www.youtube.com/results?search_query=sprint+jake+knapp+audiobook+portugues" target="_blank">Audiobook YouTube</a> · Recursos: <a href="https://www.thesprintbook.com/resources" target="_blank">thesprintbook.com</a> · <a href="https://www.amazon.com.br/dp/8551001523" target="_blank">Kindle</a>.',c:30},
+    {t:'A Arte de Fazer Acontecer — David Allen',d:'🎧 <a href="https://www.youtube.com/results?search_query=arte+fazer+acontecer+david+allen+audiobook" target="_blank">Audiobook YouTube</a> · <a href="https://www.amazon.com.br/dp/8543102588" target="_blank">Kindle</a>.',c:30},
+    {t:'Organizações Exponenciais — Salim Ismail',d:'🎧 <a href="https://www.youtube.com/results?search_query=organizacoes+exponenciais+audiobook" target="_blank">Audiobook YouTube</a> · <a href="https://www.amazon.com.br/dp/8543102022" target="_blank">Kindle</a>.',c:30},
+    {t:'A Meta — Eliyahu Goldratt',d:'🎧 <a href="https://www.youtube.com/results?search_query=a+meta+goldratt+audiobook+portugues" target="_blank">Audiobook YouTube</a> · <a href="https://www.amazon.com.br/s?k=a+meta+goldratt" target="_blank">Kindle</a>.',c:30},
+    {t:'Kaizen — Masaaki Imai',d:'🎧 <a href="https://www.youtube.com/results?search_query=kaizen+melhoria+continua+audiobook" target="_blank">Audiobook YouTube</a> · <a href="https://www.amazon.com.br/s?k=kaizen+imai" target="_blank">Kindle</a>. Melhoria contínua.',c:30},
+    {t:'Arte da Guerra — Sun Tzu',d:'🎧 <a href="https://www.youtube.com/results?search_query=arte+da+guerra+sun+tzu+audiobook+portugues" target="_blank">Audiobook YouTube</a> · <a href="https://www.amazon.com.br/dp/8501070289" target="_blank">Kindle</a>.',c:30},
+    {t:'Excelência no Secretariado',d:'🎧 <a href="https://www.youtube.com/results?search_query=excelencia+secretariado+audiobook" target="_blank">Audiobook YouTube</a> · <a href="https://www.amazon.com.br/s?k=excelencia+secretariado" target="_blank">Kindle</a>.',c:30},
+    {t:'Cerimonial para Executivos',d:'🎧 <a href="https://www.youtube.com/results?search_query=cerimonial+executivos+audiobook" target="_blank">Audiobook YouTube</a> · <a href="https://www.amazon.com.br/s?k=cerimonial+executivos" target="_blank">Kindle</a>.',c:30},
+    {t:'O Futuro do Secretariado',d:'🎧 <a href="https://www.youtube.com/results?search_query=futuro+secretariado+audiobook" target="_blank">Audiobook YouTube</a> · <a href="https://www.amazon.com.br/s?k=futuro+secretariado" target="_blank">Kindle</a>.',c:30},
+    {t:'Clube do livro (2+ times diferentes)',d:'Mesmo livro, debate de 30 min com ata. Todos os participantes recebem o dobro de moedas.',c:60,joint:true},
+  ]},
+  cursos:{label:'🎓 Cursos',items:[
+    {t:'Desenvolvimento Profissional — Fundação Bradesco',d:'<a href="https://www.ev.org.br/cursos/desenvolvimento-profissional" target="_blank">ev.org.br →</a> Gratuito + Certificado',c:25},
+    {t:'Organização Pessoal — Fundação Bradesco',d:'<a href="https://www.ev.org.br/cursos/organizacao-pessoal" target="_blank">ev.org.br →</a> Gratuito + Certificado',c:25},
+    {t:'Excel na Prática — Fundação Bradesco',d:'<a href="https://www.ev.org.br/cursos/excel-na-pratica" target="_blank">ev.org.br →</a> Gratuito + Certificado',c:25},
+    {t:'Introdução à Gestão de Projetos — Fundação Bradesco',d:'<a href="https://www.ev.org.br/cursos/introducao-a-gestao-de-projetos" target="_blank">ev.org.br →</a> Gratuito + Certificado',c:25},
+    {t:'LGPD na Prática — FGV Online',d:'<a href="https://educacao-executiva.fgv.br/cursos/gratuitos" target="_blank">fgv.br →</a> Gratuito + Certificado FGV',c:25},
+    {t:'Fundamentos da Administração — FGV Online',d:'<a href="https://educacao-executiva.fgv.br/cursos/gratuitos" target="_blank">fgv.br →</a> Gratuito + Certificado FGV',c:25},
+    {t:'Neurociência para Líderes — FGV Online',d:'<a href="https://educacao-executiva.fgv.br/cursos/gratuitos" target="_blank">fgv.br →</a> Gratuito + Certificado FGV. Comportamento e tomada de decisão.',c:25},
+    {t:'Gestão Financeira — Sebrae',d:'<a href="https://sebrae.com.br/sites/PortalSebrae/cursosonline" target="_blank">sebrae.com.br →</a> Gratuito + Certificado. Fluxo de caixa e planejamento.',c:25},
+    {t:'Melhoria Contínua (Lean/Kaizen) — Sebrae',d:'<a href="https://sebrae.com.br/sites/PortalSebrae/cursosonline" target="_blank">sebrae.com.br →</a> Gratuito + Certificado',c:25},
+    {t:'Indicadores de Desempenho (KPI) — Sebrae',d:'<a href="https://sebrae.com.br/sites/PortalSebrae/cursosonline" target="_blank">sebrae.com.br →</a> Gratuito + Certificado. O que medir e como usar.',c:25},
+    {t:'Facilities Management Básico — Sebrae',d:'<a href="https://sebrae.com.br/sites/PortalSebrae/cursosonline" target="_blank">sebrae.com.br →</a> Gratuito + Certificado. Gestão de espaços e serviços.',c:25},
+    {t:'Gestão de Pessoas — Escola Virtual Gov',d:'<a href="https://www.escolavirtual.gov.br" target="_blank">escolavirtual.gov.br →</a> Gratuito + Certificado Federal',c:25},
+    {t:'Compliance e Ética — Escola Virtual Gov',d:'<a href="https://www.escolavirtual.gov.br" target="_blank">escolavirtual.gov.br →</a> Gratuito + Certificado Federal',c:25},
+    {t:'Gestão da Mudança — Escola Virtual Gov',d:'<a href="https://www.escolavirtual.gov.br" target="_blank">escolavirtual.gov.br →</a> Gratuito + Certificado Federal. Change management na prática.',c:25},
+    {t:'Departamento Pessoal — Prime Cursos',d:'<a href="https://www.primecursos.com.br/departamento-pessoal" target="_blank">primecursos.com.br →</a> Gratuito + Certificado. Rotinas trabalhistas e CLT.',c:25},
+    {t:'Comunicação Assertiva — Prime Cursos',d:'<a href="https://www.primecursos.com.br" target="_blank">primecursos.com.br →</a> Gratuito + Certificado. Feedback, escuta ativa e CNV.',c:25},
+    {t:'Assessoria Executiva Moderna — Prime Cursos',d:'<a href="https://www.primecursos.com.br" target="_blank">primecursos.com.br →</a> Gratuito + Certificado. Agenda, protocolo e suporte estratégico.',c:25},
+    {t:'Jurídico Básico para não Juristas — Escola Virtual Gov',d:'<a href="https://www.escolavirtual.gov.br" target="_blank">escolavirtual.gov.br →</a> Gratuito + Certificado. Contratos e direito do trabalho.',c:25},
+    {t:'Scrum Fundamentals Certified — ScrumStudy',d:'<a href="https://www.scrumstudy.com/certification/scrum-fundamentals-certified" target="_blank">scrumstudy.com →</a> Gratuito + Certificado Internacional. Gestão ágil.',c:25},
+    {t:'Google Looker Studio — Google Skillshop',d:'<a href="https://skillshop.withgoogle.com" target="_blank">skillshop.google.com →</a> Gratuito + Certificado Google. Dashboards e indicadores.',c:25},
+    {t:'IA para Todos — DeepLearning.AI / Coursera',d:'<a href="https://www.coursera.org/learn/ai-for-everyone" target="_blank">coursera.org →</a> Audit gratuito. Conceitos de IA para qualquer área.',c:25},
+    {t:'Introdução ao ChatGPT — Coursera',d:'<a href="https://www.coursera.org/learn/prompt-engineering" target="_blank">coursera.org →</a> Audit gratuito. Prompts e uso no trabalho.',c:25},
+    {t:'Google Gemini no Trabalho — Google Skillshop',d:'<a href="https://skillshop.withgoogle.com" target="_blank">skillshop.google.com →</a> Gratuito + Certificado Google. Gemini no Workspace.',c:25},
+    {t:'Claude para Produtividade — Anthropic / YouTube',d:'<a href="https://www.youtube.com/results?search_query=claude+anthropic+tutorial+portugues" target="_blank">YouTube gratuito →</a> Como usar Claude no trabalho.',c:25},
+    {t:'n8n — Automação sem código',d:'<a href="https://www.youtube.com/results?search_query=n8n+tutorial+portugues+iniciante" target="_blank">YouTube gratuito →</a> Criação de fluxos automáticos.',c:25},
+    {t:'Gestão Ágil (Scrum/Kanban) — Coursera',d:'<a href="https://www.coursera.org/learn/agile-development" target="_blank">coursera.org →</a> Audit gratuito. Metodologias ágeis na prática.',c:25},
+    {t:'Segurança do Trabalho (NR) — Senai EAD',d:'<a href="https://www.senai.br/ead" target="_blank">senai.br/ead →</a> Gratuito. NRs essenciais para Facilities.',c:25},
+  ]},
+  indicadores:{label:'📊 Indicadores',items:[
+    {t:'⚠️ REGRA: Indicador precisa ser automático',d:'Não são aceitas planilhas preenchidas manualmente. Use <strong>Google Forms → Sheets, Apps Script, Claude, n8n, ChatGPT, Gemini, Data Studio</strong> ou qualquer ferramenta que alimente os dados sozinha e seja segura. Apresentação ao vivo obrigatória.',c:0,rule:true},
+    {t:'O que é um indicador válido?',d:'Um indicador responde à pergunta: <em>"Estou melhorando ou piorando nisso?"</em> Precisa ser mensurável com dados reais, acompanhado ao longo do tempo e alimentado automaticamente. NÃO é válido: opinião subjetiva, tarefa concluída sem dado ou meta sem histórico.',c:0,rule:true},
+    {t:'Nível 1 — 1 métrica automatizada (35 🪙)',d:'Uma métrica simples alimentada automaticamente. Ex: Google Forms → Sheets com gráfico que se atualiza sozinho. Apresentação de 5 min ao vivo mostrando o indicador funcionando.',c:35},
+    {t:'Nível 2 — painel com 3+ métricas integradas (60 🪙)',d:'Dashboard com 3 ou mais indicadores relacionados, atualização automática via Apps Script, Gemini, Data Studio ou equivalente. Apresentação de 10 min.',c:60},
+    {t:'Nível 3 — integração entre ferramentas + alertas automáticos (90 🪙)',d:'Ex: Forms → Sheets → Data Studio com alertas automáticos. Uso de n8n, Claude ou ChatGPT para análise automática é aceito e incentivado.',c:90},
+    {t:'Dashboard compartilhado entre dois times (120 🪙)',d:'Dois times co-criam um painel com dados de ambas as áreas. Ambos os responsáveis pontuam individualmente. Apresentação conjunta obrigatória.',c:120,joint:true},
+    {t:'Indicador apresentado na reunião de SG&A (+50 🪙)',d:'Espaço fixo nas <strong>reuniões de SG&A de terças-feiras</strong>. Regras: (1) Avise a Amanda com antecedência. (2) O indicador precisa estar aprovado no app antes da apresentação. (3) Leve dados reais e conclusões.',c:50},
+  ]},
+  templates:{label:'🗂️ Templates',items:[
+    {t:'💰 Financeiro — Painel de Contas a Pagar',d:'Acompanha vencimentos, valores e status de pagamento. Visual: gráfico de barras por faixa (vencido / a vencer em 30 dias / a vencer em 60+). <strong>Modelo:</strong> <a href="https://docs.google.com/spreadsheets/d/1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgVE2upms/edit" target="_blank">Abrir template Google Sheets →</a> <br><br><div style="background:#FFF3DC;border-radius:6px;padding:8px;font-size:10px;margin-top:6px">📊 <strong>Visualização esperada:</strong> 3 barras coloridas (vermelho=vencido, amarelo=vence em breve, verde=ok) + resumo de totais. Ferramenta: Google Sheets + gráfico automático.</div>',c:0,rule:true},
+    {t:'👥 Rec. Humanos — Vagas em Aberto e Pesquisa de Cultura',d:'Opção A — Painel de vagas: status de cada posição (triagem/entrevista/oferta/fechada), tempo médio por etapa. Opção B — Pesquisa de clima: Forms com perguntas de engajamento → Sheets com NPS interno e tendência mensal. <strong>Modelo:</strong> <a href="https://docs.google.com/forms/d/e/1FAIpQLSdXbVE0PRlMd5rFQSwuPCNyE0OmMPjBB_sNKz5o-J5T-9XM8g/viewform" target="_blank">Pesquisa de clima →</a> <br><br><div style="background:#E6F1FB;border-radius:6px;padding:8px;font-size:10px;margin-top:6px">📊 <strong>Visualização esperada:</strong> Gráfico de funil para vagas ou gráfico de linha para NPS ao longo das semanas. Ferramenta: Forms + Sheets + gráfico automático.</div>',c:0,rule:true},
+    {t:'📋 Dep. Pessoal — Monitor de Prazos Trabalhistas',d:'Datas-chave de cada colaborador (férias, 13º, FGTS, vencimento de contratos) → alerta automático quando faltam 15 dias. <strong>Modelo:</strong> <a href="https://docs.google.com/spreadsheets/d/1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgVE2upms/edit" target="_blank">Abrir template →</a> <br><br><div style="background:#E1F5EE;border-radius:6px;padding:8px;font-size:10px;margin-top:6px">📊 <strong>Visualização esperada:</strong> Tabela com semáforo (🔴 vencido, 🟡 próximo, 🟢 ok) + Apps Script enviando e-mail automático de alerta. Ferramenta: Sheets + Apps Script.</div>',c:0,rule:true},
+    {t:'🏢 Facilities — Painel de Chamados e SLA',d:'Formulário de abertura de chamado → painel com volume por categoria, tempo médio de atendimento e % dentro do SLA definido. <strong>Modelo:</strong> <a href="https://docs.google.com/forms/d/e/1FAIpQLSdXbVE0PRlMd5rFQSwuPCNyE0OmMPjBB_sNKz5o-J5T-9XM8g/viewform" target="_blank">Formulário base →</a> <br><br><div style="background:#FCEBEB;border-radius:6px;padding:8px;font-size:10px;margin-top:6px">📊 <strong>Visualização esperada:</strong> Gráfico de pizza por tipo de chamado + linha de tempo médio de resolução. Ferramenta: Forms → Sheets → gráfico.</div>',c:0,rule:true},
+    {t:'⚖️ Jurídico — Carteira de Contratos e Vencimentos',d:'Base de contratos com datas de início, vencimento e status → alerta automático de renovação com 30 dias de antecedência. <strong>Modelo:</strong> <a href="https://docs.google.com/spreadsheets/d/1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgVE2upms/edit" target="_blank">Template de contratos →</a> <br><br><div style="background:#EEEDFE;border-radius:6px;padding:8px;font-size:10px;margin-top:6px">📊 <strong>Visualização esperada:</strong> Tabela com status colorido + contador de contratos por status + alerta por e-mail. Ferramenta: Sheets + Apps Script ou n8n.</div>',c:0,rule:true},
+    {t:'🌟 Estratégico — Iniciativas de Melhoria Contínua',d:'Registro de iniciativas de melhoria (kaizen) → painel com status, responsável, % de conclusão e impacto estimado. <strong>Modelo:</strong> <a href="https://docs.google.com/spreadsheets/d/1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgVE2upms/edit" target="_blank">Template kaizen →</a> <br><br><div style="background:#FFF8E1;border-radius:6px;padding:8px;font-size:10px;margin-top:6px">📊 <strong>Visualização esperada:</strong> Roadmap de iniciativas (tipo Kanban) + gráfico de conclusão ao longo do tempo. Ferramenta: Sheets ou Looker Studio.</div>',c:0,rule:true},
+    {t:'🌟 Estratégico — SLA de Demandas de Assessoria',d:'Formulário de solicitação de assessoria executiva → painel com volume de demandas por tipo, prazo solicitado vs. entregue e taxa de satisfação (NPS). <strong>Modelo:</strong> <a href="https://docs.google.com/forms/d/e/1FAIpQLSdXbVE0PRlMd5rFQSwuPCNyE0OmMPjBB_sNKz5o-J5T-9XM8g/viewform" target="_blank">Formulário de demandas →</a> <br><br><div style="background:#FFF8E1;border-radius:6px;padding:8px;font-size:10px;margin-top:6px">📊 <strong>Visualização esperada:</strong> Gráfico de barras por tipo de demanda + linha de SLA cumprido/não cumprido. Pode usar ChatGPT para categorizar demandas automaticamente.</div>',c:0,rule:true},
+  ]},
+  treinamento:{label:'🎙️ Treinamentos',items:[
+    {t:'🎙️ Ministrar treinamento interno (50 🪙)',d:'Registre na aba Registrar como "Treinamento". Informe link da agenda (sexta 13h–13h30) e slides. Após aprovação da Amanda, o treinamento aparece na Agenda para todos. Após o treino, confirme na Agenda quem participou.',c:50},
+    {t:'👥 Participar de treinamento interno (15 🪙)',d:'Acesse a aba Agenda e clique em "Quero participar". As moedas são creditadas após o ministrador confirmar sua presença.',c:15},
+    {t:'💡 Sugestões de temas para ministrar',d:'📊 Google Sheets avançado · 🤖 Gemini no trabalho · 💬 Claude para redação · 📈 Looker Studio · 🔄 n8n básico · 📣 Comunicação assertiva · 🧠 Eneagrama · 📋 DISC · ⚡ Kanban · 📊 Indicadores · 🏗️ Mapeamento de processos · 🔒 LGPD · 🕐 Gestão do tempo · 🎯 OKRs',c:0,rule:true},
+  ]},
+  automacoes:{label:'⚙️ Automações',items:[
+    {t:'Script ou fluxo que elimina tarefa manual (45 🪙)',d:'Qualquer script (ex: Apps Script) ou fluxo que elimine tarefa manual recorrente. Documentação obrigatória: o que era feito manualmente, como está automatizado, evidência funcionando. Ferramentas precisam ser seguras e aprovadas pela empresa.',c:45},
+    {t:'Mapeamento de gargalo + automação do gargalo (70 🪙)',d:'<strong>As duas etapas obrigatórias juntas.</strong> Etapa 1: mapear o processo e identificar o gargalo com evidência real (fluxograma + dado do problema). Etapa 2: automatizar exatamente aquele gargalo. Apenas uma das etapas não pontua.',c:70},
+    {t:'Automação adotada por outro time — validada (70 🪙)',d:'O time receptor confirma formalmente que está usando. Ambos os envolvidos registram como ação conjunta. Ferramentas precisam ser seguras.',c:70,joint:true},
+  ]},
+  colaboracao:{label:'🤝 Colaboração',items:[
+    {t:'Entrega conjunta entre times diferentes (50 🪙)',d:'Projeto ou entregável co-criado por membros de times distintos, documentado e validado. Todos os envolvidos registram marcando ação conjunta.',c:50,joint:true},
+  ]},
+  outros:{label:'⭐ Outros',items:[
+    {t:'Participar de evento externo (15 🪙)',d:'Webinar, palestra, fórum ou conferência. Resumo mínimo 150 palavras compartilhado com o time, descrevendo o que aprendeu e como pretende aplicar.',c:15},
+  ]},
+};
+
+let currentUser=null,isAdmin=false,scores={},submissions=[],agendaItems=[],unsubScores=null,unsubSubs=null;
+function ini(n){return n.split(' ').slice(0,2).map(w=>w[0]).join('')}
+function getTotal(name){const s=scores[name]||{ind:0,bonus:0};return(s.ind||0)+(s.bonus||0);}
+function rc(i){return i===0?'r1':i===1?'r2':i===2?'r3':'rn';}
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3200);}
+function showModal(icon,title,msg){document.getElementById('modal-icon').textContent=icon;document.getElementById('modal-title').textContent=title;document.getElementById('modal-msg').textContent=msg;document.getElementById('modal-overlay').classList.add('show');}
+function closeModal(){document.getElementById('modal-overlay').classList.remove('show');}
+
+const auth = firebase.auth();
+const ADMIN_EMAIL = 'amanda.conrado@liveseo.com.br';
+const COPA_END = new Date('2026-08-07T23:59:00');
+
+function doGoogleLogin(){
+  const provider = new firebase.auth.GoogleAuthProvider();
+  provider.setCustomParameters({hd:'liveseo.com.br'});
+  auth.signInWithPopup(provider).then(r=>{
+    const email = r.user.email;
+    if(!email||!email.endsWith('@liveseo.com.br')){
+      auth.signOut();
+      document.getElementById('login-error').style.display='block';
+      return;
+    }
+    onUserLoggedIn(r.user);
+  }).catch(e=>{
+    document.getElementById('login-error').style.display='block';
+    document.getElementById('login-error').textContent='Erro ao entrar: '+e.message;
+  });
+}
+auth.onAuthStateChanged(user=>{
+  if(user&&user.email&&user.email.endsWith('@liveseo.com.br')){
+    onUserLoggedIn(user);
+  }
+});
+function onUserLoggedIn(user){
+  const email = user.email;
+  const matched = PEOPLE.find(p=>p.short.toLowerCase().replace(/\s/g,'').startsWith(email.split('@')[0].replace('.','').toLowerCase().substring(0,4)));
+  const byEmail = PEOPLE.find(p=>{
+    const namePart = email.split('@')[0].toLowerCase();
+    const parts = namePart.split('.');
+    const firstName = parts[0]||'';
+    return p.short.toLowerCase().startsWith(firstName);
+  });
+  currentUser = byEmail || matched || {name:user.displayName||email,short:user.displayName||email.split('@')[0],team:'',cargo:'',email};
+  if(email===ADMIN_EMAIL) currentUser = PEOPLE.find(p=>p.name==='Amanda Conrado')||currentUser;
+  currentUser.email = email;
+  isAdmin = (email===ADMIN_EMAIL);
+  document.getElementById('login-screen').style.display='none';
+  document.getElementById('app-screen').style.display='block';
+  const tc=TC[currentUser.team]||{bg:'#F4F5FA',txt:'#101820'};
+  const av=document.getElementById('top-av');av.textContent=ini(currentUser.short);av.style.background=tc.bg;av.style.color=tc.txt;
+  document.getElementById('top-name').textContent=currentUser.short.split(' ')[0];
+  if(isAdmin){document.getElementById('admin-badge').style.display='inline';document.querySelectorAll('.admin-only').forEach(el=>el.style.display='block');}
+  buildParticipantsSelect();buildDesafios();subscribeScores();subscribeMySubmissions();loadAgenda();loadPhotos();
+}
+function buildLogin(){}
+function doLogout(){auth.signOut();if(unsubScores)unsubScores();if(unsubSubs)unsubSubs();currentUser=null;scores={};document.getElementById('app-screen').style.display='none';document.getElementById('login-screen').style.display='flex';}
+function subscribeScores(){
+  if(unsubScores)unsubScores();
+  unsubScores=db.collection('scores').onSnapshot(snap=>{scores={};snap.forEach(doc=>{scores[doc.id]=doc.data();});renderMyStats();renderRank();renderTeamRank();buildAlbum();});
+}
+function subscribeMySubmissions(){
+  if(unsubSubs)unsubSubs();
+  const q=isAdmin?db.collection('submissions').orderBy('ts','desc').limit(200):db.collection('submissions').where('user','==',currentUser.name).orderBy('ts','desc');
+  unsubSubs=q.onSnapshot(snap=>{submissions=[];snap.forEach(doc=>submissions.push({id:doc.id,...doc.data()}));renderMySubmissions();if(isAdmin)loadAdmin();});
+}
+
+// FORM
+function onCatChange(){
+  const v=document.getElementById('f-cat').value;
+  ['f-book-row','f-outro-livro-row','f-curso-rows','f-outro-curso-row','f-treinamento-rows','f-title-row','f-resumo-row'].forEach(id=>{const el=document.getElementById(id);if(el)el.style.display='none';});
+  const proofRow=document.getElementById('f-proof-row');
+  if(proofRow)proofRow.style.display=(v==='treinamento')?'none':'block';
+  if(v==='livro')document.getElementById('f-book-row').style.display='block';
+  if(v==='curso')document.getElementById('f-curso-rows').style.display='block';
+  if(v==='treinamento')document.getElementById('f-treinamento-rows').style.display='block';
+  if(v==='indicador'||v==='automacao'||v==='evento')document.getElementById('f-title-row').style.display='block';
+  if(v==='livro'||v==='curso'||v==='evento')document.getElementById('f-resumo-row').style.display='block';
+  const c=CAT_COINS[v]||0;document.getElementById('f-pts-preview').textContent=c?'🪙 '+c+' moedas base':'';
+}
+function onBookChange(){document.getElementById('f-outro-livro-row').style.display=document.getElementById('f-book').value==='outro-livro'?'block':'none';}
+function onCourseChange(){const el=document.getElementById('f-outro-curso-row');if(el)el.style.display=document.getElementById('f-course').value==='outro-curso'?'block':'none';}
+function onJointChange(){document.getElementById('f-joint-rows').style.display=document.getElementById('f-joint').checked?'block':'none';}
+function validateTrainingDate(){
+  const d=document.getElementById('f-training-date').value;
+  const warn=document.getElementById('f-date-warning');
+  if(!d){warn.style.display='none';return;}
+  const day=new Date(d+'T12:00:00').getDay();
+  warn.style.display=day===5?'none':'block';
+}
+function validateAgendaTime(){
+  // Heuristic: check if URL contains calendar and inform user about time requirement
+  const url=document.getElementById('f-agenda-link').value;
+  const warn=document.getElementById('f-agenda-warning');
+  if(url&&url.includes('calendar.google.com')){warn.style.display='none';}
+  else if(url&&url.length>5){warn.style.display='none';}
+  else{warn.style.display='none';}
+}
+function buildParticipantsSelect(){
+  const sel=document.getElementById('f-participants'),ldr=document.getElementById('f-leader');
+  sel.innerHTML='';ldr.innerHTML='<option value="">Selecione...</option>';
+  const so=document.createElement('option');so.value=currentUser.name;so.textContent=currentUser.short+' (eu — líder)';ldr.appendChild(so);
+  PEOPLE.filter(p=>p.name!==currentUser.name&&p.team!=='ADMIN').forEach(p=>{
+    const tc=TC[p.team]||{};
+    const o=document.createElement('option');o.value=p.name;o.textContent=p.short+' ('+tc.label+')';sel.appendChild(o);ldr.appendChild(o.cloneNode(true));
+  });
+}
+async function submitActivity(){
+  const cat=document.getElementById('f-cat').value;
+  if(!cat){showToast('Selecione a categoria!');return;}
+  // Validate required fields per category
+  if(cat==='livro'){
+    const book=document.getElementById('f-book').value;
+    const resumo=document.getElementById('f-resumo').value.trim();
+    const proof=document.getElementById('f-proof').value.trim();
+    const img=document.getElementById('f-image')?.files[0];
+    if(!book){showToast('Selecione o livro lido.');return;}
+    if(!resumo||resumo.length<50){showToast('Escreva um resumo com pelo menos 150 palavras.');return;}
+    if(!proof&&!img){showModal('📎','Comprovante obrigatório','Para livros sem link, envie uma foto do livro físico ou capa. Anexe a imagem no campo de comprovante.');return;}
+  }
+  if(cat==='curso'){
+    const course=document.getElementById('f-course')?.value||'';
+    const resumo=document.getElementById('f-resumo').value.trim();
+    const proof=document.getElementById('f-proof').value.trim();
+    const img=document.getElementById('f-image')?.files[0];
+    if(!course){showToast('Selecione o curso.');return;}
+    if(!resumo||resumo.length<50){showToast('Escreva um resumo com pelo menos 150 palavras.');return;}
+    if(!proof&&!img){showModal('📎','Comprovante obrigatório','Para cursos, envie o link do certificado. Se não tiver link, anexe uma foto do certificado ou material do curso.');return;}
+  }
+  if(cat==='indicador'||cat==='automacao'){
+    const title=document.getElementById('f-title').value.trim();
+    const proof=document.getElementById('f-proof').value.trim();
+    if(!title){showToast('Descreva o indicador/automação criado.');return;}
+    if(!proof){showToast('Informe o link ou comprovante.');return;}
+  }
+  if(cat==='evento'){
+    const title=document.getElementById('f-title').value.trim();
+    const resumo=document.getElementById('f-resumo').value.trim();
+    const proof=document.getElementById('f-proof').value.trim();
+    if(!title){showToast('Descreva o evento.');return;}
+    if(!resumo||resumo.length<50){showToast('Escreva um resumo com pelo menos 150 palavras.');return;}
+    if(!proof){showToast('Informe o link ou nome do evento.');return;}
+  }
+  const book=document.getElementById('f-book').value;
+  const course=document.getElementById('f-course')?.value||'';
+  const title=document.getElementById('f-title').value.trim();
+  const proof=cat==='treinamento'?'':document.getElementById('f-proof').value.trim();
+  const resumo=document.getElementById('f-resumo').value.trim();
+  const trainTema=document.getElementById('f-training-tema')?.value||'';
+  const agendaLink=document.getElementById('f-agenda-link')?.value||'';
+  const slideLink=document.getElementById('f-slide-link')?.value||'';
+  const trainDate=document.getElementById('f-training-date')?.value||'';
+  const isJoint=document.getElementById('f-joint').checked;
+  const leader=isJoint?document.getElementById('f-leader').value:'';
+  const participants=isJoint?Array.from(document.getElementById('f-participants').selectedOptions).map(o=>o.value):[];
+  // Validation
+  if(cat==='livro'&&!book){showToast('Selecione o livro!');return;}
+  if(cat==='curso'&&!course){showToast('Selecione o curso!');return;}
+  if(cat==='treinamento'){
+    if(!agendaLink||!slideLink||!trainTema){showToast('Preencha todos os campos do treinamento!');return;}
+    if(!trainDate){showToast('Informe a data do treinamento!');return;}
+    const tDate=new Date(trainDate+'T12:00:00');
+    const day=tDate.getDay();
+    const copaEnd=new Date('2026-08-07T23:59:00');
+    if(day!==5){
+      showModal('📅','Data inválida!','O treinamento deve ser realizado numa SEXTA-FEIRA das 13h às 13h30. Por favor, ajuste a data da sua agenda para uma sexta-feira e tente novamente.');
+      return;
+    }
+    if(tDate>copaEnd){
+      showModal('⏰','Data fora do prazo!','O treinamento precisa acontecer até o último dia da Copa: 07/08/2026. Escolha uma data dentro do período da competição.');
+      return;
+    }
+  }
+  if((cat==='indicador'||cat==='automacao'||cat==='evento')&&!title){showToast('Preencha o título!');return;}
+  if(isJoint&&!leader){showToast('Informe quem liderou!');return;}
+  if(isJoint){
+    const jImg=document.getElementById('f-joint-image')?.files[0];
+    if(!jImg){showModal('📷','Foto obrigatória','Para ações conjuntas, é obrigatório enviar uma foto dos participantes durante a atividade.');return;}
+  }
+  const btn=document.getElementById('f-submit-btn');btn.disabled=true;btn.textContent='Enviando...';
+  const basePts=CAT_COINS[cat]||20;
+  const amILeader=leader===currentUser.name;
+  const myPts=basePts+(isJoint?(amILeader?BONUS.lider:BONUS.part):0);
+  const aiScore=(cat==='livro'||cat==='curso'||cat==='evento')?calcAiScore(resumo):0;
+  const descTitle=cat==='livro'?(book==='outro-livro'?document.getElementById('f-outro-livro').value:book):cat==='curso'?(course==='outro-curso'?document.getElementById('f-outro-curso').value:course):cat==='treinamento'?trainTema||'Treinamento':title;
+  const sub={user:currentUser.name,userShort:currentUser.short,team:currentUser.team,cargo:currentUser.cargo,cat,title:descTitle,proof,resumo,agendaLink,slideLink,trainDate,isJoint,leader,participants,basePts,myPts,aiScore,status:aiScore>=65?'ai_review':'pending',ts:firebase.firestore.FieldValue.serverTimestamp(),date:new Date().toLocaleDateString('pt-BR')};
+  // Upload images to Firebase Storage
+  let imageUrl='', jointImageUrl='';
+  const imgFile=document.getElementById('f-image')?.files[0];
+  const jointImgFile=document.getElementById('f-joint-image')?.files[0];
+  try{
+    if(imgFile){
+      const ref=firebase.storage().ref('copa2026/'+Date.now()+'_'+imgFile.name);
+      await ref.put(imgFile);imageUrl=await ref.getDownloadURL();
+    }
+    if(jointImgFile){
+      const ref=firebase.storage().ref('copa2026/joint_'+Date.now()+'_'+jointImgFile.name);
+      await ref.put(jointImgFile);jointImageUrl=await ref.getDownloadURL();
+    }
+  }catch(e){console.warn('Image upload failed',e);}
+  sub.imageUrl=imageUrl;sub.jointImageUrl=jointImageUrl;
+  try{
+    await db.collection('submissions').add(sub);
+    showToast(aiScore>=65?'Enviado! Aguarda revisão':'Enviado para aprovação! 🪙');
+    ['f-cat','f-title','f-proof','f-resumo'].forEach(id=>document.getElementById(id).value='');
+    document.getElementById('f-book').value='';
+    ['f-course','f-training-tema','f-agenda-link','f-slide-link','f-training-date'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+    document.getElementById('f-joint').checked=false;
+    ['f-book-row','f-outro-livro-row','f-curso-rows','f-outro-curso-row','f-treinamento-rows','f-title-row','f-resumo-row','f-joint-rows'].forEach(id=>{const el=document.getElementById(id);if(el)el.style.display='none';});
+    const pr=document.getElementById('f-proof-row');if(pr)pr.style.display='block';
+    document.getElementById('f-pts-preview').textContent='';
+    document.getElementById('ai-warning').classList.remove('show');
+  }catch(e){showToast('Erro ao enviar.');console.error(e);}
+  btn.disabled=false;btn.textContent='Enviar para aprovação';
+}
+
+async function approveSubmission(subId,encoded){
+  const data=JSON.parse(decodeURIComponent(encoded));
+  const batch=db.batch();
+  batch.set(db.collection('scores').doc(data.user),{ind:firebase.firestore.FieldValue.increment(data.myPts)},{merge:true});
+  PEOPLE.filter(p=>p.team===data.team&&p.name!==data.user&&p.team!=='ADMIN').forEach(p=>{batch.set(db.collection('scores').doc(p.name),{bonus:firebase.firestore.FieldValue.increment(BONUS.team)},{merge:true});});
+  if(data.isJoint&&data.participants){
+    data.participants.forEach(pname=>{
+      if(pname!==data.user){
+        const isLdr=pname===data.leader;
+        batch.set(db.collection('scores').doc(pname),{ind:firebase.firestore.FieldValue.increment(data.basePts+(isLdr?BONUS.lider:BONUS.part))},{merge:true});
+        const pt=PEOPLE.find(p=>p.name===pname)?.team;
+        if(pt&&pt!=='ADMIN')PEOPLE.filter(p=>p.team===pt&&p.name!==pname).forEach(p2=>{batch.set(db.collection('scores').doc(p2.name),{bonus:firebase.firestore.FieldValue.increment(BONUS.team)},{merge:true});});
+      }
+    });
+  }
+  if(data.cat==='treinamento'&&data.agendaLink){
+    const agendaRef = await db.collection('agenda').add({tema:data.title,ministrador:data.userShort,ministeradorId:data.user,agendaLink:data.agendaLink,slideLink:data.slideLink||'',trainDate:data.trainDate||'',status:'aprovado',participants:[],confirmedAttendees:[],ts:firebase.firestore.FieldValue.serverTimestamp()});
+    // Save notification for all users (they'll see it on next load)
+    await db.collection('notifications').add({
+      type:'new_training',tema:data.title,ministrador:data.userShort,
+      trainDate:data.trainDate||'',agendaId:agendaRef.id,
+      ts:firebase.firestore.FieldValue.serverTimestamp(),readBy:[],
+      msg:'Novo treinamento: '+data.title+' com '+data.userShort+' — '+
+          (data.trainDate?new Date(data.trainDate+'T12:00:00').toLocaleDateString('pt-BR',{weekday:'long',day:'2-digit',month:'2-digit'}):'Sexta-feira')+' das 13h às 13h30'
+    });
+  }
+  batch.update(db.collection('submissions').doc(subId),{status:'approved'});
+  await batch.commit();showToast('Aprovado! 🪙 Moedas creditadas.'+(data.cat==='treinamento'?' Agenda criada!':''));
+  loadAgenda();
+}
+async function rejectSubmission(subId){await db.collection('submissions').doc(subId).update({status:'rejected'});showToast('Rejeitada.');}
+
+function renderMyStats(){
+  if(!currentUser)return;
+  const sc=scores[currentUser.name]||{ind:0,bonus:0};
+  const total=getTotal(currentUser.name);
+  const allT=PEOPLE.filter(p=>p.team!=='ADMIN').map(p=>getTotal(p.name)).sort((a,b)=>b-a);
+  const rank=allT.findIndex(t=>t<=total)+1;
+  const approved=submissions.filter(s=>s.user===currentUser.name&&s.status==='approved').length;
+  document.getElementById('my-stats').innerHTML=`
+    <div class="ms"><div class="v gold">🪙 ${total}</div><div class="l">Moedas totais</div></div>
+    <div class="ms"><div class="v">${sc.ind||0}</div><div class="l">Moedas ganhas</div></div>
+    <div class="ms"><div class="v">${sc.bonus||0}</div><div class="l">Bônus de time</div></div>
+    <div class="ms"><div class="v">${rank}º</div><div class="l">Posição</div></div>
+    <div class="ms"><div class="v">${approved}</div><div class="l">Aprovadas</div></div>`;
+}
+function renderMySubmissions(){
+  const el=document.getElementById('my-submissions');
+  const list=submissions.filter(s=>isAdmin?true:s.user===currentUser?.name);
+  if(!list.length){el.innerHTML='<p class="empty">Nenhuma atividade ainda.</p>';return;}
+  const stM={pending:'st-pend',approved:'st-ok',rejected:'st-rej',ai_review:'st-ai'};
+  const stL={pending:'Aguardando',approved:'Aprovada ✓',rejected:'Rejeitada',ai_review:'Revisão IA'};
+  el.innerHTML=list.map(s=>`<div class="sub"><div class="sub-h"><div><div class="sub-t">${s.title}</div><div class="sub-m">${s.date||''} · ${s.cat} · <span style="font-weight:600;color:var(--or)">🪙 ${s.myPts||0}</span>${s.isJoint?' · 🤝':''}</div></div><span class="stpill ${stM[s.status]||'st-pend'}">${stL[s.status]||'Pendente'}</span></div>${s.resumo?`<div class="sub-body">${s.resumo.substring(0,160)}...${s.status==='ai_review'?`<div class="ai-flag">⚠ IA ${s.aiScore}%</div>`:''}</div>`:''} ${s.imageUrl?`<div style="margin-top:6px"><img src="${s.imageUrl}" style="max-width:120px;border-radius:6px;border:0.5px solid var(--bd)" alt="Comprovante"></div>`:''}</div>`).join('');
+}
+function rv(v,btn){document.getElementById('rank-ind').style.display=v==='ind'?'block':'none';document.getElementById('rank-team').style.display=v==='team'?'block':'none';document.querySelectorAll('.seg .sb').forEach(b=>b.classList.remove('on'));btn.classList.add('on');}
+function renderRank(){
+  if(!currentUser)return;
+  const ft=document.getElementById('rank-filter')?.value||'';
+  const sc=document.getElementById('rank-sort')?.value||'total';
+  let data=PEOPLE.filter(p=>p.team!=='ADMIN').map(p=>({...p,ind:scores[p.name]?.ind||0,bonus:scores[p.name]?.bonus||0,total:getTotal(p.name)}));
+  if(ft)data=data.filter(p=>p.team===ft);
+  data.sort((a,b)=>sc==='ind'?b.ind-a.ind:sc==='bonus'?b.bonus-a.bonus:b.total-a.total);
+  const maxT=Math.max(...data.map(p=>p.total),1);
+  document.getElementById('rank-tbody').innerHTML=data.map((p,i)=>{
+    const tc=TC[p.team]||{bg:'#F4F5FA',txt:'#101820',label:p.team};const isMe=p.name===currentUser.name;
+    return`<tr${isMe?' class="me"':''}><td><div class="rb ${rc(i)}" style="margin:0 auto">${i+1}</div></td><td><div class="nc"><div class="av" style="background:${tc.bg};color:${tc.txt}">${ini(p.short)}</div><div class="ni"><strong>${p.short}${isMe?' (você)':''}</strong><span>${p.cargo}</span></div></div></td><td style="font-size:11px;color:var(--mu)">${p.cargo}</td><td><span class="tpill" style="background:${tc.bg};color:${tc.txt}">${tc.label}</span></td><td style="text-align:right">${p.ind}</td><td style="text-align:right;color:var(--green)">+${p.bonus}</td><td style="text-align:right;font-weight:700;color:var(--or)">🪙 ${p.total}</td><td><div class="bbar"><div class="bfill" style="width:${Math.round((p.total/maxT)*100)}%"></div></div></td></tr>`;}).join('');
+}
+function renderTeamRank(){
+  const data=Object.keys(TC).filter(t=>t!=='ADMIN').map(t=>{const mbs=PEOPLE.filter(p=>p.team===t);const ind=mbs.reduce((a,p)=>a+(scores[p.name]?.ind||0),0);return{team:t,ind,count:mbs.length,avg:mbs.length?Math.round(ind/mbs.length):0};}).filter(t=>t.count>0).sort((a,b)=>b.ind-a.ind);
+  const maxI=Math.max(...data.map(t=>t.ind),1);
+  document.getElementById('team-tbody').innerHTML=data.map((t,i)=>{const tc=TC[t.team];const pct=Math.round((t.ind/maxI)*100);return`<tr><td><div class="rb ${rc(i)}" style="margin:0 auto">${i+1}</div></td><td><div class="nc"><div style="width:25px;height:25px;border-radius:5px;background:${tc.bg};display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0">${tc.icon}</div><div class="ni"><strong>${tc.label}</strong><span>${t.count} membros</span></div>${i===0?'<span class="tpill" style="background:var(--ol);color:#854F0B;margin-left:4px">Líder</span>':''}</div></td><td style="text-align:right;font-weight:700;color:var(--or)">🪙 ${t.ind}</td><td style="text-align:right;color:var(--mu)">${t.count}</td><td style="text-align:right;color:var(--mu)">${t.avg}</td><td><div class="pbr"><div class="pbg"><div class="pfill" style="width:${pct}%;background:${tc.color}"></div></div><span class="ppct">${pct}%</span></div></td></tr>`;}).join('');
+}
+function buildDesafios(){
+  const tabs=document.getElementById('cat-tabs'),content=document.getElementById('cat-content');
+  if(tabs.childElementCount>0)return;
+  let first=true;
+  Object.entries(CHALLENGES).forEach(([key,cat])=>{
+    const tb=document.createElement('button');tb.className='ct'+(first?' on':'');tb.textContent=cat.label;
+    tb.onclick=function(){document.querySelectorAll('.ct').forEach(t=>t.classList.remove('on'));this.classList.add('on');document.querySelectorAll('.ch-sec').forEach(c=>c.style.display='none');document.getElementById('cs-'+key).style.display='block';};
+    tabs.appendChild(tb);
+    const div=document.createElement('div');div.className='chl ch-sec';div.id='cs-'+key;div.style.display=first?'block':'none';
+    div.innerHTML=cat.items.map(item=>{
+      if(item.rule)return`<div class="ch rule"><div class="chm"><strong style="color:#3C3489">${item.t}</strong><div class="desc" style="color:#534AB7">${item.d}</div></div></div>`;
+      if(item.c===0)return'';
+      return`<div class="ch ${item.joint?'conj':''}"><div class="chm"><strong>${item.t}</strong><div class="desc">${item.d}</div></div><div class="chr"><span class="chp">🪙 ${item.c}</span>${item.joint?'<span class="jtag">CONJUNTO</span>':''}<span class="btag">+2 time</span></div></div>`;}).join('');
+    content.appendChild(div);first=false;
+  });
+}
+function buildAlbum(){
+  if(!currentUser||currentUser.team==='ADMIN')return;
+  const myTeam=currentUser.team;const myMembers=PEOPLE.filter(p=>p.team===myTeam);
+  const myCoins=getTotal(currentUser.name);const myApproved=submissions.filter(s=>s.user===currentUser.name&&s.status==='approved');
+  const hasCourse=myApproved.some(s=>s.cat==='curso'||s.cat==='treinamento');
+  const hasIndOrAuto=myApproved.some(s=>s.cat==='indicador'||s.cat==='automacao');
+  const hasLedJoint=myApproved.some(s=>s.isJoint&&s.leader===currentUser.name);
+  const distinctJoint=new Set(myApproved.filter(s=>s.isJoint).flatMap(s=>s.participants||[]));
+  const hasGolden=myApproved.some(s=>s.cat==='livro'||s.cat==='curso')&&distinctJoint.size>=3;
+  const memberStatus=myMembers.map(p=>({name:p.short,coins:getTotal(p.name),hasAct:submissions.some(s=>s.user===p.name&&s.status==='approved'),ready:getTotal(p.name)>=100&&submissions.some(s=>s.user===p.name&&s.status==='approved')}));
+  const readyCount=memberStatus.filter(m=>m.ready).length;
+  const hasActCount=memberStatus.filter(m=>m.hasAct).length;
+  const hasCoinsCount=memberStatus.filter(m=>m.coins>=100).length;
+  const actPct=Math.round((hasActCount/myMembers.length)*100);
+  const coinsPct=Math.round((hasCoinsCount/myMembers.length)*100);
+  const pct=Math.round((readyCount/myMembers.length)*100);
+  document.getElementById('thermo-act-fill').style.width=actPct+'%';
+  document.getElementById('thermo-act-pct').textContent=actPct+'%';
+  document.getElementById('thermo-act-label').textContent=hasActCount+' de '+myMembers.length+' membros com atividade aprovada';
+  document.getElementById('thermo-coin-fill').style.width=coinsPct+'%';
+  document.getElementById('thermo-coin-pct').textContent=coinsPct+'%';
+  document.getElementById('thermo-coin-label').textContent=hasCoinsCount+' de '+myMembers.length+' membros com 100+ moedas';
+  document.getElementById('thermo-fill').style.width=pct+'%';
+  document.getElementById('thermo-left').textContent=readyCount+' de '+myMembers.length+' prontos (ambas as condições)';
+  document.getElementById('thermo-pct').textContent=pct+'%';
+  document.getElementById('member-coins').innerHTML=memberStatus.map(m=>`<div class="mc-row"><div style="display:flex;justify-content:space-between;align-items:center"><span style="font-size:11px;font-weight:600;color:var(--dk)">${m.name}</span><span style="font-size:11px">${m.ready?'✅ Pronto':'⏳ Pendente'}</span></div><div style="display:flex;align-items:center;gap:6px"><span style="font-size:10px;color:var(--mu);min-width:65px">Atividade:</span><span style="font-size:10px;font-weight:600;color:${m.hasAct?'var(--green)':'var(--mu)'}">${m.hasAct?'✓ Tem':'✗ Sem'}</span></div><div style="display:flex;align-items:center;gap:6px"><span style="font-size:10px;color:var(--mu);min-width:65px">Moedas:</span><div class="mc-bar-bg" style="flex:1"><div class="mc-bar-fill" style="width:${Math.min(100,Math.round((m.coins/100)*100))}%"></div></div><span style="font-size:10px;font-weight:700;color:${m.coins>=100?'var(--green)':'var(--or)'}">${m.coins>=100?'✓ ':''} 🪙${m.coins}/100</span></div></div>`).join('');
+  const stickers=[{label:'Menor Aprendiz',icon:'🌱',req:60,unlocked:myCoins>=60&&myApproved.length>=1,color:'#8A9AB0'},{label:'Estagiário(a)',icon:'📝',req:120,unlocked:myCoins>=120&&hasCourse,color:'#2E75B6'},{label:'Analista',icon:'📊',req:220,unlocked:myCoins>=220&&hasIndOrAuto,color:'#1D9E75'},{label:'Coordenação',icon:'🎯',req:380,unlocked:myCoins>=380&&hasLedJoint,color:'#FC9801'},{label:'Gestora/Sócia',icon:'🏅',req:520,unlocked:myCoins>=520,color:'#534AB7'},{label:'Julia & Tumtum 🐾',icon:'⭐',req:0,unlocked:hasGolden,color:'#B8860B'},{label:'Foto do Time',icon:'📸',req:400,unlocked:readyCount===myMembers.length&&myMembers.length>0,color:'#A32D2D'}];
+  const owned=stickers.filter(s=>s.unlocked);
+  document.getElementById('stickers-owned').innerHTML=owned.length?owned.map(s=>`<div class="alb-slot unlocked" style="border-color:${s.color}"><div class="alb-check" style="background:${s.color}">✓</div><div class="alb-icon">${s.icon}</div><div class="alb-name">${s.label}</div></div>`).join(''):'<p class="empty" style="font-size:11px">Acumule moedas para desbloquear!</p>';
+  document.getElementById('album-slots').innerHTML=stickers.map(s=>`<div class="alb-slot ${s.unlocked?'placed':'locked'}">${s.unlocked?`<div class="alb-check" style="background:${s.color}">✓</div>`:''}<div class="alb-icon">${s.unlocked?s.icon:'🔒'}</div><div class="alb-name">${s.label}</div><div class="alb-coins">${s.req>0?s.req+'🪙':s.label.includes('Foto')?'Coletiva':'Especial'}</div></div>`).join('');
+}
+
+// AGENDA
+async function loadAgenda(){
+  const el=document.getElementById('agenda-list');if(!el)return;
+  try{
+    const snap=await db.collection('agenda').where('status','==','aprovado').orderBy('ts','desc').get();
+    agendaItems=[];snap.forEach(doc=>agendaItems.push({id:doc.id,...doc.data()}));
+    if(!agendaItems.length){el.innerHTML='<p class="empty">Nenhum treinamento agendado ainda.</p>';return;}
+    el.innerHTML=agendaItems.map(item=>{
+      const isMini=item.ministeradorId===currentUser?.name;
+      const joined=item.participants&&item.participants.includes(currentUser?.name);
+      return`<div class="agenda-card active">
+        <div class="agenda-head">
+          <div><div class="agenda-title">🎙️ ${item.tema}</div>
+          <div class="agenda-meta">Ministrado por ${item.ministrador} · ${item.trainDate?new Date(item.trainDate+'T12:00:00').toLocaleDateString('pt-BR',{weekday:'long',day:'2-digit',month:'2-digit'}):'Sexta-feira'} · 13h–13h30</div></div>
+          <span class="stpill st-ok">Confirmado</span>
+        </div>
+        <div class="agenda-body">
+          ${item.agendaLink?`<a href="${item.agendaLink}" target="_blank">📅 Abrir agenda</a> · `:''}
+          ${item.slideLink?`<a href="${item.slideLink}" target="_blank">📄 Slides</a>`:''}
+          <div style="margin-top:8px;display:flex;gap:6px;flex-wrap:wrap">
+            ${!isMini&&!joined?`<button class="btn-sm btn-ok" onclick="joinAgenda('${item.id}')">✋ Quero participar</button>`:''}
+            ${joined&&!isMini?'<span style="font-size:11px;color:var(--green);font-weight:600">✓ Você confirmou participação</span>':''}
+            ${isMini?`<button class="btn-sm" style="background:#EEEDFE;color:#3C3489;border-color:#AFA9EC" onclick="confirmAttendees('${item.id}')">✅ Confirmar presentes</button>`:''}
+          </div>
+          ${item.confirmedAttendees&&item.confirmedAttendees.length?`<div style="margin-top:8px;font-size:11px;color:var(--mu)">Presentes confirmados: ${item.confirmedAttendees.map(a=>`<span class="attend-chip confirmed">${a}</span>`).join('')}</div>`:''}
+        </div>
+      </div>`;}).join('');
+  }catch(e){el.innerHTML='<p class="empty">Erro ao carregar agenda.</p>';console.error(e);}
+}
+async function joinAgenda(agendaId){
+  if(!currentUser)return;
+  await db.collection('agenda').doc(agendaId).update({participants:firebase.firestore.FieldValue.arrayUnion(currentUser.name)});
+  showToast('Participação confirmada!');loadAgenda();
+}
+async function confirmAttendees(agendaId){
+  const item=agendaItems.find(a=>a.id===agendaId);if(!item)return;
+  const participants=item.participants||[];
+  if(!participants.length){showToast('Nenhum participante se inscreveu ainda.');return;}
+  // Mark all participants as confirmed and give coins
+  const batch=db.batch();
+  participants.forEach(pname=>{
+    batch.set(db.collection('scores').doc(pname),{ind:firebase.firestore.FieldValue.increment(15)},{merge:true});
+  });
+  await db.collection('agenda').doc(agendaId).update({confirmedAttendees:participants.map(p=>PEOPLE.find(x=>x.name===p)?.short||p),status:'realizado'});
+  await batch.commit();
+  showToast('Presença confirmada! 🪙 15 moedas para cada participante.');loadAgenda();
+}
+
+// PHOTOS
+async function loadPhotos(){
+  const el=document.getElementById('photo-grid');if(!el)return;
+  try{
+    const snap=await db.collection('photos').orderBy('ts','desc').get();
+    const photos=[];snap.forEach(doc=>photos.push({id:doc.id,...doc.data()}));
+    if(!photos.length){el.innerHTML='<p class="empty">Nenhuma foto ainda. Em breve!</p>';return;}
+    el.innerHTML=photos.map(p=>`<div class="photo-card"><img src="${p.url}" alt="${p.caption}" onerror="this.parentElement.style.display='none'"><div class="photo-caption"><strong>${p.caption}</strong>${p.date?p.date:''}</div></div>`).join('');
+  }catch(e){el.innerHTML='<p class="empty">Erro ao carregar fotos.</p>';}
+}
+async function addPhoto(){
+  if(!isAdmin)return;
+  const url=document.getElementById('admin-photo-url').value.trim();
+  const caption=document.getElementById('admin-photo-caption').value.trim();
+  if(!url||!caption){showToast('Preencha URL e legenda!');return;}
+  await db.collection('photos').add({url,caption,date:new Date().toLocaleDateString('pt-BR'),ts:firebase.firestore.FieldValue.serverTimestamp()});
+  document.getElementById('admin-photo-url').value='';document.getElementById('admin-photo-caption').value='';
+  showToast('Foto adicionada!');loadPhotos();
+}
+
+// ADMIN
+function loadAdmin(){
+  if(!isAdmin)return;
+  const pending=submissions.filter(s=>s.status==='pending'||s.status==='ai_review');
+  const stM={pending:'st-pend',approved:'st-ok',rejected:'st-rej',ai_review:'st-ai'};
+  const stL={pending:'Aguardando',approved:'Aprovada',rejected:'Rejeitada',ai_review:'Revisão IA'};
+  document.getElementById('admin-pending').innerHTML=pending.length?pending.map(s=>{
+    const enc=encodeURIComponent(JSON.stringify({user:s.user,team:s.team,myPts:s.myPts,basePts:s.basePts,isJoint:s.isJoint,leader:s.leader,participants:s.participants||[],cat:s.cat,agendaLink:s.agendaLink||'',slideLink:s.slideLink||'',trainDate:s.trainDate||'',userShort:s.userShort}));
+    return`<div class="sub"><div class="sub-h"><div><div class="sub-t">${s.userShort||s.user} — ${s.title}</div><div class="sub-m">${s.date} · ${s.cat} · 🪙${s.myPts} · ${TC[s.team]?.label||s.team}${s.isJoint?' · 🤝':''}</div></div><span class="stpill ${stM[s.status]}">${stL[s.status]}</span></div>${s.resumo?`<div class="sub-body">${s.resumo.substring(0,180)}...${s.aiScore>=65?`<div class="ai-flag">⚠ IA ${s.aiScore}%</div>`:''}</div>`:''} ${s.imageUrl?`<div style="margin-top:6px"><img src="${s.imageUrl}" style="max-width:200px;border-radius:6px" alt="Comprovante"></div>`:''} ${s.jointImageUrl?`<div style="margin-top:4px"><span style="font-size:10px;color:var(--mu)">Foto ação conjunta:</span><br><img src="${s.jointImageUrl}" style="max-width:200px;border-radius:6px" alt="Ação conjunta"></div>`:''}<div style="display:flex;gap:6px;margin-top:8px"><button class="btn-sm btn-ok" onclick="approveSubmission('${s.id}','${enc}')">✓ Aprovar +🪙${s.myPts}</button><button class="btn-sm btn-rej" onclick="rejectSubmission('${s.id}')">✗ Rejeitar</button></div></div>`;}).join(''):'<p class="empty">Nada aguardando. ✅</p>';
+  // Agenda to confirm
+  const agEl=document.getElementById('admin-agenda');
+  if(agEl)agEl.innerHTML=agendaItems.length?agendaItems.map(item=>`<div class="sub"><div class="sub-h"><div><div class="sub-t">${item.tema}</div><div class="sub-m">${item.ministrador} · ${item.trainDate||''} · ${item.participants?.length||0} inscritos</div></div><span class="stpill ${item.status==='realizado'?'st-ok':'st-pend'}">${item.status==='realizado'?'Realizado':'Pendente'}</span></div>${item.status!=='realizado'?`<button class="btn-sm btn-ok" style="margin-top:6px" onclick="confirmAttendees('${item.id}')">✅ Confirmar presença de todos</button>`:''}</div>`).join(''):'<p class="empty">Nenhum treinamento ainda.</p>';
+  const allP=PEOPLE.filter(p=>p.team!=='ADMIN').map(p=>({...p,ind:scores[p.name]?.ind||0,bonus:scores[p.name]?.bonus||0,total:getTotal(p.name)})).sort((a,b)=>b.total-a.total);
+  document.getElementById('admin-scores').innerHTML=`<div class="tw"><table><thead><tr><th>#</th><th>Colaborador</th><th>Time</th><th>Cargo</th><th style="text-align:right">Ind.</th><th style="text-align:right">Bônus</th><th style="text-align:right">Total</th></tr></thead><tbody>${allP.map((p,i)=>`<tr><td>${i+1}</td><td>${p.short}</td><td>${TC[p.team]?.label||p.team}</td><td style="font-size:11px;color:var(--mu)">${p.cargo}</td><td style="text-align:right">${p.ind}</td><td style="text-align:right;color:var(--green)">+${p.bonus}</td><td style="text-align:right;font-weight:700;color:var(--or)">🪙 ${p.total}</td></tr>`).join('')}</tbody></table></div>`;
+  document.getElementById('admin-subs').innerHTML=submissions.slice(0,50).map(s=>`<div class="sub"><div class="sub-h"><div><div class="sub-t">${s.userShort} — ${s.title}</div><div class="sub-m">${s.date} · 🪙${s.myPts}</div></div><span class="stpill ${stM[s.status]||'st-pend'}">${stL[s.status]||'?'}</span></div></div>`).join('');
+}
+
+// AI
+let aiTimer=null;
+function analyzeText(){
+  clearTimeout(aiTimer);
+  aiTimer=setTimeout(()=>{
+    const txt=document.getElementById('f-resumo').value;
+    const warn=document.getElementById('ai-warning');
+    if(txt.length<60){warn.classList.remove('show');return;}
+    warn.classList.add('show');
+    const score=calcAiScore(txt);
+    const fill=document.getElementById('ai-fill');const scoreEl=document.getElementById('ai-score');const msg=document.getElementById('ai-msg');
+    fill.style.width=score+'%';const clr=score<30?'#1D9E75':score<65?'#FC9801':'#A32D2D';
+    fill.style.background=clr;scoreEl.style.color=clr;
+    scoreEl.textContent=score+'% '+(score<30?'· Autêntico':score<65?'· Atenção':'· Alto risco de IA');
+    msg.textContent=score<30?'Texto parece escrito por você.':score<65?'Revise: use mais voz pessoal.':'Reescreva com suas próprias palavras.';
+  },700);
+}
+function calcAiScore(txt){
+  if(!txt||txt.length<20)return 0;
+  const phrases=['é importante destacar','nesse contexto','no entanto','portanto','em conclusão','dessa forma','assim sendo','é fundamental','podemos observar','é possível perceber','em suma','diante disso','vale ressaltar','cabe destacar','em síntese','além disso','por outro lado','tendo em vista','com isso'];
+  const words=txt.toLowerCase().split(/\s+/);const wc=words.length;if(wc<15)return 0;
+  const avgLen=words.reduce((a,w)=>a+w.replace(/[^a-z]/g,'').length,0)/wc;
+  const sents=txt.split(/[.!?]+/).filter(s=>s.trim().length>5);
+  const sentLens=sents.map(s=>s.split(/\s+/).length);
+  const avgSL=sentLens.reduce((a,b)=>a+b,0)/Math.max(sentLens.length,1);
+  const variance=sentLens.reduce((a,b)=>a+Math.pow(b-avgSL,2),0)/Math.max(sentLens.length,1);
+  const uniformity=Math.max(0,1-variance/50);
+  const phraseHits=phrases.filter(p=>txt.toLowerCase().includes(p)).length;
+  const personal=(txt.match(/\beu\b|\baprendi\b|\bapliquei\b|\btrabalhei\b|\bfiz\b|\bvi\b|\btentei\b|\bminha\b|\bmeu\b|\bpercebo\b|\bsinto\b/gi)||[]).length;
+  let score=0;score+=avgLen>6?25:avgLen>5?12:0;score+=uniformity*28;score+=phraseHits*6;score+=Math.max(0,18-personal*3);
+  return Math.min(99,Math.max(0,Math.round(score)));
+}
+
+function goPage(id,btn){
+  document.querySelectorAll('.page').forEach(e=>e.classList.remove('on'));
+  document.querySelectorAll('.nb').forEach(e=>e.classList.remove('on'));
+  document.getElementById('page-'+id).classList.add('on');
+  if(btn)btn.classList.add('on');
+  if(id==='ranking'){renderRank();renderTeamRank();}
+  if(id==='album')buildAlbum();
+  if(id==='home')renderMyStats();
+  if(id==='desafios')buildDesafios();
+  if(id==='admin'&&isAdmin)loadAdmin();
+  if(id==='agenda')loadAgenda();
+  if(id==='fotos')loadPhotos();
+}
+buildLogin();
+// Check for notifications on load
+async function checkNotifications(){
+  if(!currentUser)return;
+  try{
+    const snap=await db.collection('notifications').orderBy('ts','desc').limit(5).get();
+    const notifs=[];snap.forEach(doc=>notifs.push({id:doc.id,...doc.data()}));
+    const unread=notifs.filter(n=>!n.readBy||!n.readBy.includes(currentUser.name));
+    if(unread.length>0){
+      const n=unread[0];
+      showToast('🔔 '+n.msg.substring(0,80));
+      // Mark as read
+      await db.collection('notifications').doc(n.id).update({readBy:firebase.firestore.FieldValue.arrayUnion(currentUser.name)});
+    }
+  }catch(e){}
+}
+function checkDriveReminder(val){
+  const remind=document.getElementById('drive-reminder');
+  if(!remind)return;
+  const isDriveLink=val&&(val.includes('drive.google')||val.includes('docs.google')||val.includes('sheets.google')||val.includes('slides.google')||val.includes('looker')||val.includes('dashboard'));
+  remind.style.display=isDriveLink?'block':'none';
+}
+function updateImgRequired(){
+  const cat=document.getElementById('f-cat').value;
+  const proof=document.getElementById('f-proof').value.trim();
+  const lbl=document.getElementById('img-required-label');
+  if(!lbl)return;
+  const needsImg=(cat==='livro'||cat==='curso')&&!proof;
+  lbl.style.display=needsImg?'inline':'none';
+}
+</script>
+</body>
+</html>

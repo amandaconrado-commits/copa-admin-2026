@@ -569,18 +569,12 @@ tbody td{padding:8px 10px;font-size:12px;color:var(--tx);vertical-align:middle}
 
       <!-- CONSULTOR DE INDICADORES -->
       <div id="ind-consultor" style="display:none;background:linear-gradient(135deg,#101820,#1a2535);border-radius:12px;padding:16px;margin-bottom:14px">
-        <div style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:15px;color:var(--or);margin-bottom:4px">🤖 Consultor de Indicadores — IA</div>
-        <p style="font-size:12px;color:#8A9AB0;margin-bottom:12px">Descreva o indicador que quer criar e a IA analisa se faz sentido para a Copa, se é automatizável e qual nível seria.</p>
-        <div style="display:flex;gap:8px;margin-bottom:8px">
-          <textarea id="ind-query" rows="3" style="flex:1;padding:9px 11px;border:0.5px solid rgba(255,255,255,.15);border-radius:7px;font-size:12px;font-family:'Barlow',sans-serif;color:var(--tx);background:var(--wh);outline:none;resize:none;line-height:1.5" placeholder="Ex: quero medir quantos chamados o Facilities recebe por semana, separado por tipo e com tempo médio de resolução..."></textarea>
-        </div>
-        <div style="display:flex;gap:8px;flex-wrap:wrap">
-          <button class="btn" onclick="consultarIndicadorIA()" id="ind-consult-btn">🔍 Analisar com IA</button>
-          <a href="https://claude.ai" target="_blank" style="display:inline-flex;align-items:center;gap:5px;padding:8px 14px;background:rgba(252,152,1,.15);border:0.5px solid var(--or);border-radius:7px;font-size:12px;color:var(--or);font-weight:600;text-decoration:none">Abrir Claude →</a>
-          <a href="https://www.google.com/search?q=como+criar+indicador+automatico+google+sheets+kpi" target="_blank" style="display:inline-flex;align-items:center;gap:5px;padding:8px 14px;background:rgba(46,117,182,.15);border:0.5px solid #2E75B6;border-radius:7px;font-size:12px;color:#2E75B6;font-weight:600;text-decoration:none">Pesquisar no Google →</a>
-        </div>
-        <div id="ind-result" style="display:none;margin-top:12px;background:rgba(255,255,255,.06);border-radius:8px;padding:12px">
-          <div id="ind-result-content" style="font-size:12px;color:#E0E6F0;line-height:1.6"></div>
+        <div style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:15px;color:var(--or);margin-bottom:4px">🤖 Consultor de Indicadores</div>
+        <p style="font-size:12px;color:#8A9AB0;margin-bottom:12px">Descreva com detalhes o indicador que quer criar. Quanto mais específico você for (área, o que quer medir, de onde virão os dados), melhor será a análise.</p>
+        <textarea id="ind-query" rows="4" style="width:100%;padding:9px 11px;border:0.5px solid rgba(255,255,255,.15);border-radius:7px;font-size:12px;font-family:'Barlow',sans-serif;color:var(--tx);background:var(--wh);outline:none;resize:vertical;line-height:1.5;margin-bottom:10px" placeholder="Ex: Sou do Facilities e quero acompanhar quantos chamados de manutenção entram por semana, separados por tipo (elétrico, hidráulico, limpeza) e quanto tempo leva para cada um ser resolvido. Os chamados hoje chegam por WhatsApp e eu registro numa planilha manual."></textarea>
+        <button class="btn" onclick="consultarIndicadorIA()" id="ind-consult-btn" style="width:100%">🔍 Analisar indicador</button>
+        <div id="ind-result" style="display:none;margin-top:12px;background:rgba(255,255,255,.06);border-radius:8px;padding:14px">
+          <div id="ind-result-content" style="font-size:12px;color:#E0E6F0;line-height:1.7"></div>
         </div>
       </div>
 
@@ -872,13 +866,15 @@ const CHALLENGES={
     {t:'Indicador apresentado na reunião de SG&A (+50 🪙)',d:'Espaço fixo nas <strong>reuniões de SG&A de terças-feiras</strong>. Regras: (1) Avise a Amanda com antecedência. (2) O indicador precisa estar aprovado no app antes da apresentação. (3) Leve dados reais e conclusões.',c:50},
   ]},
   templates:{label:'🗂️ Templates',items:[
-    {t:'💰 Financeiro — Painel de Contas a Pagar',d:'Acompanha vencimentos, valores e status de pagamento. Visual: gráfico de barras por faixa (vencido / a vencer em 30 dias / a vencer em 60+). <strong>Modelo:</strong> <a href="https://docs.google.com/spreadsheets/d/1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgVE2upms/edit" target="_blank">Abrir template Google Sheets →</a> <br><br><div style="background:#FFF3DC;border-radius:6px;padding:8px;font-size:10px;margin-top:6px">📊 <strong>Visualização esperada:</strong> 3 barras coloridas (vermelho=vencido, amarelo=vence em breve, verde=ok) + resumo de totais. Ferramenta: Google Sheets + gráfico automático.</div>',c:0,rule:true},
-    {t:'👥 Rec. Humanos — Vagas em Aberto e Pesquisa de Cultura',d:'Opção A — Painel de vagas: status de cada posição (triagem/entrevista/oferta/fechada), tempo médio por etapa. Opção B — Pesquisa de clima: Forms com perguntas de engajamento → Sheets com NPS interno e tendência mensal. <strong>Modelo:</strong> <a href="https://docs.google.com/forms/d/e/1FAIpQLSdXbVE0PRlMd5rFQSwuPCNyE0OmMPjBB_sNKz5o-J5T-9XM8g/viewform" target="_blank">Pesquisa de clima →</a> <br><br><div style="background:#E6F1FB;border-radius:6px;padding:8px;font-size:10px;margin-top:6px">📊 <strong>Visualização esperada:</strong> Gráfico de funil para vagas ou gráfico de linha para NPS ao longo das semanas. Ferramenta: Forms + Sheets + gráfico automático.</div>',c:0,rule:true},
-    {t:'📋 Dep. Pessoal — Monitor de Prazos Trabalhistas',d:'Datas-chave de cada colaborador (férias, 13º, FGTS, vencimento de contratos) → alerta automático quando faltam 15 dias. <strong>Modelo:</strong> <a href="https://docs.google.com/spreadsheets/d/1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgVE2upms/edit" target="_blank">Abrir template →</a> <br><br><div style="background:#E1F5EE;border-radius:6px;padding:8px;font-size:10px;margin-top:6px">📊 <strong>Visualização esperada:</strong> Tabela com semáforo (🔴 vencido, 🟡 próximo, 🟢 ok) + Apps Script enviando e-mail automático de alerta. Ferramenta: Sheets + Apps Script.</div>',c:0,rule:true},
-    {t:'🏢 Facilities — Painel de Chamados e SLA',d:'Formulário de abertura de chamado → painel com volume por categoria, tempo médio de atendimento e % dentro do SLA definido. <strong>Modelo:</strong> <a href="https://docs.google.com/forms/d/e/1FAIpQLSdXbVE0PRlMd5rFQSwuPCNyE0OmMPjBB_sNKz5o-J5T-9XM8g/viewform" target="_blank">Formulário base →</a> <br><br><div style="background:#FCEBEB;border-radius:6px;padding:8px;font-size:10px;margin-top:6px">📊 <strong>Visualização esperada:</strong> Gráfico de pizza por tipo de chamado + linha de tempo médio de resolução. Ferramenta: Forms → Sheets → gráfico.</div>',c:0,rule:true},
-    {t:'⚖️ Jurídico — Carteira de Contratos e Vencimentos',d:'Base de contratos com datas de início, vencimento e status → alerta automático de renovação com 30 dias de antecedência. <strong>Modelo:</strong> <a href="https://docs.google.com/spreadsheets/d/1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgVE2upms/edit" target="_blank">Template de contratos →</a> <br><br><div style="background:#EEEDFE;border-radius:6px;padding:8px;font-size:10px;margin-top:6px">📊 <strong>Visualização esperada:</strong> Tabela com status colorido + contador de contratos por status + alerta por e-mail. Ferramenta: Sheets + Apps Script ou n8n.</div>',c:0,rule:true},
-    {t:'🌟 Estratégico — Iniciativas de Melhoria Contínua',d:'Registro de iniciativas de melhoria (kaizen) → painel com status, responsável, % de conclusão e impacto estimado. <strong>Modelo:</strong> <a href="https://docs.google.com/spreadsheets/d/1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgVE2upms/edit" target="_blank">Template kaizen →</a> <br><br><div style="background:#FFF8E1;border-radius:6px;padding:8px;font-size:10px;margin-top:6px">📊 <strong>Visualização esperada:</strong> Roadmap de iniciativas (tipo Kanban) + gráfico de conclusão ao longo do tempo. Ferramenta: Sheets ou Looker Studio.</div>',c:0,rule:true},
-    {t:'🌟 Estratégico — SLA de Demandas de Assessoria',d:'Formulário de solicitação de assessoria executiva → painel com volume de demandas por tipo, prazo solicitado vs. entregue e taxa de satisfação (NPS). <strong>Modelo:</strong> <a href="https://docs.google.com/forms/d/e/1FAIpQLSdXbVE0PRlMd5rFQSwuPCNyE0OmMPjBB_sNKz5o-J5T-9XM8g/viewform" target="_blank">Formulário de demandas →</a> <br><br><div style="background:#FFF8E1;border-radius:6px;padding:8px;font-size:10px;margin-top:6px">📊 <strong>Visualização esperada:</strong> Gráfico de barras por tipo de demanda + linha de SLA cumprido/não cumprido. Pode usar ChatGPT para categorizar demandas automaticamente.</div>',c:0,rule:true},
+    {t:'💡 Estes são apenas exemplos de inspiração',d:'Os indicadores abaixo são <strong>sugestões</strong> para ajudar a entender o que é um bom indicador automatizado. Você não precisa criar exatamente esses — use como ponto de partida para pensar no que faz sentido para a sua área.',c:0,rule:true},
+    {t:'💰 Financeiro — Painel de Contas a Pagar',d:'Acompanha vencimentos, valores e status de pagamento. Gráfico de barras por faixa (vencido / a vencer em 30 dias / a vencer em 60+). Alimentado automaticamente via Google Sheets com dados do sistema financeiro ou lançamento via Forms. Ferramenta sugerida: Google Sheets + gráfico automático.',c:0,rule:true},
+    {t:'👥 Rec. Humanos — Pesquisa de Clima e Engajamento',d:'Formulário de pesquisa periódica (mensal ou quinzenal) → Sheets com NPS interno e tendência ao longo do tempo. Permite acompanhar humor do time, pontos de melhoria e evolução mês a mês. Ferramenta sugerida: Google Forms → Sheets → gráfico de linha.',c:0,rule:true},
+    {t:'📋 Dep. Pessoal — Monitor de Prazos Trabalhistas',d:'Datas-chave de cada colaborador (férias, 13º, FGTS, vencimento de contratos) → alerta automático quando faltam 15 dias. <br><br><div style="background:#E1F5EE;border-radius:6px;padding:8px;font-size:10px;margin-top:6px">📊 <strong>Visualização esperada:</strong> Tabela com semáforo (🔴 vencido, 🟡 próximo, 🟢 ok) + Apps Script enviando e-mail automático de alerta. Ferramenta: Sheets + Apps Script.</div>',c:0,rule:true},
+    {t:'📋 Dep. Pessoal — Monitor de Prazos Trabalhistas',d:'Planilha com datas-chave de cada colaborador (vencimento de férias, prazo do 13º, datas de revisão de contrato) → semáforo automático por proximidade do prazo (🔴 vencido, 🟡 próximos 15 dias, 🟢 ok). Pode usar Apps Script para enviar alerta por e-mail quando um prazo se aproxima. Ferramenta sugerida: Google Sheets + Apps Script.',c:0,rule:true},
+    {t:'🏢 Facilities — Painel de Chamados e SLA',d:'Formulário de abertura de chamado → painel com volume por categoria, tempo médio de atendimento e % dentro do SLA definido. A cada novo chamado aberto via Forms, os dados entram automaticamente no painel. Ferramenta sugerida: Google Forms → Sheets → gráfico automático.',c:0,rule:true},
+    {t:'⚖️ Jurídico — Carteira de Contratos e Vencimentos',d:'Base de contratos com datas de início, vencimento e status → alerta automático de renovação com 30 dias de antecedência. Pode usar Apps Script ou n8n para enviar o aviso por e-mail. Ferramenta sugerida: Google Sheets + Apps Script.',c:0,rule:true},
+    {t:'🌟 Estratégico — Iniciativas de Melhoria Contínua',d:'Registro de iniciativas de melhoria (kaizen) → painel com status de cada iniciativa, responsável, % de conclusão e impacto estimado. Permite visualizar quantas melhorias estão em andamento, concluídas ou paradas. Ferramenta sugerida: Google Sheets ou Looker Studio.',c:0,rule:true},
+    {t:'🌟 Estratégico — SLA de Demandas de Assessoria',d:'Formulário de solicitação de assessoria executiva → painel com volume de demandas por tipo, prazo solicitado vs. entregue e taxa de satisfação. Permite identificar os tipos de demanda mais frequentes e se os prazos estão sendo cumpridos. Ferramenta sugerida: Google Forms → Sheets → gráfico de barras.',c:0,rule:true},
   ]},
   treinamento:{label:'🎙️ Treinamentos',items:[
     {t:'🎙️ Ministrar treinamento interno (50 🪙)',d:'Registre na aba Registrar como "Treinamento". Informe link da agenda (sexta 13h–13h30) e slides. Após aprovação da Amanda, o treinamento aparece na Agenda para todos. Após o treino, confirme na Agenda quem participou.',c:50},
@@ -1379,30 +1375,122 @@ async function consultarIndicadorIA(){
 }
 
 function analyzeIndicatorLocal(q){
-  const ql=q.toLowerCase();
-  const hasMetric=!!(ql.match(/quantos|quantas|numero|media|taxa|tempo|percentual|total|volume|quantidade|medir/));
-  const hasAuto=!!(ql.match(/formulario|form|sheets|planilha|automatico|dashboard|sistema|script/));
-  const hasTime=!!(ql.match(/semana|mes|dia|periodo|mensal|semanal|historico|tendencia/));
-  let score=0;
-  if(hasMetric)score++;if(hasAuto)score++;if(hasTime)score++;
-  const googleQuery=encodeURIComponent('indicador KPI automatico google sheets '+q.substring(0,40));
-  let html='';
-  if(score>=2){
-    html+='<div style="color:#4ade80;font-weight:600;margin-bottom:8px">✅ Indicador com bom potencial!</div>';
-    html+='<p style="margin-bottom:8px">O que você descreveu parece ser uma boa métrica para a Copa.</p>';
-    html+='<p style="margin-bottom:8px"><strong>🔧 Como automatizar:</strong> Crie um Google Forms para coleta de dados → conecte ao Google Sheets → use gráficos automáticos ou Looker Studio para o painel. Para alertas, use Apps Script ou n8n.</p>';
-    html+='<p style="margin-bottom:8px"><strong>📊 Nível estimado:</strong> 1 métrica → Nível 1 (35🪙) · 3+ métricas → Nível 2 (60🪙) · Integração com alertas → Nível 3 (90🪙)</p>';
-    html+='<p style="margin-bottom:10px"><strong>💡 Dica:</strong> Antes de construir, defina: qual pergunta esse indicador responde? Quem vai usar? Com que frequência?</p>';
+  if(!q||q.trim().length<15) return '<p style="color:#fb923c">Por favor, descreva o indicador com mais detalhes.</p>';
+  const ql = q.toLowerCase();
+
+  // ── Detectar área ──
+  const area = ql.match(/financeiro|financeira|contas|fatura|pagamento|receber/) ? 'Financeiro'
+    : ql.match(/rh|recursos humanos|pessoas|colaborador|funcionário|vaga|recrutamento|clima|engajamento/) ? 'Recursos Humanos'
+    : ql.match(/dep.? pessoal|departamento pessoal|férias|fgts|holerite|folha|trabalhista|clt|admiss|demiss/) ? 'Departamento Pessoal'
+    : ql.match(/facilities|chamado|manutenção|espaço|limpeza|portaria|copa|sala|estoque|suprimento/) ? 'Facilities'
+    : ql.match(/jurídico|juridico|contrato|processo|legal|compliance|prazo legal|renovação/) ? 'Jurídico'
+    : ql.match(/estratégico|estrategico|assessoria|melhoria|kaizen|kpi|sga|reunião|pauta|demanda|solicitação/) ? 'Estratégico'
+    : null;
+
+  // ── Detectar o que será medido ──
+  const temQuantidade = !!(ql.match(/quantos|quantas|número|numero|volume|total|contagem|quantidade|vezes|ocorrência/));
+  const temTempo = !!(ql.match(/tempo|prazo|duração|dias|horas|sla|demora|rapidez|velocidade|lead.?time/));
+  const temPercentual = !!(ql.match(/percentual|porcentagem|taxa|índice|indice|%|proporção/));
+  const temValor = !!(ql.match(/valor|custo|gasto|despesa|receita|economia|reais|r\$/));
+  const temSatisfacao = !!(ql.match(/satisfação|satisfacao|nps|nota|avaliação|avaliacao|feedback|qualidade/));
+  const metricas = [temQuantidade, temTempo, temPercentual, temValor, temSatisfacao].filter(Boolean).length;
+
+  // ── Detectar fonte de dados ──
+  const temFonteManual = !!(ql.match(/planilha manual|whatsapp|email|e-mail|anoto|registro manual|caderno|palavra|conversa/));
+  const temFonteDigital = !!(ql.match(/sistema|forms|formulário|app|software|erp|sheets|drive|banco de dados|crm/));
+
+  // ── Detectar se menciona automação ──
+  const temAutomacao = !!(ql.match(/automatico|automático|automatizar|script|forms|formulário|looker|dashboard|apps script|n8n|gemini|chatgpt/));
+
+  // ── Detectar problemas ──
+  const muitoVago = !temQuantidade && !temTempo && !temPercentual && !temValor && !temSatisfacao;
+  const soBrasil = !!(ql.match(/se|são|bom|ruim|melhor|pior/) && !temQuantidade);
+
+  // ── Construir resposta ──
+  let html = '';
+
+  // Cabeçalho
+  if(muitoVago){
+    html += '<div style="background:rgba(251,146,60,.15);border-left:3px solid #fb923c;border-radius:4px;padding:10px 12px;margin-bottom:14px">';
+    html += '<div style="color:#fb923c;font-weight:700;font-size:13px;margin-bottom:4px">⚠️ Indicador muito vago</div>';
+    html += '<div style="color:#E0E6F0;font-size:12px">O que você descreveu não deixa claro <strong>o que exatamente será medido</strong> em números. Um bom indicador responde: quantos? qual taxa? qual tempo? qual valor?</div></div>';
+  } else if(metricas >= 1 && !temFonteManual){
+    html += '<div style="background:rgba(74,222,128,.12);border-left:3px solid #4ade80;border-radius:4px;padding:10px 12px;margin-bottom:14px">';
+    html += '<div style="color:#4ade80;font-weight:700;font-size:13px;margin-bottom:4px">✅ Indicador com bom potencial!</div>';
+    html += '<div style="color:#E0E6F0;font-size:12px">O que você descreveu parece ser uma métrica concreta e mensurável.</div></div>';
+  } else if(temFonteManual){
+    html += '<div style="background:rgba(251,146,60,.15);border-left:3px solid #fb923c;border-radius:4px;padding:10px 12px;margin-bottom:14px">';
+    html += '<div style="color:#fb923c;font-weight:700;font-size:13px;margin-bottom:4px">🔧 Indicador válido, mas precisa de automação</div>';
+    html += '<div style="color:#E0E6F0;font-size:12px">O que você mede faz sentido, mas o processo atual é manual. Para pontuar na Copa, precisa ser automatizado.</div></div>';
   } else {
-    html+='<div style="color:#fb923c;font-weight:600;margin-bottom:8px">⚠️ Indicador precisa de ajuste</div>';
-    html+='<p style="margin-bottom:8px">Para ser válido na Copa, o indicador precisa: ser mensurável com números reais, ser alimentado automaticamente e mostrar tendência ao longo do tempo.</p>';
-    html+='<p style="margin-bottom:8px"><strong>💡 Refine sua ideia respondendo:</strong><br>— O que exatamente você vai contar ou medir?<br>— Onde esses dados existem ou podem ser coletados?<br>— Qual ferramenta vai alimentar o painel automaticamente?</p>';
+    html += '<div style="background:rgba(74,222,128,.12);border-left:3px solid #4ade80;border-radius:4px;padding:10px 12px;margin-bottom:14px">';
+    html += '<div style="color:#4ade80;font-weight:700;font-size:13px;margin-bottom:4px">✅ Indicador válido!</div>';
+    html += '<div style="color:#E0E6F0;font-size:12px">O que você descreveu tem características de um bom indicador.</div></div>';
   }
-  html+='<div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px">';
-  html+='<a href="https://www.google.com/search?q='+googleQuery+'" target="_blank" style="color:var(--or);font-size:11px">🔍 Pesquisar no Google →</a>';
-  html+=' &nbsp; ';
-  html+='<a href="https://claude.ai" target="_blank" style="color:#8B9CF4;font-size:11px">💬 Perguntar ao Claude →</a>';
-  html+='</div>';
+
+  // Área detectada
+  if(area){
+    html += '<div style="margin-bottom:12px"><div style="color:#FC9801;font-size:11px;font-weight:600;margin-bottom:4px">🏷️ ÁREA IDENTIFICADA</div>';
+    html += '<div style="color:#E0E6F0;font-size:12px">'+area+'</div></div>';
+  }
+
+  // O que está sendo medido
+  if(!muitoVago){
+    html += '<div style="margin-bottom:12px"><div style="color:#FC9801;font-size:11px;font-weight:600;margin-bottom:4px">📐 O QUE VOCÊ QUER MEDIR</div><div style="color:#E0E6F0;font-size:12px">';
+    const medicoes = [];
+    if(temQuantidade) medicoes.push('Volume / quantidade');
+    if(temTempo) medicoes.push('Tempo / prazo / SLA');
+    if(temPercentual) medicoes.push('Taxa / percentual');
+    if(temValor) medicoes.push('Valor financeiro');
+    if(temSatisfacao) medicoes.push('Satisfação / NPS');
+    html += medicoes.join(' · ') || 'Métrica identificada';
+    html += '</div></div>';
+  }
+
+  // Nível estimado
+  if(!muitoVago){
+    let nivel = 1, nCoins = 35, nDesc = '1 métrica automatizada';
+    if(metricas >= 3 || (metricas >= 2 && temAutomacao)){
+      nivel = 2; nCoins = 60; nDesc = 'painel com múltiplas métricas';
+    }
+    if(metricas >= 3 && temAutomacao && (ql.match(/alerta|notifica|email automático|script|n8n/))){
+      nivel = 3; nCoins = 90; nDesc = 'integração + alertas automáticos';
+    }
+    html += '<div style="margin-bottom:12px"><div style="color:#FC9801;font-size:11px;font-weight:600;margin-bottom:4px">📊 NÍVEL ESTIMADO</div>';
+    html += '<div style="background:rgba(252,152,1,.15);border-radius:6px;padding:8px 10px;display:inline-block">';
+    html += '<span style="color:#FC9801;font-weight:700;font-size:14px">Nível '+nivel+' — '+nCoins+' 🪙</span>';
+    html += '<div style="color:#8A9AB0;font-size:11px;margin-top:2px">'+nDesc+'</div></div></div>';
+  }
+
+  // Como automatizar
+  html += '<div style="margin-bottom:12px"><div style="color:#FC9801;font-size:11px;font-weight:600;margin-bottom:6px">🔧 COMO AUTOMATIZAR</div>';
+  if(temFonteManual){
+    html += '<div style="color:#E0E6F0;font-size:12px;line-height:1.6">';
+    html += '<strong style="color:#fb923c">⚠️ Fonte atual é manual</strong> — precisa migrar para coleta automática.<br>';
+    html += '<strong>Solução:</strong> Substitua o registro manual por um <strong>Google Forms</strong>. ';
+    html += 'As respostas vão automaticamente para uma planilha Sheets, que pode gerar gráficos sem você precisar fazer nada.</div>';
+  } else if(temFonteDigital){
+    html += '<div style="color:#E0E6F0;font-size:12px;line-height:1.6">Você já tem um sistema digital como fonte — ótimo! ';
+    html += 'Se ele exporta dados para Sheets ou CSV, conecte ao <strong>Looker Studio</strong> para criar um dashboard automático que se atualiza sozinho.</div>';
+  } else {
+    html += '<div style="color:#E0E6F0;font-size:12px;line-height:1.6">';
+    html += '<strong>Passo 1:</strong> Crie um Google Forms para receber os dados.<br>';
+    html += '<strong>Passo 2:</strong> As respostas vão automaticamente para um Google Sheets.<br>';
+    html += '<strong>Passo 3:</strong> Crie gráficos no Sheets ou conecte ao Looker Studio.<br>';
+    html += '<strong>Passo 4 (Nível 3):</strong> Use Apps Script para enviar alertas automáticos por e-mail quando algum número sair do esperado.</div>';
+  }
+  html += '</div>';
+
+  // Perguntas a responder antes de criar
+  if(muitoVago){
+    html += '<div style="margin-bottom:4px"><div style="color:#FC9801;font-size:11px;font-weight:600;margin-bottom:6px">❓ RESPONDA ANTES DE CRIAR</div>';
+    html += '<div style="color:#E0E6F0;font-size:12px;line-height:1.7">';
+    html += '— O que exatamente você vai contar? (ex: número de chamados, não "qualidade dos chamados")<br>';
+    html += '— De onde vêm os dados? (ex: WhatsApp, sistema, planilha existente)<br>';
+    html += '— Com que frequência vai medir? (ex: diário, semanal, mensal)<br>';
+    html += '— Quem vai usar esse indicador para tomar decisões?</div></div>';
+  }
+
   return html;
 }
 

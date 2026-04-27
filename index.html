@@ -1137,19 +1137,46 @@ async function approveSubmission(subId){
       }
     });
   }
-  if(data.cat==='treinamento'&&data.agendaLink){
-    const agendaRef = await db.collection('agenda').add({tema:data.title,ministrador:data.userShort,ministeradorId:data.user,agendaLink:data.agendaLink,slideLink:data.slideLink||'',trainDate:data.trainDate||'',status:'aprovado',participants:[],confirmedAttendees:[],ts:firebase.firestore.FieldValue.serverTimestamp()});
-    // Save notification for all users (they'll see it on next load)
-    await db.collection('notifications').add({
-      type:'new_training',tema:data.title,ministrador:data.userShort,
-      trainDate:data.trainDate||'',agendaId:agendaRef.id,
-      ts:firebase.firestore.FieldValue.serverTimestamp(),readBy:[],
-      msg:'Novo treinamento: '+data.title+' com '+data.userShort+' — '+
-          (data.trainDate?new Date(data.trainDate+'T12:00:00').toLocaleDateString('pt-BR',{weekday:'long',day:'2-digit',month:'2-digit'}):'Sexta-feira')+' das 13h às 13h30'
-    });
-  }
+  // Commit scores first
   batch.update(db.collection('submissions').doc(subId),{status:'approved'});
-  await batch.commit();showToast('Aprovado! 🪙 Moedas creditadas.'+(data.cat==='treinamento'?' Agenda criada!':''));
+  await batch.commit();
+  showToast('Aprovado! 🪙 Moedas creditadas.');
+
+  // If training: create agenda entry regardless of agendaLink presence
+  if(data.cat==='treinamento'){
+    try{
+      const agendaData = {
+        tema: data.title || 'Treinamento',
+        ministrador: data.userShort || data.user || '',
+        ministeradorId: data.user || '',
+        agendaLink: data.agendaLink || '',
+        slideLink: data.slideLink || '',
+        trainDate: data.trainDate || '',
+        status: 'aprovado',
+        participants: [],
+        confirmedAttendees: [],
+        ts: firebase.firestore.FieldValue.serverTimestamp()
+      };
+      console.log('Creating agenda entry:', agendaData);
+      const agendaRef = await db.collection('agenda').add(agendaData);
+      console.log('Agenda created with ID:', agendaRef.id);
+      await db.collection('notifications').add({
+        type:'new_training',
+        tema: agendaData.tema,
+        ministrador: agendaData.ministrador,
+        trainDate: agendaData.trainDate,
+        agendaId: agendaRef.id,
+        ts: firebase.firestore.FieldValue.serverTimestamp(),
+        readBy: [],
+        msg: 'Novo treinamento: '+agendaData.tema+' com '+agendaData.ministrador+' — '+
+             (agendaData.trainDate?new Date(agendaData.trainDate+'T12:00:00').toLocaleDateString('pt-BR',{weekday:'long',day:'2-digit',month:'2-digit'}):'Sexta-feira')+' das 13h às 13h30'
+      });
+      showToast('Treinamento adicionado à Agenda!');
+    }catch(e){
+      console.error('Erro ao criar agenda:', e);
+      showToast('Moedas creditadas, mas erro ao criar agenda: '+e.message);
+    }
+  }
   loadAgenda();
 }
 async function rejectSubmission(subId){await db.collection('submissions').doc(subId).update({status:'rejected'});showToast('Rejeitada.');}
@@ -1246,12 +1273,26 @@ function buildAlbum(){
 async function loadAgenda(){
   const el=document.getElementById('agenda-list');if(!el)return;
   try{
-    const snap=await db.collection('agenda').where('status','==','aprovado').orderBy('ts','desc').get();
-    agendaItems=[];snap.forEach(doc=>agendaItems.push({id:doc.id,...doc.data()}));
+    // Use simple query without orderBy to avoid composite index requirement
+    const snap=await db.collection('agenda').get();
+    agendaItems=[];
+    snap.forEach(doc=>{
+      const d=doc.data();
+      // Show approved and realizado items
+      if(d.status==='aprovado'||d.status==='realizado'){
+        agendaItems.push({id:doc.id,...d});
+      }
+    });
+    // Sort by trainDate or ts client-side
+    agendaItems.sort((a,b)=>(b.trainDate||'')>(a.trainDate||'')?1:-1);
     if(!agendaItems.length){el.innerHTML='<p class="empty">Nenhum treinamento agendado ainda.</p>';return;}
     el.innerHTML=agendaItems.map(item=>{
-      const isMini=item.ministeradorId===currentUser?.name;
-      const joined=item.participants&&item.participants.includes(currentUser?.name);
+      // Match ministrador by name, short name, or email
+      const isMini=item.ministeradorId===currentUser?.name
+        ||item.ministeradorId===currentUser?.short
+        ||item.ministrador===currentUser?.short
+        ||item.ministrador===currentUser?.name;
+      const joined=item.participants&&(item.participants.includes(currentUser?.name)||item.participants.includes(currentUser?.short));
       return`<div class="agenda-card active">
         <div class="agenda-head">
           <div><div class="agenda-title">🎙️ ${item.tema}</div>

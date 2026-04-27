@@ -7,7 +7,6 @@
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;900&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-storage-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
@@ -248,7 +247,7 @@ tbody td{padding:8px 10px;font-size:12px;color:var(--tx);vertical-align:middle}
 <!-- MODAL POPUP -->
 <div class="modal-overlay" id="modal-overlay">
   <div class="modal-box">
-    <div class="modal-icon" id="modal-icon">⚠️</div>
+    <div class="modal-icon" id="modal-icon" style="font-size:36px">⚠️</div>
     <div class="modal-title" id="modal-title">Atenção</div>
     <div class="modal-msg" id="modal-msg"></div>
     <button class="btn" onclick="closeModal()">Entendi</button>
@@ -471,16 +470,17 @@ tbody td{padding:8px 10px;font-size:12px;color:var(--tx);vertical-align:middle}
         <div class="fr" id="f-proof-row">
           <label>Comprovante — link do certificado, curso ou material *</label>
           <input type="text" id="f-proof" placeholder="Cole o link do certificado, dashboard ou material..." oninput="checkDriveReminder(this.value)">
-          <div style="font-size:11px;color:var(--mu);margin-top:4px">📌 Em caso de <strong>livro lido/escutado</strong> ou <strong>curso concluído sem link</strong>, é obrigatório anexar uma imagem do livro ou certificado abaixo.</div>
+          <div style="font-size:11px;color:var(--mu);margin-top:6px;line-height:1.6;background:var(--ow);border-radius:6px;padding:8px 10px">
+            ✅ <strong>Tem link?</strong> Cole o link do certificado ou material acima.<br>
+            📷 <strong>Não tem link?</strong> (livro físico, audiobook, curso sem certificado) — tire uma foto ou print e envie para o Drive da Copa antes de registrar:<br>
+            <a href="https://drive.google.com/drive/folders/1iHPGXZIHfsiBFu2YDHVVqphZt43hD8wo" target="_blank" style="color:var(--blue);font-weight:600">📁 Acessar Drive da Copa →</a><br>
+            <span style="color:var(--mu)">Depois cole no campo acima o link direto da imagem ou escreva "Enviado no Drive".</span>
+          </div>
         </div>
         <div id="drive-reminder" style="display:none;background:#EEEDFE;border:0.5px solid #AFA9EC;border-radius:7px;padding:9px 12px;font-size:12px;color:#3C3489;margin-bottom:10px">
           📤 <strong>Lembrete:</strong> Você está inserindo um link de documento, planilha, slide ou dashboard. Por favor, <strong>compartilhe o arquivo com amanda.conrado@liveseo.com.br</strong> antes de enviar.
         </div>
-        <div class="fr">
-          <label>📷 Imagem comprobatória <span id="img-required-label" style="color:var(--red);display:none">*</span></label>
-          <input type="file" id="f-image" accept="image/*" style="padding:6px;font-size:12px">
-          <div style="font-size:11px;color:var(--mu);margin-top:3px">A imagem será enviada automaticamente ao Drive da Copa. Obrigatória para livros e cursos sem link, e para ações conjuntas.</div>
-        </div>
+
         <!-- AÇÃO CONJUNTA -->
         <div style="margin-bottom:11px">
           <label style="display:flex;align-items:center;gap:8px;cursor:pointer;padding:8px 11px;background:var(--ol);border:0.5px solid var(--om);border-radius:7px;font-size:13px">
@@ -497,11 +497,7 @@ tbody td{padding:8px 10px;font-size:12px;color:var(--tx);vertical-align:middle}
             <select id="f-leader"><option value="">Selecione...</option></select>
           </div>
           <div class="notice info" style="font-size:11px">Líder: +5 moedas extras · Participante: +3 moedas extras</div>
-          <div class="fr">
-            <label>📷 Foto dos participantes na ação conjunta *</label>
-            <input type="file" id="f-joint-image" accept="image/*" style="padding:6px;font-size:12px">
-            <div style="font-size:11px;color:var(--mu);margin-top:3px">Obrigatório para ações conjuntas. Envie uma foto dos participantes durante a atividade. A imagem vai para o Drive da Copa.</div>
-          </div>
+
         </div>
         <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:4px">
           <button class="btn" id="f-submit-btn" onclick="submitActivity()">Enviar para aprovação</button>
@@ -697,11 +693,7 @@ tbody td{padding:8px 10px;font-size:12px;color:var(--tx);vertical-align:middle}
       <div class="sh2">Painel Admin</div>
       <div class="notice red">Área restrita · amanda.conrado@liveseo.com.br</div>
       <div class="admin-box"><h3>⏳ Aguardando aprovação</h3><div id="admin-pending"><div class="loading"><div class="spinner"></div></div></div></div>
-      <div class="admin-box"><h3>📸 Upload de foto para galeria</h3>
-        <div class="fr"><label>URL da foto</label><input type="url" id="admin-photo-url" placeholder="https://..."></div>
-        <div class="fr"><label>Legenda da foto</label><input type="text" id="admin-photo-caption" placeholder="Ex: Treinamento de Sheets — 23/05/2026"></div>
-        <button class="btn" onclick="addPhoto()">Adicionar foto</button>
-      </div>
+
       <div class="admin-box"><h3>📊 Pontuação resumida por atividade</h3>
         <div class="tw"><table>
           <thead><tr><th>Atividade</th><th style="text-align:right">🪙 Base</th><th>+ Bônus possíveis</th></tr></thead>
@@ -952,6 +944,7 @@ function onUserLoggedIn(user){
   const tc=TC[currentUser.team]||{bg:'#F4F5FA',txt:'#101820'};
   const av=document.getElementById('top-av');av.textContent=ini(currentUser.short);av.style.background=tc.bg;av.style.color=tc.txt;
   document.getElementById('top-name').textContent=currentUser.short.split(' ')[0];
+  console.log('Logged in as:', currentUser.short, '| name:', currentUser.name, '| email:', email);
   if(isAdmin){document.getElementById('admin-badge').style.display='inline';document.querySelectorAll('.admin-only').forEach(el=>el.style.display='block');}
   buildParticipantsSelect();buildDesafios();subscribeScores();subscribeMySubmissions();loadAgenda();loadPhotos();
 }
@@ -963,14 +956,35 @@ function subscribeScores(){
 }
 function subscribeMySubmissions(){
   if(unsubSubs)unsubSubs();
-  const q=isAdmin?db.collection('submissions').orderBy('ts','desc').limit(200):db.collection('submissions').where('user','==',currentUser.name).orderBy('ts','desc');
+  // For admin: get all. For user: get by name OR userShort (handles both save formats)
+  const q=isAdmin
+    ?db.collection('submissions').orderBy('ts','desc').limit(200)
+    :db.collection('submissions').where('user','==',currentUser.name).orderBy('ts','desc');
   unsubSubs=q.onSnapshot(snap=>{
     submissions=[];
     snap.forEach(doc=>submissions.push({id:doc.id,...doc.data()}));
-    renderMySubmissions();
-    renderMyStats(); // update stats when submission status changes (e.g. approved)
-    buildAlbum();    // update album when new approval comes in
-    if(isAdmin)loadAdmin();
+    // Also fetch by userShort in case saved differently
+    if(!isAdmin){
+      db.collection('submissions').where('user','==',currentUser.short).orderBy('ts','desc').get().then(snap2=>{
+        snap2.forEach(doc=>{
+          if(!submissions.find(s=>s.id===doc.id)){
+            submissions.push({id:doc.id,...doc.data()});
+          }
+        });
+        renderMySubmissions();
+        renderMyStats();
+        buildAlbum();
+      }).catch(()=>{
+        renderMySubmissions();
+        renderMyStats();
+        buildAlbum();
+      });
+    } else {
+      renderMySubmissions();
+      renderMyStats();
+      buildAlbum();
+      loadAdmin();
+    }
   });
 }
 
@@ -1022,19 +1036,17 @@ async function submitActivity(){
     const book=document.getElementById('f-book').value;
     const resumo=document.getElementById('f-resumo').value.trim();
     const proof=document.getElementById('f-proof').value.trim();
-    const img=document.getElementById('f-image')?.files[0];
     if(!book){showToast('Selecione o livro lido.');return;}
     if(!resumo||resumo.length<50){showToast('Escreva um resumo com pelo menos 150 palavras.');return;}
-    if(!proof&&!img){showModal('📎','Comprovante obrigatório','Para livros sem link, envie uma foto do livro físico ou capa. Anexe a imagem no campo de comprovante.');return;}
+    if(!proof){showModal('📎','Comprovante obrigatório','Para livros sem link de comprovante, descreva brevemente onde leu/ouviu o livro no campo de comprovante.');return;}
   }
   if(cat==='curso'){
     const course=document.getElementById('f-course')?.value||'';
     const resumo=document.getElementById('f-resumo').value.trim();
     const proof=document.getElementById('f-proof').value.trim();
-    const img=document.getElementById('f-image')?.files[0];
     if(!course){showToast('Selecione o curso.');return;}
     if(!resumo||resumo.length<50){showToast('Escreva um resumo com pelo menos 150 palavras.');return;}
-    if(!proof&&!img){showModal('📎','Comprovante obrigatório','Para cursos, envie o link do certificado. Se não tiver link, anexe uma foto do certificado ou material do curso.');return;}
+    if(!proof){showModal('📎','Comprovante obrigatório','Informe o link do certificado. Se não tiver link, descreva brevemente o curso e onde foi feito.');return;}
   }
   if(cat==='indicador'||cat==='automacao'){
     const title=document.getElementById('f-title').value.trim();
@@ -1082,47 +1094,22 @@ async function submitActivity(){
   }
   if((cat==='indicador'||cat==='automacao'||cat==='evento')&&!title){showToast('Preencha o título!');return;}
   if(isJoint&&!leader){showToast('Informe quem liderou!');return;}
-  if(isJoint){
-    const jImg=document.getElementById('f-joint-image')?.files[0];
-    if(!jImg){showModal('📷','Foto obrigatória','Para ações conjuntas, é obrigatório enviar uma foto dos participantes durante a atividade.');return;}
-  }
+
   const btn=document.getElementById('f-submit-btn');btn.disabled=true;btn.textContent='Enviando...';
   const basePts=CAT_COINS[cat]||20;
   const amILeader=leader===currentUser.name;
   const myPts=basePts+(isJoint?(amILeader?BONUS.lider:BONUS.part):0);
   const aiScore=0; // AI scoring removed
   const descTitle=cat==='livro'?(book==='outro-livro'?document.getElementById('f-outro-livro').value:book):cat==='curso'?(course==='outro-curso'?document.getElementById('f-outro-curso').value:course):cat==='treinamento'?trainTema||'Treinamento':title;
-  const sub={user:currentUser.name,userShort:currentUser.short,team:currentUser.team,cargo:currentUser.cargo,cat,title:descTitle,proof,resumo,agendaLink,slideLink,trainDate,isJoint,leader,participants,basePts,myPts,aiScore,status:'pending',ts:firebase.firestore.FieldValue.serverTimestamp(),date:new Date().toLocaleDateString('pt-BR')};
-  // Upload images to Firebase Storage (non-blocking - submission works even if upload fails)
-  let imageUrl='', jointImageUrl='';
-  const imgFile=document.getElementById('f-image')?.files[0];
-  const jointImgFile=document.getElementById('f-joint-image')?.files[0];
-  if(imgFile){
-    try{
-      const ref=firebase.storage().ref('copa2026/'+Date.now()+'_'+imgFile.name.replace(/[^a-zA-Z0-9._-]/g,'_'));
-      const snap=await ref.put(imgFile);
-      imageUrl=await snap.ref.getDownloadURL();
-    }catch(e){
-      console.warn('Image upload failed - submitting without image:',e.message);
-      showToast('Imagem não enviada (Storage), mas atividade foi registrada.');
-    }
-  }
-  if(jointImgFile){
-    try{
-      const ref=firebase.storage().ref('copa2026/joint_'+Date.now()+'_'+jointImgFile.name.replace(/[^a-zA-Z0-9._-]/g,'_'));
-      const snap=await ref.put(jointImgFile);
-      jointImageUrl=await snap.ref.getDownloadURL();
-    }catch(e){
-      console.warn('Joint image upload failed:',e.message);
-    }
-  }
-  sub.imageUrl=imageUrl;sub.jointImageUrl=jointImageUrl;
+  const sub={user:currentUser.short,userShort:currentUser.short,team:currentUser.team,cargo:currentUser.cargo,cat,title:descTitle,proof,resumo,agendaLink,slideLink,trainDate,isJoint,leader,participants,basePts,myPts,aiScore,status:'pending',ts:firebase.firestore.FieldValue.serverTimestamp(),date:new Date().toLocaleDateString('pt-BR')};
+  // Image upload removed - Firebase Storage not configured
+  sub.imageUrl='';sub.jointImageUrl='';
   try{
     await db.collection('submissions').add(sub);
     showToast('✅ Atividade enviada! Aguardando aprovação da Amanda.');
     ['f-cat','f-title','f-proof','f-resumo'].forEach(id=>document.getElementById(id).value='');
     document.getElementById('f-book').value='';
-    ['f-course','f-training-tema','f-agenda-link','f-slide-link','f-training-date'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+    ['f-course','f-training-tema','f-agenda-link','f-slide-link','f-training-date'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';}); 
     document.getElementById('f-joint').checked=false;
     ['f-book-row','f-outro-livro-row','f-curso-rows','f-outro-curso-row','f-treinamento-rows','f-title-row','f-resumo-row','f-joint-rows'].forEach(id=>{const el=document.getElementById(id);if(el)el.style.display='none';});
     const pr=document.getElementById('f-proof-row');if(pr)pr.style.display='block';
@@ -1169,7 +1156,7 @@ function renderMyStats(){
   const total=getTotal(currentUser.name);
   const allT=PEOPLE.filter(p=>p.team!=='ADMIN').map(p=>getTotal(p.name)).sort((a,b)=>b-a);
   const rank=allT.findIndex(t=>t<=total)+1;
-  const approved=submissions.filter(s=>s.user===currentUser.name&&s.status==='approved').length;
+  const approved=submissions.filter(s=>(s.user===currentUser.name||s.user===currentUser.short||s.userShort===currentUser.short)&&s.status==='approved').length;
   document.getElementById('my-stats').innerHTML=`
     <div class="ms"><div class="v gold">🪙 ${total}</div><div class="l">Moedas totais</div></div>
     <div class="ms"><div class="v">${sc.ind||0}</div><div class="l">Moedas ganhas</div></div>
@@ -1179,7 +1166,7 @@ function renderMyStats(){
 }
 function renderMySubmissions(){
   const el=document.getElementById('my-submissions');
-  const list=submissions.filter(s=>isAdmin?true:s.user===currentUser?.name);
+  const list=submissions.filter(s=>isAdmin?true:(s.user===currentUser?.name||s.user===currentUser?.short||s.userShort===currentUser?.short));
   if(!list.length){el.innerHTML='<p class="empty">Nenhuma atividade ainda.</p>';return;}
   const stM={pending:'st-pend',approved:'st-ok',rejected:'st-rej',ai_review:'st-pend'};
   const stL={pending:'Aguardando aprovação',approved:'Aprovada ✓ — moedas creditadas!',rejected:'Rejeitada',ai_review:'Aguardando aprovação'};
@@ -1273,7 +1260,13 @@ async function loadAgenda(){
           <div style="margin-top:8px;display:flex;gap:6px;flex-wrap:wrap">
             ${!isMini&&!joined?`<button class="btn-sm btn-ok" onclick="joinAgenda('${item.id}')">✋ Quero participar</button>`:''}
             ${joined&&!isMini?'<span style="font-size:11px;color:var(--green);font-weight:600">✓ Você confirmou participação</span>':''}
-            ${isMini?`<button class="btn-sm" style="background:#EEEDFE;color:#3C3489;border-color:#AFA9EC" onclick="confirmAttendees('${item.id}')">✅ Confirmar presentes</button>`:''}
+            ${isMini&&item.status!=='realizado'?`
+              <div style="font-size:11px;color:var(--mu);margin-bottom:6px">
+                📷 Antes de confirmar, envie a foto do treinamento para o 
+                <a href="https://drive.google.com/drive/folders/1iHPGXZIHfsiBFu2YDHVVqphZt43hD8wo" target="_blank" style="color:var(--blue);font-weight:600">Drive da Copa →</a>
+              </div>
+              <button class="btn-sm" style="background:#EEEDFE;color:#3C3489;border-color:#AFA9EC" onclick="confirmAttendees('${item.id}')">✅ Confirmar presentes e creditar moedas</button>
+            `:''}
           </div>
           ${item.confirmedAttendees&&item.confirmedAttendees.length?`<div style="margin-top:8px;font-size:11px;color:var(--mu)">Presentes confirmados: ${item.confirmedAttendees.map(a=>`<span class="attend-chip confirmed">${a}</span>`).join('')}</div>`:''}
         </div>
@@ -1289,35 +1282,39 @@ async function confirmAttendees(agendaId){
   const item=agendaItems.find(a=>a.id===agendaId);if(!item)return;
   const participants=item.participants||[];
   if(!participants.length){showToast('Nenhum participante se inscreveu ainda.');return;}
-  // Mark all participants as confirmed and give coins
-  const batch=db.batch();
-  participants.forEach(pname=>{
-    batch.set(db.collection('scores').doc(pname),{ind:firebase.firestore.FieldValue.increment(15)},{merge:true});
-  });
-  await db.collection('agenda').doc(agendaId).update({confirmedAttendees:participants.map(p=>PEOPLE.find(x=>x.name===p)?.short||p),status:'realizado'});
-  await batch.commit();
-  showToast('Presença confirmada! 🪙 15 moedas para cada participante.');loadAgenda();
+  // Show Drive reminder before confirming
+  showModal('📷','Antes de confirmar — envie a foto!',
+    'Tire uma foto dos participantes no treinamento e envie para o Drive da Copa antes de confirmar as presenças. Acesse: drive.google.com/drive/folders/1iHPGXZIHfsiBFu2YDHVVqphZt43hD8wo\n\nApós enviar a foto, feche este aviso e confirme as presenças novamente.');
+  // Override closeModal to run the actual confirmation
+  window._pendingConfirmAgendaId = agendaId;
+  document.getElementById('modal-overlay').querySelector('button').onclick = async function(){
+    closeModal();
+    const item2=agendaItems.find(a=>a.id===window._pendingConfirmAgendaId);if(!item2)return;
+    const parts=item2.participants||[];
+    const batch=db.batch();
+    parts.forEach(pname=>{
+      batch.set(db.collection('scores').doc(pname),{ind:firebase.firestore.FieldValue.increment(15)},{merge:true});
+    });
+    await db.collection('agenda').doc(window._pendingConfirmAgendaId).update({confirmedAttendees:parts.map(p=>PEOPLE.find(x=>x.name===p)?.short||p),status:'realizado'});
+    await batch.commit();
+    showToast('Presença confirmada! 🪙 15 moedas para cada participante.');
+    loadAgenda();
+    // Restore closeModal
+    document.getElementById('modal-overlay').querySelector('button').onclick = closeModal;
+  };
 }
 
-// PHOTOS
+// PHOTOS - kept for gallery display only (admin upload removed)
 async function loadPhotos(){
   const el=document.getElementById('photo-grid');if(!el)return;
   try{
     const snap=await db.collection('photos').orderBy('ts','desc').get();
     const photos=[];snap.forEach(doc=>photos.push({id:doc.id,...doc.data()}));
-    if(!photos.length){el.innerHTML='<p class="empty">Nenhuma foto ainda. Em breve!</p>';return;}
-    el.innerHTML=photos.map(p=>`<div class="photo-card"><img src="${p.url}" alt="${p.caption}" onerror="this.parentElement.style.display='none'"><div class="photo-caption"><strong>${p.caption}</strong>${p.date?p.date:''}</div></div>`).join('');
+    if(!photos.length){el.innerHTML='<p class="empty" style="text-align:center;padding:24px">📸 Nenhuma foto ainda. Em breve!</p>';return;}
+    el.innerHTML=photos.map(p=>`<div class="photo-card"><img src="${p.url}" alt="${p.caption}" onerror="this.parentElement.style.display='none'"><div class="photo-caption"><strong>${p.caption}</strong>${p.date?' · '+p.date:''}</div></div>`).join('');
   }catch(e){el.innerHTML='<p class="empty">Erro ao carregar fotos.</p>';}
 }
-async function addPhoto(){
-  if(!isAdmin)return;
-  const url=document.getElementById('admin-photo-url').value.trim();
-  const caption=document.getElementById('admin-photo-caption').value.trim();
-  if(!url||!caption){showToast('Preencha URL e legenda!');return;}
-  await db.collection('photos').add({url,caption,date:new Date().toLocaleDateString('pt-BR'),ts:firebase.firestore.FieldValue.serverTimestamp()});
-  document.getElementById('admin-photo-url').value='';document.getElementById('admin-photo-caption').value='';
-  showToast('Foto adicionada!');loadPhotos();
-}
+async function addPhoto(){} // removed
 
 // ADMIN
 function loadAdmin(){

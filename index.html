@@ -956,35 +956,35 @@ function subscribeScores(){
 }
 function subscribeMySubmissions(){
   if(unsubSubs)unsubSubs();
-  // For admin: get all. For user: get by name OR userShort (handles both save formats)
-  const q=isAdmin
-    ?db.collection('submissions').orderBy('ts','desc').limit(200)
-    :db.collection('submissions').where('user','==',currentUser.name).orderBy('ts','desc');
+  // Load all submissions and filter client-side - avoids OR query issues
+  // Limit to 500 for performance; admin sees all, users see only theirs
+  const q=db.collection('submissions').orderBy('ts','desc').limit(500);
   unsubSubs=q.onSnapshot(snap=>{
-    submissions=[];
-    snap.forEach(doc=>submissions.push({id:doc.id,...doc.data()}));
-    // Also fetch by userShort in case saved differently
-    if(!isAdmin){
-      db.collection('submissions').where('user','==',currentUser.short).orderBy('ts','desc').get().then(snap2=>{
-        snap2.forEach(doc=>{
-          if(!submissions.find(s=>s.id===doc.id)){
-            submissions.push({id:doc.id,...doc.data()});
-          }
-        });
-        renderMySubmissions();
-        renderMyStats();
-        buildAlbum();
-      }).catch(()=>{
-        renderMySubmissions();
-        renderMyStats();
-        buildAlbum();
-      });
+    const all=[];
+    snap.forEach(doc=>all.push({id:doc.id,...doc.data()}));
+    if(isAdmin){
+      submissions=all;
     } else {
-      renderMySubmissions();
-      renderMyStats();
-      buildAlbum();
-      loadAdmin();
+      // Match by any name variant the submission might have been saved with
+      const myNames=[
+        currentUser.name,
+        currentUser.short,
+        currentUser.email
+      ].filter(Boolean).map(n=>n.toLowerCase());
+      submissions=all.filter(s=>{
+        const sUser=(s.user||'').toLowerCase();
+        const sShort=(s.userShort||'').toLowerCase();
+        const sEmail=(s.email||'').toLowerCase();
+        return myNames.some(n=>n===sUser||n===sShort||n===sEmail);
+      });
     }
+    renderMySubmissions();
+    renderMyStats();
+    buildAlbum();
+    if(isAdmin)loadAdmin();
+  },err=>{
+    console.error('subscribeMySubmissions error:',err);
+    document.getElementById('my-submissions').innerHTML='<p class="empty">Erro ao carregar atividades. Recarregue a página.</p>';
   });
 }
 

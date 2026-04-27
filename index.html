@@ -919,17 +919,34 @@ auth.onAuthStateChanged(user=>{
 });
 function onUserLoggedIn(user){
   const email = user.email;
-  const matched = PEOPLE.find(p=>p.short.toLowerCase().replace(/\s/g,'').startsWith(email.split('@')[0].replace('.','').toLowerCase().substring(0,4)));
-  const byEmail = PEOPLE.find(p=>{
-    const namePart = email.split('@')[0].toLowerCase();
-    const parts = namePart.split('.');
+  // Store email→person mapping in Firestore so it persists across sessions
+  let matched = null;
+  if(email===ADMIN_EMAIL){
+    matched = PEOPLE.find(p=>p.name==='Amanda Conrado');
+  } else {
+    // Try to match by email prefix (e.g. luana.rohling@liveseo.com.br → Luana Rohling)
+    const emailPrefix = email.split('@')[0].toLowerCase(); // e.g. "luana.rohling"
+    const parts = emailPrefix.split('.');
     const firstName = parts[0]||'';
-    return p.short.toLowerCase().startsWith(firstName);
-  });
-  currentUser = byEmail || matched || {name:user.displayName||email,short:user.displayName||email.split('@')[0],team:'',cargo:'',email};
-  if(email===ADMIN_EMAIL) currentUser = PEOPLE.find(p=>p.name==='Amanda Conrado')||currentUser;
+    const lastName = parts[1]||'';
+    // Match by first name + optional last name
+    matched = PEOPLE.find(p=>{
+      const shortL = p.short.toLowerCase();
+      const nameL = p.name.toLowerCase();
+      if(firstName && lastName){
+        return (shortL.includes(firstName) && shortL.includes(lastName)) ||
+               (nameL.includes(firstName) && nameL.includes(lastName));
+      }
+      return shortL.startsWith(firstName) || nameL.startsWith(firstName);
+    });
+  }
+  currentUser = matched || {name:user.displayName||email,short:user.displayName||email.split('@')[0],team:'',cargo:'',email};
   currentUser.email = email;
   isAdmin = (email===ADMIN_EMAIL);
+  // Save email→name mapping to Firestore for reliability
+  db.collection('userEmails').doc(email.replace('@','_at_').replace(/\./g,'_')).set({
+    email,name:currentUser.name,short:currentUser.short,team:currentUser.team
+  },{merge:true}).catch(()=>{});
   document.getElementById('login-screen').style.display='none';
   document.getElementById('app-screen').style.display='block';
   const tc=TC[currentUser.team]||{bg:'#F4F5FA',txt:'#101820'};
@@ -947,7 +964,14 @@ function subscribeScores(){
 function subscribeMySubmissions(){
   if(unsubSubs)unsubSubs();
   const q=isAdmin?db.collection('submissions').orderBy('ts','desc').limit(200):db.collection('submissions').where('user','==',currentUser.name).orderBy('ts','desc');
-  unsubSubs=q.onSnapshot(snap=>{submissions=[];snap.forEach(doc=>submissions.push({id:doc.id,...doc.data()}));renderMySubmissions();if(isAdmin)loadAdmin();});
+  unsubSubs=q.onSnapshot(snap=>{
+    submissions=[];
+    snap.forEach(doc=>submissions.push({id:doc.id,...doc.data()}));
+    renderMySubmissions();
+    renderMyStats(); // update stats when submission status changes (e.g. approved)
+    buildAlbum();    // update album when new approval comes in
+    if(isAdmin)loadAdmin();
+  });
 }
 
 // FORM
@@ -1066,27 +1090,36 @@ async function submitActivity(){
   const basePts=CAT_COINS[cat]||20;
   const amILeader=leader===currentUser.name;
   const myPts=basePts+(isJoint?(amILeader?BONUS.lider:BONUS.part):0);
-  const aiScore=(cat==='livro'||cat==='curso'||cat==='evento')?calcAiScore(resumo):0;
+  const aiScore=0; // AI scoring removed
   const descTitle=cat==='livro'?(book==='outro-livro'?document.getElementById('f-outro-livro').value:book):cat==='curso'?(course==='outro-curso'?document.getElementById('f-outro-curso').value:course):cat==='treinamento'?trainTema||'Treinamento':title;
-  const sub={user:currentUser.name,userShort:currentUser.short,team:currentUser.team,cargo:currentUser.cargo,cat,title:descTitle,proof,resumo,agendaLink,slideLink,trainDate,isJoint,leader,participants,basePts,myPts,aiScore,status:aiScore>=65?'ai_review':'pending',ts:firebase.firestore.FieldValue.serverTimestamp(),date:new Date().toLocaleDateString('pt-BR')};
-  // Upload images to Firebase Storage
+  const sub={user:currentUser.name,userShort:currentUser.short,team:currentUser.team,cargo:currentUser.cargo,cat,title:descTitle,proof,resumo,agendaLink,slideLink,trainDate,isJoint,leader,participants,basePts,myPts,aiScore,status:'pending',ts:firebase.firestore.FieldValue.serverTimestamp(),date:new Date().toLocaleDateString('pt-BR')};
+  // Upload images to Firebase Storage (non-blocking - submission works even if upload fails)
   let imageUrl='', jointImageUrl='';
   const imgFile=document.getElementById('f-image')?.files[0];
   const jointImgFile=document.getElementById('f-joint-image')?.files[0];
-  try{
-    if(imgFile){
-      const ref=firebase.storage().ref('copa2026/'+Date.now()+'_'+imgFile.name);
-      await ref.put(imgFile);imageUrl=await ref.getDownloadURL();
+  if(imgFile){
+    try{
+      const ref=firebase.storage().ref('copa2026/'+Date.now()+'_'+imgFile.name.replace(/[^a-zA-Z0-9._-]/g,'_'));
+      const snap=await ref.put(imgFile);
+      imageUrl=await snap.ref.getDownloadURL();
+    }catch(e){
+      console.warn('Image upload failed - submitting without image:',e.message);
+      showToast('Imagem não enviada (Storage), mas atividade foi registrada.');
     }
-    if(jointImgFile){
-      const ref=firebase.storage().ref('copa2026/joint_'+Date.now()+'_'+jointImgFile.name);
-      await ref.put(jointImgFile);jointImageUrl=await ref.getDownloadURL();
+  }
+  if(jointImgFile){
+    try{
+      const ref=firebase.storage().ref('copa2026/joint_'+Date.now()+'_'+jointImgFile.name.replace(/[^a-zA-Z0-9._-]/g,'_'));
+      const snap=await ref.put(jointImgFile);
+      jointImageUrl=await snap.ref.getDownloadURL();
+    }catch(e){
+      console.warn('Joint image upload failed:',e.message);
     }
-  }catch(e){console.warn('Image upload failed',e);}
+  }
   sub.imageUrl=imageUrl;sub.jointImageUrl=jointImageUrl;
   try{
     await db.collection('submissions').add(sub);
-    showToast(aiScore>=65?'Enviado! Aguarda revisão':'Enviado para aprovação! 🪙');
+    showToast('✅ Atividade enviada! Aguardando aprovação da Amanda.');
     ['f-cat','f-title','f-proof','f-resumo'].forEach(id=>document.getElementById(id).value='');
     document.getElementById('f-book').value='';
     ['f-course','f-training-tema','f-agenda-link','f-slide-link','f-training-date'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
@@ -1148,8 +1181,8 @@ function renderMySubmissions(){
   const el=document.getElementById('my-submissions');
   const list=submissions.filter(s=>isAdmin?true:s.user===currentUser?.name);
   if(!list.length){el.innerHTML='<p class="empty">Nenhuma atividade ainda.</p>';return;}
-  const stM={pending:'st-pend',approved:'st-ok',rejected:'st-rej',ai_review:'st-ai'};
-  const stL={pending:'Aguardando',approved:'Aprovada ✓',rejected:'Rejeitada',ai_review:'Revisão IA'};
+  const stM={pending:'st-pend',approved:'st-ok',rejected:'st-rej',ai_review:'st-pend'};
+  const stL={pending:'Aguardando aprovação',approved:'Aprovada ✓ — moedas creditadas!',rejected:'Rejeitada',ai_review:'Aguardando aprovação'};
   el.innerHTML=list.map(s=>`<div class="sub"><div class="sub-h"><div><div class="sub-t">${s.title}</div><div class="sub-m">${s.date||''} · ${s.cat} · <span style="font-weight:600;color:var(--or)">🪙 ${s.myPts||0}</span>${s.isJoint?' · 🤝':''}</div></div><span class="stpill ${stM[s.status]||'st-pend'}">${stL[s.status]||'Pendente'}</span></div>${s.resumo?`<div class="sub-body">${s.resumo.substring(0,160)}...${s.status==='ai_review'?`<div class="ai-flag">⚠ IA ${s.aiScore}%</div>`:''}</div>`:''} ${s.imageUrl?`<div style="margin-top:6px"><img src="${s.imageUrl}" style="max-width:120px;border-radius:6px;border:0.5px solid var(--bd)" alt="Comprovante"></div>`:''}</div>`).join('');
 }
 function rv(v,btn){document.getElementById('rank-ind').style.display=v==='ind'?'block':'none';document.getElementById('rank-team').style.display=v==='team'?'block':'none';document.querySelectorAll('.seg .sb').forEach(b=>b.classList.remove('on'));btn.classList.add('on');}

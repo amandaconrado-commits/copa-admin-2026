@@ -442,11 +442,13 @@ tbody td{padding:8px 10px;font-size:12px;color:var(--tx);vertical-align:middle}
             </div>
           </div>
           <div class="fr"><label>Link da agenda (Google Calendar) *</label>
-            <input type="url" id="f-agenda-link" placeholder="https://calendar.google.com/..." oninput="validateAgendaTime()">
-            <div id="f-agenda-warning" style="display:none;font-size:11px;color:var(--red);margin-top:4px">⚠️ A agenda deve ser uma sexta-feira das 13h às 13h30</div>
+            <input type="url" id="f-agenda-link" placeholder="https://calendar.google.com/event?eid=..." oninput="validateAgendaLink(this.value)">
+            <div style="font-size:11px;color:var(--mu);margin-top:3px">Cole o link do evento criado no Google Calendar. Deve começar com <strong>https://calendar.google.com</strong></div>
+            <div id="f-agenda-warning" style="display:none;font-size:11px;color:var(--red);margin-top:4px">⚠️ Este não parece ser um link do Google Calendar válido</div>
           </div>
           <div class="fr"><label>Link dos slides / material *</label>
             <input type="url" id="f-slide-link" placeholder="https://docs.google.com/presentation/...">
+            <div style="font-size:11px;color:var(--mu);margin-top:3px">Cole o link da apresentação no Google Drive/Slides. Deve começar com <strong>https://docs.google.com</strong></div>
           </div>
           <div class="fr"><label>Tema do treinamento *</label>
             <input type="text" id="f-training-tema" placeholder="Ex: Google Sheets para iniciantes">
@@ -1011,6 +1013,13 @@ function validateTrainingDate(){
   const day=new Date(d+'T12:00:00').getDay();
   warn.style.display=day===5?'none':'block';
 }
+function validateAgendaLink(val){
+  const warn = document.getElementById('f-agenda-warning');
+  if(!warn) return;
+  if(!val) { warn.style.display='none'; return; }
+  const isValid = val.startsWith('https://calendar.google.com') || val.startsWith('https://meet.google.com');
+  warn.style.display = isValid ? 'none' : 'block';
+}
 function validateAgendaTime(){
   // Heuristic: check if URL contains calendar and inform user about time requirement
   const url=document.getElementById('f-agenda-link').value;
@@ -1300,8 +1309,8 @@ async function loadAgenda(){
           <span class="stpill st-ok">Confirmado</span>
         </div>
         <div class="agenda-body">
-          ${item.agendaLink?`<a href="${item.agendaLink}" target="_blank">📅 Abrir agenda</a> · `:''}
-          ${item.slideLink?`<a href="${item.slideLink}" target="_blank">📄 Slides</a>`:''}
+          ${(item.agendaLink&&item.agendaLink.startsWith('http')&&!item.agendaLink.includes('github.io')&&!item.agendaLink.includes('copa-admin'))?`<a href="${item.agendaLink}" target="_blank" style="color:var(--blue);font-weight:600">📅 Abrir agenda no Google Calendar</a> · `:(item.agendaLink?`<span style="font-size:11px;color:var(--red)">⚠️ Link de agenda inválido</span> · `:'')}
+          ${(item.slideLink&&item.slideLink.startsWith('http')&&!item.slideLink.includes('github.io')&&!item.slideLink.includes('copa-admin'))?`<a href="${item.slideLink}" target="_blank" style="color:var(--blue);font-weight:600">📄 Ver slides</a>`:(item.slideLink?`<span style="font-size:11px;color:var(--red)">⚠️ Link de slides inválido</span>`:'')}
           <div style="margin-top:8px;display:flex;gap:6px;flex-wrap:wrap">
             ${!isMini&&!joined?`<button class="btn-sm btn-ok" onclick="joinAgenda('${item.id}')">✋ Quero participar</button>`:''}
             ${joined&&!isMini?'<span style="font-size:11px;color:var(--green);font-weight:600">✓ Você confirmou participação</span>':''}

@@ -444,7 +444,13 @@ tbody td{padding:8px 10px;font-size:12px;color:var(--tx);vertical-align:middle}
           <div class="notice info" style="font-size:11px">📅 A agenda será criada automaticamente no Google Calendar de cada participante quando eles clicarem em "Quero participar".</div>
           <div class="fr"><label>Link dos slides / material *</label>
             <input type="url" id="f-slide-link" placeholder="https://docs.google.com/presentation/...">
-            <div style="font-size:11px;color:var(--mu);margin-top:3px">Cole o link da apresentação no Google Drive/Slides. Deve começar com <strong>https://docs.google.com</strong></div>
+            <div style="font-size:11px;line-height:1.6;margin-top:6px;background:#E1F5EE;border:0.5px solid #9FE1CB;border-radius:6px;padding:8px 10px;color:#085041">
+              📋 <strong>Antes de colar o link, configure o acesso no Google Slides:</strong><br>
+              1. Abra o arquivo → clique em <strong>"Compartilhar"</strong> (canto superior direito)<br>
+              2. Em "Acesso geral" → selecione <strong>"Qualquer pessoa com o link"</strong><br>
+              3. No menu ao lado → selecione <strong>"Leitor"</strong> (somente visualização, sem edição)<br>
+              4. Clique em <strong>"Copiar link"</strong> e cole aqui abaixo
+            </div>
           </div>
           <div class="fr"><label>Tema do treinamento *</label>
             <input type="text" id="f-training-tema" placeholder="Ex: Google Sheets para iniciantes">
@@ -1317,12 +1323,13 @@ async function loadAgenda(){
             ${!isMini&&!joined?`<button class="btn-sm btn-ok" onclick="joinAgenda('${item.id}')">✋ Quero participar — adicionar à minha agenda</button>`:''}
             ${joined&&!isMini?'<span style="font-size:11px;color:var(--green);font-weight:600">✓ Participação confirmada — evento adicionado ao seu Google Calendar</span>':''}
             ${isMini&&item.status!=='realizado'?`
-              <div style="font-size:11px;color:var(--mu);margin-bottom:6px">
-                📷 Antes de confirmar, envie a foto do treinamento para o 
-                <a href="https://drive.google.com/drive/folders/1iHPGXZIHfsiBFu2YDHVVqphZt43hD8wo" target="_blank" style="color:var(--blue);font-weight:600">Drive da Copa →</a>
+              <div style="background:#EEEDFE;border:0.5px solid #AFA9EC;border-radius:7px;padding:10px 12px;margin-top:8px">
+                <div style="font-size:12px;font-weight:600;color:#3C3489;margin-bottom:6px">🎙️ Você ministrou este treinamento</div>
+                <div style="font-size:11px;color:#534AB7;margin-bottom:8px">Após o treinamento, confirme quem efetivamente participou para que recebam suas 15 🪙. Você escolhe quem marcar.</div>
+                <button class="btn" style="font-size:12px;padding:8px 16px" onclick="confirmAttendees('${item.id}')">✅ Confirmar quem participou</button>
               </div>
-              <button class="btn-sm" style="background:#EEEDFE;color:#3C3489;border-color:#AFA9EC" onclick="confirmAttendees('${item.id}')">✅ Confirmar presentes e creditar moedas</button>
             `:''}
+            ${isMini&&item.status==='realizado'?'<span style="font-size:11px;color:var(--green);font-weight:600">✓ Presenças confirmadas</span>':''}
           </div>
           ${item.confirmedAttendees&&item.confirmedAttendees.length?`<div style="margin-top:8px;font-size:11px;color:var(--mu)">Presentes confirmados: ${item.confirmedAttendees.map(a=>`<span class="attend-chip confirmed">${a}</span>`).join('')}</div>`:''}
         </div>
@@ -1374,29 +1381,59 @@ async function joinAgenda(agendaId){
   showToast('✅ Participação confirmada! Adicionando à sua agenda...');
   loadAgenda();
 }
-async function confirmAttendees(agendaId){
+function confirmAttendees(agendaId){
   const item=agendaItems.find(a=>a.id===agendaId);if(!item)return;
   const participants=item.participants||[];
-  if(!participants.length){showToast('Nenhum participante se inscreveu ainda.');return;}
-  // Show Drive reminder before confirming
-  showModal('📷','Antes de confirmar — envie a foto!',
-    'Tire uma foto dos participantes no treinamento e envie para o Drive da Copa antes de confirmar as presenças. Acesse: drive.google.com/drive/folders/1iHPGXZIHfsiBFu2YDHVVqphZt43hD8wo\n\nApós enviar a foto, feche este aviso e confirme as presenças novamente.');
-  // Override closeModal to run the actual confirmation
-  window._pendingConfirmAgendaId = agendaId;
-  document.getElementById('modal-overlay').querySelector('button').onclick = async function(){
+  if(!participants.length){showToast('Nenhum participante se inscreveu ainda. Peça para confirmarem na aba Agenda.');return;}
+
+  // Build a modal with checkboxes for each participant
+  const participantNames=participants.map(pname=>{
+    const person=PEOPLE.find(p=>p.name===pname||p.short===pname);
+    return{id:pname,label:person?person.short:pname};
+  });
+
+  // Build modal content with checkboxes
+  const checkboxHtml=participantNames.map(p=>
+    `<label style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:0.5px solid var(--bd);cursor:pointer;font-size:13px">
+      <input type="checkbox" data-pname="${p.id}" checked style="width:16px;height:16px;cursor:pointer">
+      ${p.label}
+    </label>`
+  ).join('');
+
+  // Show modal
+  document.getElementById('modal-icon').textContent='✅';
+  document.getElementById('modal-title').textContent='Quem efetivamente participou?';
+  document.getElementById('modal-msg').innerHTML=
+    `<div style="font-size:12px;color:var(--mu);margin-bottom:10px">Marque apenas quem esteve presente no treinamento. Somente os marcados receberão as 15 🪙.</div>`+
+    `<div style="text-align:left;margin-bottom:12px;max-height:240px;overflow-y:auto">${checkboxHtml}</div>`+
+    `<div style="font-size:11px;color:var(--mu);background:#E1F5EE;border-radius:6px;padding:8px;margin-bottom:4px">📷 Lembre de enviar a foto do treinamento para o <a href="https://drive.google.com/drive/folders/1iHPGXZIHfsiBFu2YDHVVqphZt43hD8wo" target="_blank" style="color:var(--blue)">Drive da Copa →</a></div>`;
+
+  document.getElementById('modal-overlay').querySelector('button').textContent='Confirmar presenças e creditar moedas';
+  document.getElementById('modal-overlay').querySelector('button').style.width='100%';
+  document.getElementById('modal-overlay').classList.add('show');
+
+  window._pendingConfirmAgendaId=agendaId;
+  document.getElementById('modal-overlay').querySelector('button').onclick=async function(){
+    // Get checked participants
+    const checked=Array.from(document.querySelectorAll('#modal-overlay input[type=checkbox]:checked')).map(cb=>cb.dataset.pname);
+    if(!checked.length){showToast('Selecione ao menos um participante.');return;}
     closeModal();
-    const item2=agendaItems.find(a=>a.id===window._pendingConfirmAgendaId);if(!item2)return;
-    const parts=item2.participants||[];
+    document.getElementById('modal-overlay').querySelector('button').textContent='Entendi';
+    document.getElementById('modal-overlay').querySelector('button').style.width='';
+    document.getElementById('modal-overlay').querySelector('button').onclick=closeModal;
+
     const batch=db.batch();
-    parts.forEach(pname=>{
+    checked.forEach(pname=>{
       batch.set(db.collection('scores').doc(pname),{ind:firebase.firestore.FieldValue.increment(15)},{merge:true});
     });
-    await db.collection('agenda').doc(window._pendingConfirmAgendaId).update({confirmedAttendees:parts.map(p=>PEOPLE.find(x=>x.name===p)?.short||p),status:'realizado'});
+    const confirmedLabels=checked.map(p=>PEOPLE.find(x=>x.name===p||x.short===p)?.short||p);
+    await db.collection('agenda').doc(window._pendingConfirmAgendaId).update({
+      confirmedAttendees:confirmedLabels,
+      status:'realizado'
+    });
     await batch.commit();
-    showToast('Presença confirmada! 🪙 15 moedas para cada participante.');
+    showToast('✅ Presenças confirmadas! 🪙 15 moedas para '+checked.length+' participante(s).');
     loadAgenda();
-    // Restore closeModal
-    document.getElementById('modal-overlay').querySelector('button').onclick = closeModal;
   };
 }
 

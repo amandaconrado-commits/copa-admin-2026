@@ -1401,8 +1401,7 @@ Responda em até 4 parágrafos curtos:
     if(response.ok){
       const data=await response.json();
       const text=data.content?.[0]?.text||'Sem resposta.';
-      resultContent.innerHTML=text.replace(/
-/g,'<br>');
+      resultContent.innerHTML=text.replace(/\n/g,'<br>');
     } else {
       // Fallback: use smart local analysis + Google link
       resultContent.innerHTML=analyzeIndicatorLocal(q);

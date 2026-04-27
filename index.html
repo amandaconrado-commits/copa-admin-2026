@@ -242,6 +242,8 @@ tbody td{padding:8px 10px;font-size:12px;color:var(--tx);vertical-align:middle}
 .spinner{width:22px;height:22px;border:2px solid var(--bd);border-top-color:var(--or);border-radius:50%;animation:spin .7s linear infinite;margin:0 auto 8px}
 @keyframes spin{to{transform:rotate(360deg)}}
 .divider{height:0.5px;background:var(--bd);margin:14px 0}
+.ind-consult-box{background:linear-gradient(135deg,#101820,#1a2535);border-radius:12px;padding:16px;margin-bottom:14px}
+.ind-consult-box textarea:focus{outline:none;border-color:var(--or)!important}
 .empty{font-size:12px;color:var(--mu);padding:6px 0}
 </style>
 </head>
@@ -564,6 +566,24 @@ tbody td{padding:8px 10px;font-size:12px;color:var(--tx);vertical-align:middle}
     <div id="page-desafios" class="page">
       <div class="sh2">Desafios & moedas</div>
       <div class="notice"><strong>🪙 Moedas:</strong> Líder de ação conjunta +5 extras · Participante +3 extras · Bônus automático +2 para todos do time a cada ação de colega.</div>
+
+      <!-- CONSULTOR DE INDICADORES -->
+      <div id="ind-consultor" style="display:none;background:linear-gradient(135deg,#101820,#1a2535);border-radius:12px;padding:16px;margin-bottom:14px">
+        <div style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:15px;color:var(--or);margin-bottom:4px">🤖 Consultor de Indicadores — IA</div>
+        <p style="font-size:12px;color:#8A9AB0;margin-bottom:12px">Descreva o indicador que quer criar e a IA analisa se faz sentido para a Copa, se é automatizável e qual nível seria.</p>
+        <div style="display:flex;gap:8px;margin-bottom:8px">
+          <textarea id="ind-query" rows="3" style="flex:1;padding:9px 11px;border:0.5px solid rgba(255,255,255,.15);border-radius:7px;font-size:12px;font-family:'Barlow',sans-serif;color:var(--tx);background:var(--wh);outline:none;resize:none;line-height:1.5" placeholder="Ex: quero medir quantos chamados o Facilities recebe por semana, separado por tipo e com tempo médio de resolução..."></textarea>
+        </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <button class="btn" onclick="consultarIndicadorIA()" id="ind-consult-btn">🔍 Analisar com IA</button>
+          <a href="https://claude.ai" target="_blank" style="display:inline-flex;align-items:center;gap:5px;padding:8px 14px;background:rgba(252,152,1,.15);border:0.5px solid var(--or);border-radius:7px;font-size:12px;color:var(--or);font-weight:600;text-decoration:none">Abrir Claude →</a>
+          <a href="https://www.google.com/search?q=como+criar+indicador+automatico+google+sheets+kpi" target="_blank" style="display:inline-flex;align-items:center;gap:5px;padding:8px 14px;background:rgba(46,117,182,.15);border:0.5px solid #2E75B6;border-radius:7px;font-size:12px;color:#2E75B6;font-weight:600;text-decoration:none">Pesquisar no Google →</a>
+        </div>
+        <div id="ind-result" style="display:none;margin-top:12px;background:rgba(255,255,255,.06);border-radius:8px;padding:12px">
+          <div id="ind-result-content" style="font-size:12px;color:#E0E6F0;line-height:1.6"></div>
+        </div>
+      </div>
+
       <div class="ctabs" id="cat-tabs"></div>
       <div id="cat-content"></div>
     </div>
@@ -655,6 +675,19 @@ tbody td{padding:8px 10px;font-size:12px;color:var(--tx);vertical-align:middle}
           <tr style="background:#E1F5EE"><td>🎁 Bônus de time (por ação de colega)</td><td style="text-align:right;font-weight:600;color:var(--green)">+2</td><td style="font-size:11px;color:var(--mu)">Automático</td></tr>
           <tr style="background:#E1F5EE"><td>⚡ Bônus líder de ação conjunta</td><td style="text-align:right;font-weight:600;color:var(--green)">+5</td><td style="font-size:11px;color:var(--mu)">Adicional ao valor base</td></tr>
           <tr style="background:#E1F5EE"><td>⚡ Bônus participante de ação conjunta</td><td style="text-align:right;font-weight:600;color:var(--green)">+3</td><td style="font-size:11px;color:var(--mu)">Adicional ao valor base</td></tr>
+        </tbody>
+      </table></div>
+      <div class="stag">figurinhas — moedas necessárias</div>
+      <div class="tw"><table>
+        <thead><tr><th>Figurinha</th><th style="text-align:right">🪙 Para desbloquear</th><th>Requisito adicional</th></tr></thead>
+        <tbody>
+          <tr><td>⭐ Menor Aprendiz (Comum)</td><td style="text-align:right;font-weight:600;color:var(--or)">60 🪙</td><td style="font-size:11px;color:var(--mu)">1 atividade aprovada · ~2 livros</td></tr>
+          <tr><td>⭐⭐ Estagiário(a) (Incomum)</td><td style="text-align:right;font-weight:600;color:var(--or)">120 🪙</td><td style="font-size:11px;color:var(--mu)">Curso ou treinamento concluído · ~4 cursos</td></tr>
+          <tr><td>⭐⭐⭐ Analista (Rara)</td><td style="text-align:right;font-weight:600;color:var(--or)">220 🪙</td><td style="font-size:11px;color:var(--mu)">Indicador ou automação aprovados · demanda meses de trabalho</td></tr>
+          <tr><td>⭐⭐⭐⭐ Coordenação (Épica)</td><td style="text-align:right;font-weight:600;color:var(--or)">380 🪙</td><td style="font-size:11px;color:var(--mu)">Liderou ação conjunta aprovada · demanda várias atividades</td></tr>
+          <tr><td>⭐⭐⭐⭐⭐ Gestora / Sócia (Lendária)</td><td style="text-align:right;font-weight:600;color:var(--or)">520 🪙</td><td style="font-size:11px;color:var(--mu)">Projeto estratégico + acúmulo ao longo da Copa</td></tr>
+          <tr style="background:#FFF8E1"><td>✦ Julia & Tumtum 🐾 (Dourada)</td><td style="text-align:right;font-weight:600;color:var(--gold)">Especial</td><td style="font-size:11px;color:var(--mu)">1 livro/curso + 3 ações conjuntas com pessoas distintas</td></tr>
+          <tr style="background:#FCEBEB"><td>✦✦✦ Foto do Time (Ultra Rara)</td><td style="text-align:right;font-weight:600;color:var(--red)">400 🪙 cada membro</td><td style="font-size:11px;color:var(--mu)">Todos do time com 100+ moedas + ao menos 1 atividade aprovada cada</td></tr>
         </tbody>
       </table></div>
       <div class="notice"><strong>Vigência:</strong> 28/04/2026 a 07/08/2026. Atividades fora desse período não são válidas. Todas precisam de aprovação da Amanda para gerar moedas.</div>
@@ -752,75 +785,82 @@ const BONUS={team:2,lider:5,part:3};
 const CHALLENGES={
   livros:{label:'📚 Livros',items:[
     {t:'📱 Dica: Wellhub + Storytell',d:'Quem tem plano <strong>Wellhub</strong> pode acessar gratuitamente o app <strong>Storytell</strong>, que tem audiobooks de vários livros dessa lista e muito mais. Vale verificar se seu plano inclui! Disponível para iOS e Android.',c:0,rule:true},
-    {t:'O Código da Cultura — Daniel Coyle',d:'🎧 <a href="https://www.youtube.com/results?search_query=codigo+da+cultura+daniel+coyle+audiobook+portugues" target="_blank">Audiobook YouTube</a> · <a href="https://www.amazon.com.br/dp/8550804606" target="_blank">Kindle</a>. Resumo + 3 aprendizados aplicáveis.',c:30},
-    {t:'Equipes Brilhantes — Daniel Coyle',d:'🎧 <a href="https://www.youtube.com/results?search_query=equipes+brilhantes+coyle+audiobook" target="_blank">Audiobook YouTube</a> · <a href="https://www.amazon.com.br/s?k=equipes+brilhantes+coyle" target="_blank">Kindle</a>.',c:30},
-    {t:'Líderes se Servem por Último — Simon Sinek',d:'🎧 <a href="https://www.youtube.com/results?search_query=lideres+servem+ultimo+sinek+audiobook+portugues" target="_blank">Audiobook YouTube</a> · <a href="https://www.amazon.com.br/dp/8576843870" target="_blank">Kindle</a>.',c:30},
-    {t:'A Coragem para Liderar — Brené Brown',d:'🎧 <a href="https://www.youtube.com/results?search_query=coragem+para+liderar+brene+brown+audiobook" target="_blank">Audiobook YouTube</a> · <a href="https://www.amazon.com.br/dp/8568014364" target="_blank">Kindle</a>.',c:30},
-    {t:'A Coragem de Ser Você Mesmo — Brené Brown',d:'🎧 <a href="https://www.youtube.com/results?search_query=brene+brown+coragem+ser+voce+mesmo+audiobook" target="_blank">Audiobook YouTube</a> · <a href="https://www.amazon.com.br/s?k=coragem+ser+voce+mesmo" target="_blank">Kindle</a>.',c:30},
-    {t:'Princípios — Ray Dalio',d:'🎧 <a href="https://www.youtube.com/results?search_query=principios+ray+dalio+audiobook+portugues" target="_blank">Audiobook YouTube</a> · Resumo gratuito: <a href="https://www.principles.com" target="_blank">principles.com</a> · <a href="https://www.amazon.com.br/dp/8551003429" target="_blank">Kindle</a>.',c:30},
-    {t:'Hábitos Atômicos — James Clear',d:'🎧 <a href="https://www.youtube.com/results?search_query=habitos+atomicos+james+clear+audiobook" target="_blank">Audiobook YouTube</a> · <a href="https://www.amazon.com.br/dp/8550807095" target="_blank">Kindle</a>. Descreva 1 hábito a implementar.',c:30},
-    {t:'O Poder do Hábito — Charles Duhigg',d:'🎧 <a href="https://www.youtube.com/results?search_query=poder+do+habito+charles+duhigg+audiobook" target="_blank">Audiobook YouTube</a> · <a href="https://www.amazon.com.br/dp/8539004119" target="_blank">Kindle</a>.',c:30},
-    {t:'Os 7 Hábitos — Stephen Covey',d:'🎧 <a href="https://www.youtube.com/results?search_query=7+habitos+covey+audiobook+portugues" target="_blank">Audiobook YouTube</a> · <a href="https://www.amazon.com.br/dp/8576840626" target="_blank">Kindle</a>.',c:30},
-    {t:'O Milagre da Manhã — Hal Elrod',d:'🎧 <a href="https://www.youtube.com/results?search_query=milagre+da+manha+hal+elrod+audiobook" target="_blank">Audiobook YouTube</a> · <a href="https://www.amazon.com.br/dp/8568014135" target="_blank">Kindle</a>.',c:30},
-    {t:'A Tríade do Tempo — Christian Barbosa',d:'🎧 <a href="https://www.youtube.com/results?search_query=triade+do+tempo+christian+barbosa+audiobook" target="_blank">Audiobook YouTube</a> · <a href="https://www.amazon.com.br/dp/8576844338" target="_blank">Kindle</a>.',c:30},
-    {t:'A Sutil Arte de Ligar o F*da-se — Mark Manson',d:'🎧 <a href="https://www.youtube.com/results?search_query=sutil+arte+ligar+foda+se+audiobook" target="_blank">Audiobook YouTube</a> · <a href="https://www.amazon.com.br/dp/8543104459" target="_blank">Kindle</a>.',c:30},
-    {t:'Viva com Entusiasmo — Dale Carnegie',d:'🎧 <a href="https://www.youtube.com/results?search_query=viva+com+entusiasmo+carnegie+audiobook" target="_blank">Audiobook YouTube</a> · <a href="https://www.amazon.com.br/s?k=viva+entusiasmo+carnegie" target="_blank">Kindle</a>.',c:30},
-    {t:'Cem Dias Entre o Céu e o Mar',d:'🎧 <a href="https://www.youtube.com/results?search_query=cem+dias+ceu+mar+audiobook" target="_blank">Audiobook YouTube</a> · <a href="https://www.amazon.com.br/s?k=cem+dias+ceu+mar" target="_blank">Kindle</a>.',c:30},
-    {t:'Como Fazer Amigos e Influenciar Pessoas — Dale Carnegie',d:'🎧 <a href="https://www.youtube.com/results?search_query=como+fazer+amigos+dale+carnegie+audiobook" target="_blank">Audiobook YouTube</a> · <a href="https://www.amazon.com.br/dp/8504018024" target="_blank">Kindle</a>.',c:30},
-    {t:'Como Falar em Público — Dale Carnegie',d:'🎧 <a href="https://www.youtube.com/results?search_query=como+falar+publico+dale+carnegie+audiobook" target="_blank">Audiobook YouTube</a> · <a href="https://www.amazon.com.br/dp/8504018768" target="_blank">Kindle</a>.',c:30},
-    {t:'Como Evitar Preocupações — Dale Carnegie',d:'🎧 <a href="https://www.youtube.com/results?search_query=evitar+preocupacoes+carnegie+audiobook" target="_blank">Audiobook YouTube</a> · <a href="https://www.amazon.com.br/dp/8504018318" target="_blank">Kindle</a>.',c:30},
-    {t:'Fale Mais Eficazmente — Dale Carnegie',d:'🎧 <a href="https://www.youtube.com/results?search_query=fale+mais+eficazmente+carnegie+audiobook" target="_blank">Audiobook YouTube</a> · <a href="https://www.amazon.com.br/s?k=fale+mais+eficazmente" target="_blank">Kindle</a>.',c:30},
-    {t:'Marketing de Relacionamento — Regis McKenna',d:'🎧 <a href="https://www.youtube.com/results?search_query=marketing+relacionamento+mckenna+audiobook" target="_blank">Audiobook YouTube</a> · <a href="https://www.amazon.com.br/s?k=marketing+relacionamento+mckenna" target="_blank">Kindle</a>.',c:30},
-    {t:'Preciso Saber se Estou Indo Bem — Richard Williams',d:'🎧 <a href="https://www.youtube.com/results?search_query=preciso+saber+indo+bem+audiobook" target="_blank">Audiobook YouTube</a> · <a href="https://www.amazon.com.br/s?k=preciso+saber+indo+bem" target="_blank">Kindle</a>.',c:30},
-    {t:'Eneagrama — Uranio Paes',d:'🎧 <a href="https://www.youtube.com/results?search_query=eneagrama+uranio+paes+audiobook" target="_blank">Audiobook YouTube</a> · <a href="https://www.eneagramabrasil.com.br" target="_blank">Material gratuito</a> · <a href="https://www.amazon.com.br/dp/8576843595" target="_blank">Kindle</a>.',c:30},
-    {t:'Descubra Seus Pontos Fortes 2.0 — Tom Rath',d:'🎧 <a href="https://www.youtube.com/results?search_query=descubra+pontos+fortes+audiobook" target="_blank">Audiobook YouTube</a> · <a href="https://www.amazon.com.br/dp/8535229604" target="_blank">Kindle</a>.',c:30},
-    {t:'A Psicologia Financeira — Morgan Housel',d:'🎧 <a href="https://www.youtube.com/results?search_query=psicologia+financeira+morgan+housel+audiobook" target="_blank">Audiobook YouTube</a> · <a href="https://www.amazon.com.br/dp/6556350183" target="_blank">Kindle</a>.',c:30},
-    {t:'O Mesmo de Sempre — Morgan Housel',d:'🎧 <a href="https://www.youtube.com/results?search_query=o+mesmo+de+sempre+housel+audiobook" target="_blank">Audiobook YouTube</a> · <a href="https://www.amazon.com.br/s?k=o+mesmo+de+sempre+housel" target="_blank">Kindle</a>.',c:30},
-    {t:'Rápido e Devagar — Daniel Kahneman',d:'🎧 <a href="https://www.youtube.com/results?search_query=rapido+devagar+kahneman+audiobook+portugues" target="_blank">Audiobook YouTube</a> · <a href="https://www.amazon.com.br/dp/8535236066" target="_blank">Kindle</a>. Neurociência da decisão.',c:30},
-    {t:'O Erro de Descartes — António Damásio',d:'🎧 <a href="https://www.youtube.com/results?search_query=erro+descartes+damasio+audiobook" target="_blank">Audiobook YouTube</a> · <a href="https://www.amazon.com.br/s?k=erro+de+descartes+damasio" target="_blank">Kindle</a>.',c:30},
-    {t:'O Poder do Subconsciente — Joseph Murphy',d:'🎧 <a href="https://www.youtube.com/results?search_query=poder+subconsciente+joseph+murphy+audiobook" target="_blank">Audiobook YouTube</a> · <a href="https://www.amazon.com.br/s?k=poder+subconsciente+murphy" target="_blank">Kindle</a>.',c:30},
-    {t:'Homo Deus — Yuval Noah Harari',d:'🎧 <a href="https://www.youtube.com/results?search_query=homo+deus+harari+audiobook+portugues" target="_blank">Audiobook YouTube</a> · <a href="https://www.amazon.com.br/dp/8535928685" target="_blank">Kindle</a>. Futuro da humanidade e IA.',c:30},
-    {t:'IA: Superpoderes Humanos — Kai-Fu Lee',d:'🎧 <a href="https://www.youtube.com/results?search_query=kai-fu+lee+inteligencia+artificial+audiobook" target="_blank">Audiobook YouTube</a> · <a href="https://www.amazon.com.br/s?k=kai-fu+lee+ia" target="_blank">Kindle</a>. IA e o futuro do trabalho.',c:30},
-    {t:'A Era da IA — Henry Kissinger e Eric Schmidt',d:'🎧 <a href="https://www.youtube.com/results?search_query=era+da+ia+kissinger+schmidt+audiobook" target="_blank">Audiobook YouTube</a> · <a href="https://www.amazon.com.br/s?k=era+da+ia+kissinger" target="_blank">Kindle</a>.',c:30},
-    {t:'Sprint — Jake Knapp',d:'🎧 <a href="https://www.youtube.com/results?search_query=sprint+jake+knapp+audiobook+portugues" target="_blank">Audiobook YouTube</a> · Recursos: <a href="https://www.thesprintbook.com/resources" target="_blank">thesprintbook.com</a> · <a href="https://www.amazon.com.br/dp/8551001523" target="_blank">Kindle</a>.',c:30},
-    {t:'A Arte de Fazer Acontecer — David Allen',d:'🎧 <a href="https://www.youtube.com/results?search_query=arte+fazer+acontecer+david+allen+audiobook" target="_blank">Audiobook YouTube</a> · <a href="https://www.amazon.com.br/dp/8543102588" target="_blank">Kindle</a>.',c:30},
-    {t:'Organizações Exponenciais — Salim Ismail',d:'🎧 <a href="https://www.youtube.com/results?search_query=organizacoes+exponenciais+audiobook" target="_blank">Audiobook YouTube</a> · <a href="https://www.amazon.com.br/dp/8543102022" target="_blank">Kindle</a>.',c:30},
-    {t:'A Meta — Eliyahu Goldratt',d:'🎧 <a href="https://www.youtube.com/results?search_query=a+meta+goldratt+audiobook+portugues" target="_blank">Audiobook YouTube</a> · <a href="https://www.amazon.com.br/s?k=a+meta+goldratt" target="_blank">Kindle</a>.',c:30},
-    {t:'Kaizen — Masaaki Imai',d:'🎧 <a href="https://www.youtube.com/results?search_query=kaizen+melhoria+continua+audiobook" target="_blank">Audiobook YouTube</a> · <a href="https://www.amazon.com.br/s?k=kaizen+imai" target="_blank">Kindle</a>. Melhoria contínua.',c:30},
-    {t:'Arte da Guerra — Sun Tzu',d:'🎧 <a href="https://www.youtube.com/results?search_query=arte+da+guerra+sun+tzu+audiobook+portugues" target="_blank">Audiobook YouTube</a> · <a href="https://www.amazon.com.br/dp/8501070289" target="_blank">Kindle</a>.',c:30},
-    {t:'Excelência no Secretariado',d:'🎧 <a href="https://www.youtube.com/results?search_query=excelencia+secretariado+audiobook" target="_blank">Audiobook YouTube</a> · <a href="https://www.amazon.com.br/s?k=excelencia+secretariado" target="_blank">Kindle</a>.',c:30},
-    {t:'Cerimonial para Executivos',d:'🎧 <a href="https://www.youtube.com/results?search_query=cerimonial+executivos+audiobook" target="_blank">Audiobook YouTube</a> · <a href="https://www.amazon.com.br/s?k=cerimonial+executivos" target="_blank">Kindle</a>.',c:30},
-    {t:'O Futuro do Secretariado',d:'🎧 <a href="https://www.youtube.com/results?search_query=futuro+secretariado+audiobook" target="_blank">Audiobook YouTube</a> · <a href="https://www.amazon.com.br/s?k=futuro+secretariado" target="_blank">Kindle</a>.',c:30},
-    {t:'Clube do livro (2+ times diferentes)',d:'Mesmo livro, debate de 30 min com ata. Todos os participantes recebem o dobro de moedas.',c:60,joint:true},
+    // 🎧 Audiobooks: links de busca no YouTube (sempre gratuitos) | 📱 Kindle: link de compra
+    // 💡 Dica: quem tem Wellhub pode usar o app Storytell gratuitamente — tem muitos desses títulos!
+    {t:'O Código da Cultura — Daniel Coyle',d:'🎧 <a href="https://www.youtube.com/results?search_query=codigo+da+cultura+daniel+coyle+audiobook+completo+portugues" target="_blank">Buscar audiobook no YouTube</a> · 📱 <a href="https://www.amazon.com.br/dp/8550804606" target="_blank">Kindle</a>. Resumo + 3 aprendizados.',c:30},
+    {t:'Equipes Brilhantes — Daniel Coyle',d:'🎧 <a href="https://www.youtube.com/results?search_query=equipes+brilhantes+daniel+coyle+audiobook+completo" target="_blank">Buscar audiobook no YouTube</a> · 📱 <a href="https://www.amazon.com.br/s?k=equipes+brilhantes+coyle" target="_blank">Kindle</a>.',c:30},
+    {t:'Líderes se Servem por Último — Simon Sinek',d:'🎧 <a href="https://www.youtube.com/results?search_query=lideres+se+servem+por+ultimo+sinek+audiobook+completo" target="_blank">Buscar audiobook no YouTube</a> · 📱 <a href="https://www.amazon.com.br/dp/8576843870" target="_blank">Kindle</a>.',c:30},
+    {t:'A Coragem para Liderar — Brené Brown',d:'🎧 <a href="https://www.youtube.com/results?search_query=coragem+para+liderar+brene+brown+audiobook+completo+portugues" target="_blank">Buscar audiobook no YouTube</a> · 📱 <a href="https://www.amazon.com.br/dp/8568014364" target="_blank">Kindle</a>.',c:30},
+    {t:'A Coragem de Ser Você Mesmo — Brené Brown',d:'🎧 <a href="https://www.youtube.com/results?search_query=coragem+ser+voce+mesmo+brene+brown+audiobook+completo" target="_blank">Buscar audiobook no YouTube</a> · 📱 <a href="https://www.amazon.com.br/s?k=coragem+ser+voce+mesmo+brown" target="_blank">Kindle</a>.',c:30},
+    {t:'Princípios — Ray Dalio',d:'🎧 <a href="https://www.youtube.com/results?search_query=principios+ray+dalio+audiobook+completo+portugues" target="_blank">Buscar audiobook no YouTube</a> · Resumo oficial gratuito: <a href="https://www.principles.com/principles/life-work" target="_blank">principles.com</a> · 📱 <a href="https://www.amazon.com.br/dp/8551003429" target="_blank">Kindle</a>.',c:30},
+    {t:'Hábitos Atômicos — James Clear',d:'🎧 <a href="https://www.youtube.com/results?search_query=habitos+atomicos+james+clear+audiobook+completo+portugues" target="_blank">Buscar audiobook no YouTube</a> · 📱 <a href="https://www.amazon.com.br/dp/8550807095" target="_blank">Kindle</a>. Descreva 1 hábito a implementar.',c:30},
+    {t:'O Poder do Hábito — Charles Duhigg',d:'🎧 <a href="https://www.youtube.com/results?search_query=poder+do+habito+charles+duhigg+audiobook+completo+portugues" target="_blank">Buscar audiobook no YouTube</a> · 📱 <a href="https://www.amazon.com.br/dp/8539004119" target="_blank">Kindle</a>.',c:30},
+    {t:'Os 7 Hábitos — Stephen Covey',d:'🎧 <a href="https://www.youtube.com/results?search_query=7+habitos+pessoas+altamente+eficazes+covey+audiobook+completo+portugues" target="_blank">Buscar audiobook no YouTube</a> · 📱 <a href="https://www.amazon.com.br/dp/8576840626" target="_blank">Kindle</a>.',c:30},
+    {t:'O Milagre da Manhã — Hal Elrod',d:'🎧 <a href="https://www.youtube.com/results?search_query=milagre+da+manha+hal+elrod+audiobook+completo+portugues" target="_blank">Buscar audiobook no YouTube</a> · 📱 <a href="https://www.amazon.com.br/dp/8568014135" target="_blank">Kindle</a>.',c:30},
+    {t:'A Tríade do Tempo — Christian Barbosa',d:'🎧 <a href="https://www.youtube.com/results?search_query=triade+do+tempo+christian+barbosa+audiobook+completo" target="_blank">Buscar audiobook no YouTube</a> · 📱 <a href="https://www.amazon.com.br/dp/8576844338" target="_blank">Kindle</a>.',c:30},
+    {t:'A Sutil Arte de Ligar o F*da-se — Mark Manson',d:'🎧 <a href="https://www.youtube.com/results?search_query=sutil+arte+ligar+fodase+mark+manson+audiobook+completo" target="_blank">Buscar audiobook no YouTube</a> · 📱 <a href="https://www.amazon.com.br/dp/8543104459" target="_blank">Kindle</a>.',c:30},
+    {t:'Viva com Entusiasmo — Dale Carnegie',d:'🎧 <a href="https://www.youtube.com/results?search_query=viva+com+entusiasmo+dale+carnegie+audiobook+completo" target="_blank">Buscar audiobook no YouTube</a> · 📱 <a href="https://www.amazon.com.br/s?k=viva+entusiasmo+carnegie" target="_blank">Kindle</a>.',c:30},
+    {t:'Como Fazer Amigos e Influenciar Pessoas — Dale Carnegie',d:'🎧 <a href="https://www.youtube.com/results?search_query=como+fazer+amigos+influenciar+pessoas+carnegie+audiobook+completo+portugues" target="_blank">Buscar audiobook no YouTube</a> · 📱 <a href="https://www.amazon.com.br/dp/8504018024" target="_blank">Kindle</a>.',c:30},
+    {t:'Como Falar em Público — Dale Carnegie',d:'🎧 <a href="https://www.youtube.com/results?search_query=como+falar+publico+influenciar+carnegie+audiobook+completo+portugues" target="_blank">Buscar audiobook no YouTube</a> · 📱 <a href="https://www.amazon.com.br/dp/8504018768" target="_blank">Kindle</a>.',c:30},
+    {t:'Como Evitar Preocupações e Começar a Viver — Dale Carnegie',d:'🎧 <a href="https://www.youtube.com/results?search_query=como+evitar+preocupacoes+comecar+viver+carnegie+audiobook+completo" target="_blank">Buscar audiobook no YouTube</a> · 📱 <a href="https://www.amazon.com.br/dp/8504018318" target="_blank">Kindle</a>.',c:30},
+    {t:'Fale Mais Eficazmente — Dale Carnegie',d:'🎧 <a href="https://www.youtube.com/results?search_query=fale+mais+eficazmente+carnegie+audiobook+completo" target="_blank">Buscar audiobook no YouTube</a> · 📱 <a href="https://www.amazon.com.br/s?k=fale+mais+eficazmente+carnegie" target="_blank">Kindle</a>.',c:30},
+    {t:'Marketing de Relacionamento — Regis McKenna',d:'🎧 <a href="https://www.youtube.com/results?search_query=marketing+relacionamento+regis+mckenna+audiobook+portugues" target="_blank">Buscar audiobook no YouTube</a> · 📱 <a href="https://www.amazon.com.br/s?k=marketing+relacionamento+mckenna" target="_blank">Kindle</a>.',c:30},
+    {t:'Preciso Saber se Estou Indo Bem — Richard Williams',d:'🎧 <a href="https://www.youtube.com/results?search_query=preciso+saber+indo+bem+richard+williams+audiobook" target="_blank">Buscar audiobook no YouTube</a> · 📱 <a href="https://www.amazon.com.br/s?k=preciso+saber+indo+bem" target="_blank">Kindle</a>.',c:30},
+    {t:'Eneagrama — A Personalidade em 9 Padrões — Uranio Paes',d:'🎧 <a href="https://www.youtube.com/results?search_query=eneagrama+uranio+paes+audiobook+completo" target="_blank">Buscar audiobook no YouTube</a> · Material gratuito: <a href="https://www.eneagramabrasil.com.br/material-gratuito/" target="_blank">eneagramabrasil.com.br</a> · 📱 <a href="https://www.amazon.com.br/dp/8576843595" target="_blank">Kindle</a>.',c:30},
+    {t:'Descubra Seus Pontos Fortes 2.0 — Tom Rath',d:'🎧 <a href="https://www.youtube.com/results?search_query=descubra+pontos+fortes+tom+rath+audiobook+portugues" target="_blank">Buscar audiobook no YouTube</a> · 📱 <a href="https://www.amazon.com.br/dp/8535229604" target="_blank">Kindle</a>.',c:30},
+    {t:'A Psicologia Financeira — Morgan Housel',d:'🎧 <a href="https://www.youtube.com/results?search_query=psicologia+financeira+morgan+housel+audiobook+completo+portugues" target="_blank">Buscar audiobook no YouTube</a> · 📱 <a href="https://www.amazon.com.br/dp/6556350183" target="_blank">Kindle</a>.',c:30},
+    {t:'O Mesmo de Sempre — Morgan Housel',d:'🎧 <a href="https://www.youtube.com/results?search_query=o+mesmo+de+sempre+morgan+housel+audiobook+portugues" target="_blank">Buscar audiobook no YouTube</a> · 📱 <a href="https://www.amazon.com.br/s?k=o+mesmo+de+sempre+housel" target="_blank">Kindle</a>.',c:30},
+    {t:'Rápido e Devagar — Daniel Kahneman',d:'🎧 <a href="https://www.youtube.com/results?search_query=rapido+e+devagar+daniel+kahneman+audiobook+completo+portugues" target="_blank">Buscar audiobook no YouTube</a> · 📱 <a href="https://www.amazon.com.br/dp/8535236066" target="_blank">Kindle</a>. Neurociência da decisão.',c:30},
+    {t:'O Erro de Descartes — António Damásio',d:'🎧 <a href="https://www.youtube.com/results?search_query=erro+de+descartes+antonio+damasio+audiobook+portugues" target="_blank">Buscar audiobook no YouTube</a> · 📱 <a href="https://www.amazon.com.br/s?k=erro+de+descartes+damasio" target="_blank">Kindle</a>.',c:30},
+    {t:'O Poder do Subconsciente — Joseph Murphy',d:'🎧 <a href="https://www.youtube.com/results?search_query=poder+do+subconsciente+joseph+murphy+audiobook+completo+portugues" target="_blank">Buscar audiobook no YouTube</a> · 📱 <a href="https://www.amazon.com.br/s?k=poder+subconsciente+murphy" target="_blank">Kindle</a>.',c:30},
+    {t:'Homo Deus — Yuval Noah Harari',d:'🎧 <a href="https://www.youtube.com/results?search_query=homo+deus+yuval+harari+audiobook+completo+portugues" target="_blank">Buscar audiobook no YouTube</a> · 📱 <a href="https://www.amazon.com.br/dp/8535928685" target="_blank">Kindle</a>. Futuro da humanidade e IA.',c:30},
+    {t:'IA: Superpoderes Humanos — Kai-Fu Lee',d:'🎧 <a href="https://www.youtube.com/results?search_query=kai-fu+lee+inteligencia+artificial+audiobook+portugues" target="_blank">Buscar audiobook no YouTube</a> · 📱 <a href="https://www.amazon.com.br/s?k=kai-fu+lee+inteligencia+artificial" target="_blank">Kindle</a>.',c:30},
+    {t:'A Era da IA — Henry Kissinger e Eric Schmidt',d:'🎧 <a href="https://www.youtube.com/results?search_query=era+da+ia+kissinger+schmidt+audiobook+portugues" target="_blank">Buscar audiobook no YouTube</a> · 📱 <a href="https://www.amazon.com.br/s?k=era+da+ia+kissinger" target="_blank">Kindle</a>.',c:30},
+    {t:'Sprint — Jake Knapp (Google Ventures)',d:'🎧 <a href="https://www.youtube.com/results?search_query=sprint+jake+knapp+audiobook+completo+portugues" target="_blank">Buscar audiobook no YouTube</a> · Recursos oficiais gratuitos: <a href="https://www.thesprintbook.com/resources" target="_blank">thesprintbook.com</a> · 📱 <a href="https://www.amazon.com.br/dp/8551001523" target="_blank">Kindle</a>.',c:30},
+    {t:'A Arte de Fazer Acontecer — David Allen',d:'🎧 <a href="https://www.youtube.com/results?search_query=arte+de+fazer+acontecer+david+allen+audiobook+completo+portugues" target="_blank">Buscar audiobook no YouTube</a> · 📱 <a href="https://www.amazon.com.br/dp/8543102588" target="_blank">Kindle</a>.',c:30},
+    {t:'Organizações Exponenciais — Salim Ismail',d:'🎧 <a href="https://www.youtube.com/results?search_query=organizacoes+exponenciais+salim+ismail+audiobook+completo" target="_blank">Buscar audiobook no YouTube</a> · 📱 <a href="https://www.amazon.com.br/dp/8543102022" target="_blank">Kindle</a>.',c:30},
+    {t:'A Meta — Eliyahu Goldratt',d:'🎧 <a href="https://www.youtube.com/results?search_query=a+meta+eliyahu+goldratt+audiobook+completo+portugues" target="_blank">Buscar audiobook no YouTube</a> · 📱 <a href="https://www.amazon.com.br/s?k=a+meta+goldratt" target="_blank">Kindle</a>. Teoria das restrições.',c:30},
+    {t:'Kaizen — A Estratégia da Melhoria Contínua — Masaaki Imai',d:'🎧 <a href="https://www.youtube.com/results?search_query=kaizen+masaaki+imai+audiobook+portugues" target="_blank">Buscar audiobook no YouTube</a> · 📱 <a href="https://www.amazon.com.br/s?k=kaizen+imai" target="_blank">Kindle</a>.',c:30},
+    {t:'Arte da Guerra — Sun Tzu',d:'🎧 <a href="https://www.youtube.com/results?search_query=arte+da+guerra+sun+tzu+audiobook+completo+portugues" target="_blank">Buscar audiobook no YouTube</a> · Domínio público: <a href="http://www.dominiopublico.gov.br/pesquisa/DetalheObraForm.do?select_action=&co_obra=2326" target="_blank">dominiopublico.gov.br</a> · 📱 <a href="https://www.amazon.com.br/dp/8501070289" target="_blank">Kindle</a>.',c:30},
+    {t:'Excelência no Secretariado — Cibele Barsalini Martins',d:'🎧 <a href="https://www.youtube.com/results?search_query=excelencia+no+secretariado+audiobook+portugues" target="_blank">Buscar audiobook no YouTube</a> · 📱 <a href="https://www.amazon.com.br/s?k=excelencia+secretariado+cibele" target="_blank">Kindle</a>.',c:30},
+    {t:'Cerimonial para Executivos',d:'🎧 <a href="https://www.youtube.com/results?search_query=cerimonial+executivos+audiobook+portugues" target="_blank">Buscar audiobook no YouTube</a> · 📱 <a href="https://www.amazon.com.br/s?k=cerimonial+executivos" target="_blank">Kindle</a>.',c:30},
+    {t:'O Futuro do Secretariado',d:'🎧 <a href="https://www.youtube.com/results?search_query=futuro+secretariado+audiobook+portugues" target="_blank">Buscar audiobook no YouTube</a> · 📱 <a href="https://www.amazon.com.br/s?k=futuro+secretariado" target="_blank">Kindle</a>.',c:30},
+    {t:'Clube do livro (2+ times diferentes)',d:'Mesmo livro, debate de 30 min com ata. Todos os participantes recebem o dobro de moedas. 🎧 Sugestão: usem o Storytell (Wellhub) para ouvir juntos!',c:60,joint:true},
   ]},
   cursos:{label:'🎓 Cursos',items:[
-    {t:'Desenvolvimento Profissional — Fundação Bradesco',d:'<a href="https://www.ev.org.br/cursos/desenvolvimento-profissional" target="_blank">ev.org.br →</a> Gratuito + Certificado',c:25},
-    {t:'Organização Pessoal — Fundação Bradesco',d:'<a href="https://www.ev.org.br/cursos/organizacao-pessoal" target="_blank">ev.org.br →</a> Gratuito + Certificado',c:25},
-    {t:'Excel na Prática — Fundação Bradesco',d:'<a href="https://www.ev.org.br/cursos/excel-na-pratica" target="_blank">ev.org.br →</a> Gratuito + Certificado',c:25},
-    {t:'Introdução à Gestão de Projetos — Fundação Bradesco',d:'<a href="https://www.ev.org.br/cursos/introducao-a-gestao-de-projetos" target="_blank">ev.org.br →</a> Gratuito + Certificado',c:25},
-    {t:'LGPD na Prática — FGV Online',d:'<a href="https://educacao-executiva.fgv.br/cursos/gratuitos" target="_blank">fgv.br →</a> Gratuito + Certificado FGV',c:25},
-    {t:'Fundamentos da Administração — FGV Online',d:'<a href="https://educacao-executiva.fgv.br/cursos/gratuitos" target="_blank">fgv.br →</a> Gratuito + Certificado FGV',c:25},
-    {t:'Neurociência para Líderes — FGV Online',d:'<a href="https://educacao-executiva.fgv.br/cursos/gratuitos" target="_blank">fgv.br →</a> Gratuito + Certificado FGV. Comportamento e tomada de decisão.',c:25},
-    {t:'Gestão Financeira — Sebrae',d:'<a href="https://sebrae.com.br/sites/PortalSebrae/cursosonline" target="_blank">sebrae.com.br →</a> Gratuito + Certificado. Fluxo de caixa e planejamento.',c:25},
-    {t:'Melhoria Contínua (Lean/Kaizen) — Sebrae',d:'<a href="https://sebrae.com.br/sites/PortalSebrae/cursosonline" target="_blank">sebrae.com.br →</a> Gratuito + Certificado',c:25},
-    {t:'Indicadores de Desempenho (KPI) — Sebrae',d:'<a href="https://sebrae.com.br/sites/PortalSebrae/cursosonline" target="_blank">sebrae.com.br →</a> Gratuito + Certificado. O que medir e como usar.',c:25},
-    {t:'Facilities Management Básico — Sebrae',d:'<a href="https://sebrae.com.br/sites/PortalSebrae/cursosonline" target="_blank">sebrae.com.br →</a> Gratuito + Certificado. Gestão de espaços e serviços.',c:25},
-    {t:'Gestão de Pessoas — Escola Virtual Gov',d:'<a href="https://www.escolavirtual.gov.br" target="_blank">escolavirtual.gov.br →</a> Gratuito + Certificado Federal',c:25},
-    {t:'Compliance e Ética — Escola Virtual Gov',d:'<a href="https://www.escolavirtual.gov.br" target="_blank">escolavirtual.gov.br →</a> Gratuito + Certificado Federal',c:25},
-    {t:'Gestão da Mudança — Escola Virtual Gov',d:'<a href="https://www.escolavirtual.gov.br" target="_blank">escolavirtual.gov.br →</a> Gratuito + Certificado Federal. Change management na prática.',c:25},
-    {t:'Departamento Pessoal — Prime Cursos',d:'<a href="https://www.primecursos.com.br/departamento-pessoal" target="_blank">primecursos.com.br →</a> Gratuito + Certificado. Rotinas trabalhistas e CLT.',c:25},
-    {t:'Comunicação Assertiva — Prime Cursos',d:'<a href="https://www.primecursos.com.br" target="_blank">primecursos.com.br →</a> Gratuito + Certificado. Feedback, escuta ativa e CNV.',c:25},
-    {t:'Assessoria Executiva Moderna — Prime Cursos',d:'<a href="https://www.primecursos.com.br" target="_blank">primecursos.com.br →</a> Gratuito + Certificado. Agenda, protocolo e suporte estratégico.',c:25},
-    {t:'Jurídico Básico para não Juristas — Escola Virtual Gov',d:'<a href="https://www.escolavirtual.gov.br" target="_blank">escolavirtual.gov.br →</a> Gratuito + Certificado. Contratos e direito do trabalho.',c:25},
-    {t:'Scrum Fundamentals Certified — ScrumStudy',d:'<a href="https://www.scrumstudy.com/certification/scrum-fundamentals-certified" target="_blank">scrumstudy.com →</a> Gratuito + Certificado Internacional. Gestão ágil.',c:25},
-    {t:'Google Looker Studio — Google Skillshop',d:'<a href="https://skillshop.withgoogle.com" target="_blank">skillshop.google.com →</a> Gratuito + Certificado Google. Dashboards e indicadores.',c:25},
-    {t:'IA para Todos — DeepLearning.AI / Coursera',d:'<a href="https://www.coursera.org/learn/ai-for-everyone" target="_blank">coursera.org →</a> Audit gratuito. Conceitos de IA para qualquer área.',c:25},
-    {t:'Introdução ao ChatGPT — Coursera',d:'<a href="https://www.coursera.org/learn/prompt-engineering" target="_blank">coursera.org →</a> Audit gratuito. Prompts e uso no trabalho.',c:25},
-    {t:'Google Gemini no Trabalho — Google Skillshop',d:'<a href="https://skillshop.withgoogle.com" target="_blank">skillshop.google.com →</a> Gratuito + Certificado Google. Gemini no Workspace.',c:25},
-    {t:'Claude para Produtividade — Anthropic / YouTube',d:'<a href="https://www.youtube.com/results?search_query=claude+anthropic+tutorial+portugues" target="_blank">YouTube gratuito →</a> Como usar Claude no trabalho.',c:25},
-    {t:'n8n — Automação sem código',d:'<a href="https://www.youtube.com/results?search_query=n8n+tutorial+portugues+iniciante" target="_blank">YouTube gratuito →</a> Criação de fluxos automáticos.',c:25},
-    {t:'Gestão Ágil (Scrum/Kanban) — Coursera',d:'<a href="https://www.coursera.org/learn/agile-development" target="_blank">coursera.org →</a> Audit gratuito. Metodologias ágeis na prática.',c:25},
-    {t:'Segurança do Trabalho (NR) — Senai EAD',d:'<a href="https://www.senai.br/ead" target="_blank">senai.br/ead →</a> Gratuito. NRs essenciais para Facilities.',c:25},
+    // ── Fundação Bradesco (ev.org.br) — 100% gratuito + certificado digital ──
+    {t:'Desenvolvimento Profissional — Fundação Bradesco',d:'<a href="https://www.ev.org.br/cursos/desenvolvimento-profissional" target="_blank">ev.org.br →</a> ✅ Gratuito + Certificado. Autoconhecimento, mercado de trabalho e planejamento de carreira.',c:25},
+    {t:'Organização Pessoal — Fundação Bradesco',d:'<a href="https://www.ev.org.br/cursos/organizacao-pessoal" target="_blank">ev.org.br →</a> ✅ Gratuito + Certificado. Gestão do tempo, rotina e produtividade.',c:25},
+    {t:'Excel na Prática — Fundação Bradesco',d:'<a href="https://www.ev.org.br/cursos/excel-na-pratica" target="_blank">ev.org.br →</a> ✅ Gratuito + Certificado. Planilhas, fórmulas e análise de dados.',c:25},
+    {t:'Introdução à Gestão de Projetos — Fundação Bradesco',d:'<a href="https://www.ev.org.br/cursos/introducao-a-gestao-de-projetos" target="_blank">ev.org.br →</a> ✅ Gratuito + Certificado. Fundamentos de gerenciamento de projetos.',c:25},
+    {t:'Inteligência Artificial — Fundação Bradesco',d:'<a href="https://www.ev.org.br/cursos/inteligencia-artificial" target="_blank">ev.org.br →</a> ✅ Gratuito + Certificado. IA aplicada ao trabalho, incluindo uso estratégico.',c:25},
+    // ── Escola Virtual Gov (escolavirtual.gov.br) — gratuito + certificado federal ──
+    {t:'Gestão de Pessoas — Escola Virtual Gov',d:'<a href="https://www.escolavirtual.gov.br/curso/289" target="_blank">escolavirtual.gov.br →</a> ✅ Gratuito + Certificado Federal. Liderança, clima e desenvolvimento.',c:25},
+    {t:'Compliance e Ética nos Negócios — Escola Virtual Gov',d:'<a href="https://www.escolavirtual.gov.br/curso/185" target="_blank">escolavirtual.gov.br →</a> ✅ Gratuito + Certificado Federal. Integridade e prevenção de riscos.',c:25},
+    {t:'Gestão da Mudança — Escola Virtual Gov',d:'<a href="https://www.escolavirtual.gov.br/curso/399" target="_blank">escolavirtual.gov.br →</a> ✅ Gratuito + Certificado Federal. Change management e adaptação organizacional.',c:25},
+    {t:'LGPD — Proteção de Dados Pessoais — Escola Virtual Gov',d:'<a href="https://www.escolavirtual.gov.br/curso/168" target="_blank">escolavirtual.gov.br →</a> ✅ Gratuito + Certificado Federal. Essencial para Jurídico, RH e DP.',c:25},
+    {t:'Redação Oficial — Escola Virtual Gov',d:'<a href="https://www.escolavirtual.gov.br/curso/13" target="_blank">escolavirtual.gov.br →</a> ✅ Gratuito + Certificado Federal. Comunicação escrita profissional.',c:25},
+    // ── Sebrae — gratuito + certificado ──
+    {t:'Gestão Financeira — Sebrae EAD',d:'<a href="https://www.sebrae.com.br/sites/PortalSebrae/cursosonline/curso-ead-gestao-financeira" target="_blank">sebrae.com.br →</a> ✅ Gratuito + Certificado. Fluxo de caixa, orçamento e planejamento.',c:25},
+    {t:'Melhoria Contínua com Lean — Sebrae EAD',d:'<a href="https://www.sebrae.com.br/sites/PortalSebrae/cursosonline" target="_blank">sebrae.com.br →</a> ✅ Gratuito + Certificado. Eliminação de desperdícios e kaizen.',c:25},
+    // ── Prime Cursos — gratuito + certificado ──
+    {t:'Departamento Pessoal — Prime Cursos',d:'<a href="https://www.primecursos.com.br/departamento-pessoal/" target="_blank">primecursos.com.br →</a> ✅ Gratuito + Certificado. Rotinas trabalhistas, CLT e folha de pagamento.',c:25},
+    {t:'Comunicação Empresarial — Prime Cursos',d:'<a href="https://www.primecursos.com.br/comunicacao-empresarial/" target="_blank">primecursos.com.br →</a> ✅ Gratuito + Certificado. Comunicação profissional, feedback e escuta ativa.',c:25},
+    {t:'Secretariado Executivo — Prime Cursos',d:'<a href="https://www.primecursos.com.br/secretariado-executivo/" target="_blank">primecursos.com.br →</a> ✅ Gratuito + Certificado. Assessoria, agenda e suporte estratégico.',c:25},
+    {t:'Gestão de Contratos — Prime Cursos',d:'<a href="https://www.primecursos.com.br/gestao-de-contratos/" target="_blank">primecursos.com.br →</a> ✅ Gratuito + Certificado. Contratos, renovações e riscos jurídicos.',c:25},
+    // ── ScrumStudy — gratuito + certificado internacional ──
+    {t:'Scrum Fundamentals Certified (SFC) — ScrumStudy',d:'<a href="https://www.scrumstudy.com/certification/scrum-fundamentals-certified" target="_blank">scrumstudy.com →</a> ✅ Gratuito + Certificado Internacional. Gestão ágil com Scrum.',c:25},
+    // ── Google Skillshop — gratuito + certificado Google ──
+    {t:'Looker Studio (Data Studio) — Google Skillshop',d:'<a href="https://skillshop.exceedlms.com/student/catalog/list?category_ids=53-google-data-studio" target="_blank">skillshop.withgoogle.com →</a> ✅ Gratuito + Certificado Google. Dashboards e indicadores automáticos.',c:25},
+    {t:'Google Workspace (Sheets, Docs, Drive) — Google Skillshop',d:'<a href="https://skillshop.withgoogle.com" target="_blank">skillshop.withgoogle.com →</a> ✅ Gratuito + Certificado Google. Ferramentas Google para o trabalho.',c:25},
+    // ── Coursera (audit gratuito, sem certificado) ──
+    {t:'IA para Todos — DeepLearning.AI (Coursera)',d:'<a href="https://www.coursera.org/learn/ai-for-everyone" target="_blank">coursera.org →</a> ✅ Audit 100% gratuito (sem certificado). Conceitos de IA para qualquer área. Certificado é pago.',c:25},
+    {t:'Fundamentos de Gestão de Projetos — Google (Coursera)',d:'<a href="https://www.coursera.org/learn/project-management-foundations" target="_blank">coursera.org →</a> ✅ Audit gratuito. Metodologias ágeis e tradicionais na prática.',c:25},
+    // ── YouTube (tutoriais gratuitos) ──
+    {t:'Claude (Anthropic) — Como usar no trabalho',d:'<a href="https://www.youtube.com/results?search_query=claude+anthropic+como+usar+trabalho+portugues+2025" target="_blank">YouTube →</a> ✅ Gratuito. Tutoriais práticos de uso do Claude para produtividade.',c:25},
+    {t:'n8n — Automação de fluxos sem código',d:'<a href="https://www.youtube.com/results?search_query=n8n+automacao+tutorial+portugues+iniciante+2025" target="_blank">YouTube →</a> ✅ Gratuito. Aprenda a criar fluxos automáticos com n8n.',c:25},
+    {t:'Google Gemini — Produtividade no Workspace',d:'<a href="https://www.youtube.com/results?search_query=google+gemini+workspace+tutorial+portugues+2025" target="_blank">YouTube →</a> ✅ Gratuito. Como usar Gemini no Docs, Gmail e Sheets.',c:25},
+    {t:'ChatGPT — Prompts para uso profissional',d:'<a href="https://www.youtube.com/results?search_query=chatgpt+prompts+trabalho+profissional+portugues+2025" target="_blank">YouTube →</a> ✅ Gratuito. Técnicas de prompt para o trabalho administrativo.',c:25},
   ]},
   indicadores:{label:'📊 Indicadores',items:[
     {t:'⚠️ REGRA: Indicador precisa ser automático',d:'Não são aceitas planilhas preenchidas manualmente. Use <strong>Google Forms → Sheets, Apps Script, Claude, n8n, ChatGPT, Gemini, Data Studio</strong> ou qualquer ferramenta que alimente os dados sozinha e seja segura. Apresentação ao vivo obrigatória.',c:0,rule:true},
@@ -1151,7 +1191,7 @@ function buildDesafios(){
   let first=true;
   Object.entries(CHALLENGES).forEach(([key,cat])=>{
     const tb=document.createElement('button');tb.className='ct'+(first?' on':'');tb.textContent=cat.label;
-    tb.onclick=function(){document.querySelectorAll('.ct').forEach(t=>t.classList.remove('on'));this.classList.add('on');document.querySelectorAll('.ch-sec').forEach(c=>c.style.display='none');document.getElementById('cs-'+key).style.display='block';};
+    tb.onclick=function(){document.querySelectorAll('.ct').forEach(t=>t.classList.remove('on'));this.classList.add('on');document.querySelectorAll('.ch-sec').forEach(c=>c.style.display='none');document.getElementById('cs-'+key).style.display='block';const cons=document.getElementById('ind-consultor');if(cons)cons.style.display=(key==='indicadores'||key==='templates')?'block':'none';};
     tabs.appendChild(tb);
     const div=document.createElement('div');div.className='chl ch-sec';div.id='cs-'+key;div.style.display=first?'block':'none';
     div.innerHTML=cat.items.map(item=>{
@@ -1324,6 +1364,81 @@ function goPage(id,btn){
   if(id==='agenda')loadAgenda();
   if(id==='fotos')loadPhotos();
 }
+async function consultarIndicadorIA(){
+  const q=document.getElementById('ind-query').value.trim();
+  if(!q||q.length<10){showToast('Descreva melhor o indicador que quer criar.');return;}
+  const btn=document.getElementById('ind-consult-btn');
+  btn.disabled=true;btn.textContent='Analisando...';
+  const result=document.getElementById('ind-result');
+  const resultContent=document.getElementById('ind-result-content');
+  result.style.display='block';
+  resultContent.innerHTML='<span style="color:#8A9AB0">⏳ Consultando IA...</span>';
+  try{
+    const response=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','x-api-key':'','anthropic-version':'2023-06-01'},
+      body:JSON.stringify({
+        model:'claude-sonnet-4-20250514',
+        max_tokens:600,
+        messages:[{role:'user',content:`Você é um especialista em indicadores de desempenho (KPIs) para times administrativos. 
+Analise o indicador que o colaborador quer criar e responda de forma direta e prática em português.
+
+Indicador descrito: "${q}"
+
+Contexto: O colaborador faz parte de um time administrativo (Financeiro, RH, Dep. Pessoal, Facilities, Jurídico ou Estratégico) numa empresa de SEO. Para pontuar na Copa Interna, o indicador precisa ser:
+1. Mensurável com dados reais (não opinião)
+2. Automatizado (Google Forms, Sheets, Apps Script, n8n, Gemini, Claude, Data Studio — sem preenchimento manual)
+3. Relevante para a área e para a empresa
+4. Acompanhado ao longo do tempo (tendência)
+
+Responda em até 4 parágrafos curtos:
+- ✅ ou ❌ Se o indicador faz sentido e por quê
+- 🔧 Como automatizá-lo (ferramenta sugerida)
+- 📊 Qual nível seria (1=35🪙, 2=60🪙, 3=90🪙)
+- 💡 Uma sugestão de melhoria ou variação se aplicável`}]
+      })
+    });
+    if(response.ok){
+      const data=await response.json();
+      const text=data.content?.[0]?.text||'Sem resposta.';
+      resultContent.innerHTML=text.replace(/
+/g,'<br>');
+    } else {
+      // Fallback: use smart local analysis + Google link
+      resultContent.innerHTML=analyzeIndicatorLocal(q);
+    }
+  }catch(e){
+    resultContent.innerHTML=analyzeIndicatorLocal(q);
+  }
+  btn.disabled=false;btn.textContent='🔍 Analisar com IA';
+}
+
+function analyzeIndicatorLocal(q){
+  const ql=q.toLowerCase();
+  const hasMetric=ql.match(/quantos|quantas|número|média|taxa|tempo|percentual|total|volume|quantidade/);
+  const hasAuto=ql.match(/formulário|form|sheets|planilha|automático|dashboard|sistema/);
+  const hasTime=ql.match(/semana|mês|dia|período|mensal|semanal|histórico|tendência/);
+  let score=0;
+  if(hasMetric)score++;if(hasAuto)score++;if(hasTime)score++;
+  const googleQuery=encodeURIComponent('como criar indicador KPI '+q.substring(0,50)+' google sheets automático');
+  if(score>=2){
+    return`✅ <strong>Indicador válido!</strong> O que você descreveu tem potencial para funcionar na Copa.<br><br>
+    🔧 <strong>Como automatizar:</strong> Crie um Google Forms para entrada de dados → conecte ao Google Sheets → use gráficos automáticos ou Looker Studio para o painel. Se quiser alertas, use Apps Script ou n8n.<br><br>
+    📊 <strong>Nível estimado:</strong> Depende da complexidade. Se for 1 métrica → Nível 1 (35🪙). Se tiver 3+ métricas relacionadas → Nível 2 (60🪙). Se integrar ferramentas com alertas automáticos → Nível 3 (90🪙).<br><br>
+    💡 <strong>Dica:</strong> Antes de construir, defina: qual pergunta esse indicador responde? Quem vai usar? Com que frequência? Isso garante que o esforço vai valer a pena.<br><br>
+    <a href="https://www.google.com/search?q=${googleQuery}" target="_blank" style="color:var(--or)">🔍 Ver mais no Google →</a>`;
+  } else {
+    return`⚠️ <strong>Indicador pode precisar de ajuste.</strong><br><br>
+    Para ser válido na Copa, o indicador precisa: ser mensurável com números reais, ser alimentado automaticamente (sem planilha manual) e mostrar tendência ao longo do tempo.<br><br>
+    💡 <strong>Refine sua ideia respondendo:</strong><br>
+    — O que exatamente você vai contar ou medir?<br>
+    — Onde esses dados já existem ou podem ser coletados?<br>
+    — Qual ferramenta vai alimentar o painel automaticamente?<br><br>
+    <a href="https://www.google.com/search?q=${googleQuery}" target="_blank" style="color:var(--or)">🔍 Pesquisar no Google →</a> · 
+    <a href="https://claude.ai" target="_blank" style="color:#2E75B6">💬 Perguntar ao Claude →</a>`;
+  }
+}
+
 buildLogin();
 // Check for notifications on load
 async function checkNotifications(){

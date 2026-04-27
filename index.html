@@ -430,7 +430,7 @@ tbody td{padding:8px 10px;font-size:12px;color:var(--tx);vertical-align:middle}
             <h4>📅 Regras do treinamento</h4>
             <div class="train-rule-item">
               <div class="train-rule-icon">🗓️</div>
-              <div class="train-rule-text"><strong>Horário fixo: toda sexta-feira das 13h às 13h30</strong><span>O sistema valida automaticamente. A data também deve ser até <strong>07/08/2026</strong> (último dia da Copa). Fora desses critérios, o registro não será aceito.</span></div>
+              <div class="train-rule-text"><strong>Horário fixo: toda sexta-feira das 13h às 13h30</strong><span>Informe a data e o sistema cria o evento automaticamente no Google Calendar de cada participante quando eles confirmarem presença. A data deve ser até 07/08/2026.</span></div>
             </div>
             <div class="train-rule-item">
               <div class="train-rule-icon">🎙️</div>
@@ -441,11 +441,7 @@ tbody td{padding:8px 10px;font-size:12px;color:var(--tx);vertical-align:middle}
               <div class="train-rule-text"><strong>Quem participa ganha <span class="coin-badge">15 🪙</span></strong><span>Após o treinamento, você acessa a Agenda e confirma quem esteve presente. Só então os participantes recebem as moedas.</span></div>
             </div>
           </div>
-          <div class="fr"><label>Link da agenda (Google Calendar) *</label>
-            <input type="url" id="f-agenda-link" placeholder="https://calendar.google.com/event?eid=..." oninput="validateAgendaLink(this.value)">
-            <div style="font-size:11px;color:var(--mu);margin-top:3px">Cole o link do evento criado no Google Calendar. Deve começar com <strong>https://calendar.google.com</strong></div>
-            <div id="f-agenda-warning" style="display:none;font-size:11px;color:var(--red);margin-top:4px">⚠️ Este não parece ser um link do Google Calendar válido</div>
-          </div>
+          <div class="notice info" style="font-size:11px">📅 A agenda será criada automaticamente no Google Calendar de cada participante quando eles clicarem em "Quero participar".</div>
           <div class="fr"><label>Link dos slides / material *</label>
             <input type="url" id="f-slide-link" placeholder="https://docs.google.com/presentation/...">
             <div style="font-size:11px;color:var(--mu);margin-top:3px">Cole o link da apresentação no Google Drive/Slides. Deve começar com <strong>https://docs.google.com</strong></div>
@@ -621,6 +617,9 @@ tbody td{padding:8px 10px;font-size:12px;color:var(--tx);vertical-align:middle}
     <div id="page-agenda" class="page">
       <div class="sh2">Agenda de treinamentos</div>
       <div class="notice info">📅 Treinamentos acontecem toda <strong>sexta-feira das 13h às 13h30</strong>. Após aprovação da Amanda, o treinamento aparece aqui e todos podem confirmar participação.</div>
+      <div class="notice" style="background:#FFF8E1;border-color:#FFD080;color:#7B5800">
+        📧 <strong>Aviso de novo treinamento:</strong> O sistema registra o treinamento aqui na aba Agenda. Para avisar o time por e-mail, <strong>copie as informações abaixo e envie pelo seu e-mail ou WhatsApp do time.</strong>
+      </div>
       <div id="agenda-list"><div class="loading"><div class="spinner"></div></div></div>
     </div>
     <!-- FOTOS -->
@@ -951,6 +950,10 @@ function onUserLoggedIn(user){
   buildParticipantsSelect();buildDesafios();subscribeScores();subscribeMySubmissions();loadAgenda();loadPhotos();
 }
 function buildLogin(){}
+function openLink(url){
+  if(!url||!url.startsWith('http')){showToast('Link inválido.');return;}
+  window.open(url,'_blank','noopener,noreferrer');
+}
 function doLogout(){auth.signOut();if(unsubScores)unsubScores();if(unsubSubs)unsubSubs();currentUser=null;scores={};document.getElementById('app-screen').style.display='none';document.getElementById('login-screen').style.display='flex';}
 function subscribeScores(){
   if(unsubScores)unsubScores();
@@ -1087,7 +1090,7 @@ async function submitActivity(){
   if(cat==='livro'&&!book){showToast('Selecione o livro!');return;}
   if(cat==='curso'&&!course){showToast('Selecione o curso!');return;}
   if(cat==='treinamento'){
-    if(!agendaLink||!slideLink||!trainTema){showToast('Preencha todos os campos do treinamento!');return;}
+    if(!slideLink||!trainTema){showToast('Preencha o tema e o link dos slides!');return;}
     if(!trainDate){showToast('Informe a data do treinamento!');return;}
     const tDate=new Date(trainDate+'T12:00:00');
     const day=tDate.getDay();
@@ -1118,7 +1121,7 @@ async function submitActivity(){
     showToast('✅ Atividade enviada! Aguardando aprovação da Amanda.');
     ['f-cat','f-title','f-proof','f-resumo'].forEach(id=>document.getElementById(id).value='');
     document.getElementById('f-book').value='';
-    ['f-course','f-training-tema','f-agenda-link','f-slide-link','f-training-date'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';}); 
+    ['f-course','f-training-tema','f-slide-link','f-training-date'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';}); 
     document.getElementById('f-joint').checked=false;
     ['f-book-row','f-outro-livro-row','f-curso-rows','f-outro-curso-row','f-treinamento-rows','f-title-row','f-resumo-row','f-joint-rows'].forEach(id=>{const el=document.getElementById(id);if(el)el.style.display='none';});
     const pr=document.getElementById('f-proof-row');if(pr)pr.style.display='block';
@@ -1306,14 +1309,13 @@ async function loadAgenda(){
         <div class="agenda-head">
           <div><div class="agenda-title">🎙️ ${item.tema}</div>
           <div class="agenda-meta">Ministrado por ${item.ministrador} · ${item.trainDate?new Date(item.trainDate+'T12:00:00').toLocaleDateString('pt-BR',{weekday:'long',day:'2-digit',month:'2-digit'}):'Sexta-feira'} · 13h–13h30</div></div>
-          <span class="stpill st-ok">Confirmado</span>
+          <span class="stpill ${item.status==='realizado'?'st-ok':'st-pend'}">${item.status==='realizado'?'Realizado':'Confirmado'}</span>
         </div>
         <div class="agenda-body">
-          ${(item.agendaLink&&item.agendaLink.startsWith('http')&&!item.agendaLink.includes('github.io')&&!item.agendaLink.includes('copa-admin'))?`<a href="${item.agendaLink}" target="_blank" style="color:var(--blue);font-weight:600">📅 Abrir agenda no Google Calendar</a> · `:(item.agendaLink?`<span style="font-size:11px;color:var(--red)">⚠️ Link de agenda inválido</span> · `:'')}
-          ${(item.slideLink&&item.slideLink.startsWith('http')&&!item.slideLink.includes('github.io')&&!item.slideLink.includes('copa-admin'))?`<a href="${item.slideLink}" target="_blank" style="color:var(--blue);font-weight:600">📄 Ver slides</a>`:(item.slideLink?`<span style="font-size:11px;color:var(--red)">⚠️ Link de slides inválido</span>`:'')}
+          ${(item.slideLink&&item.slideLink.startsWith('http')&&!item.slideLink.includes('github.io')&&!item.slideLink.includes('copa-admin'))?`<button class="btn-sm" style="background:#E6F1FB;color:#0C447C;border-color:#B5D4F4" onclick="openLink('${item.slideLink}')">📄 Ver slides do treinamento</button>`:(item.slideLink?`<span style="font-size:11px;color:var(--red)">⚠️ Link de slides inválido</span>`:'')}
           <div style="margin-top:8px;display:flex;gap:6px;flex-wrap:wrap">
-            ${!isMini&&!joined?`<button class="btn-sm btn-ok" onclick="joinAgenda('${item.id}')">✋ Quero participar</button>`:''}
-            ${joined&&!isMini?'<span style="font-size:11px;color:var(--green);font-weight:600">✓ Você confirmou participação</span>':''}
+            ${!isMini&&!joined?`<button class="btn-sm btn-ok" onclick="joinAgenda('${item.id}')">✋ Quero participar — adicionar à minha agenda</button>`:''}
+            ${joined&&!isMini?'<span style="font-size:11px;color:var(--green);font-weight:600">✓ Participação confirmada — evento adicionado ao seu Google Calendar</span>':''}
             ${isMini&&item.status!=='realizado'?`
               <div style="font-size:11px;color:var(--mu);margin-bottom:6px">
                 📷 Antes de confirmar, envie a foto do treinamento para o 
@@ -1329,8 +1331,48 @@ async function loadAgenda(){
 }
 async function joinAgenda(agendaId){
   if(!currentUser)return;
-  await db.collection('agenda').doc(agendaId).update({participants:firebase.firestore.FieldValue.arrayUnion(currentUser.name)});
-  showToast('Participação confirmada!');loadAgenda();
+  const item=agendaItems.find(a=>a.id===agendaId);
+  if(!item){showToast('Erro ao encontrar treinamento.');return;}
+
+  // Add to Firestore participants
+  await db.collection('agenda').doc(agendaId).update({
+    participants:firebase.firestore.FieldValue.arrayUnion(currentUser.name)
+  });
+
+  // Build Google Calendar "Add to Calendar" URL automatically
+  const tema=encodeURIComponent(item.tema||'Treinamento Copa Admin 2026');
+  const descRaw='Treinamento interno Copa Admin 2026 liveSEO'+(item.ministrador?' — ministrado por '+item.ministrador:'')+(item.slideLink?' | Slides: '+item.slideLink:'');
+  const desc=encodeURIComponent(descRaw);
+  const local=encodeURIComponent('liveSEO');
+
+  // Build date: trainDate is YYYY-MM-DD, time is 13:00-13:30 BRT (UTC-3 = 16:00-16:30 UTC)
+  let startDt='', endDt='';
+  if(item.trainDate){
+    const d=item.trainDate.replace(/-/g,'');
+    startDt=d+'T160000Z'; // 13h BRT = 16h UTC
+    endDt=d+'T163000Z';   // 13h30 BRT = 16h30 UTC
+  } else {
+    // fallback: next friday
+    const now=new Date();
+    const day=now.getDay();
+    const diff=(5-day+7)%7||7;
+    const fri=new Date(now);fri.setDate(now.getDate()+diff);
+    const pad=n=>String(n).padStart(2,'0');
+    const ds=fri.getFullYear()+pad(fri.getMonth()+1)+pad(fri.getDate());
+    startDt=ds+'T160000Z';endDt=ds+'T163000Z';
+  }
+
+  const calUrl='https://calendar.google.com/calendar/render?action=TEMPLATE'+
+    '&text='+tema+
+    '&dates='+startDt+'/'+endDt+
+    '&details='+desc+
+    '&location='+local+
+    '&sf=true&output=xml';
+
+  // Open Google Calendar to add event
+  window.open(calUrl,'_blank','noopener,noreferrer');
+  showToast('✅ Participação confirmada! Adicionando à sua agenda...');
+  loadAgenda();
 }
 async function confirmAttendees(agendaId){
   const item=agendaItems.find(a=>a.id===agendaId);if(!item)return;
@@ -1387,7 +1429,7 @@ function loadAdmin(){
         <span class="stpill ${stM[s.status]||'st-pend'}">${stL[s.status]||'?'}</span>
       </div>
       ${s.resumo?`<div class="sub-body">${s.resumo.substring(0,200)}...</div>`:''}
-      ${s.proof?`<div style="font-size:11px;color:var(--mu);margin-top:4px">📎 ${s.proof}</div>`:''}
+      ${s.proof?`<div style="font-size:11px;color:var(--mu);margin-top:4px">📎 ${s.proof.startsWith('http')?`<button class="btn-sm" onclick="openLink('${s.proof}')" style="font-size:11px">Abrir link →</button>`:s.proof}</div>`:''}
       <div style="display:flex;gap:6px;margin-top:10px">
         <button class="btn-sm btn-ok" onclick="approveSubmission('${s.id}')">✓ Aprovar +🪙${s.myPts||0}</button>
         <button class="btn-sm btn-rej" onclick="rejectSubmission('${s.id}')">✗ Rejeitar</button>

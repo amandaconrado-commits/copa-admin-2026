@@ -1372,70 +1372,38 @@ async function consultarIndicadorIA(){
   const result=document.getElementById('ind-result');
   const resultContent=document.getElementById('ind-result-content');
   result.style.display='block';
-  resultContent.innerHTML='<span style="color:#8A9AB0">⏳ Consultando IA...</span>';
-  try{
-    const response=await fetch('https://api.anthropic.com/v1/messages',{
-      method:'POST',
-      headers:{'Content-Type':'application/json','x-api-key':'','anthropic-version':'2023-06-01'},
-      body:JSON.stringify({
-        model:'claude-sonnet-4-20250514',
-        max_tokens:600,
-        messages:[{role:'user',content:`Você é um especialista em indicadores de desempenho (KPIs) para times administrativos. 
-Analise o indicador que o colaborador quer criar e responda de forma direta e prática em português.
-
-Indicador descrito: "${q}"
-
-Contexto: O colaborador faz parte de um time administrativo (Financeiro, RH, Dep. Pessoal, Facilities, Jurídico ou Estratégico) numa empresa de SEO. Para pontuar na Copa Interna, o indicador precisa ser:
-1. Mensurável com dados reais (não opinião)
-2. Automatizado (Google Forms, Sheets, Apps Script, n8n, Gemini, Claude, Data Studio — sem preenchimento manual)
-3. Relevante para a área e para a empresa
-4. Acompanhado ao longo do tempo (tendência)
-
-Responda em até 4 parágrafos curtos:
-- ✅ ou ❌ Se o indicador faz sentido e por quê
-- 🔧 Como automatizá-lo (ferramenta sugerida)
-- 📊 Qual nível seria (1=35🪙, 2=60🪙, 3=90🪙)
-- 💡 Uma sugestão de melhoria ou variação se aplicável`}]
-      })
-    });
-    if(response.ok){
-      const data=await response.json();
-      const text=data.content?.[0]?.text||'Sem resposta.';
-      resultContent.innerHTML=text.replace(/\n/g,'<br>');
-    } else {
-      // Fallback: use smart local analysis + Google link
-      resultContent.innerHTML=analyzeIndicatorLocal(q);
-    }
-  }catch(e){
-    resultContent.innerHTML=analyzeIndicatorLocal(q);
-  }
+  resultContent.innerHTML='<span style="color:#8A9AB0">⏳ Analisando...</span>';
+  await new Promise(r=>setTimeout(r,600));
+  resultContent.innerHTML=analyzeIndicatorLocal(q);
   btn.disabled=false;btn.textContent='🔍 Analisar com IA';
 }
 
 function analyzeIndicatorLocal(q){
   const ql=q.toLowerCase();
-  const hasMetric=ql.match(/quantos|quantas|número|média|taxa|tempo|percentual|total|volume|quantidade/);
-  const hasAuto=ql.match(/formulário|form|sheets|planilha|automático|dashboard|sistema/);
-  const hasTime=ql.match(/semana|mês|dia|período|mensal|semanal|histórico|tendência/);
+  const hasMetric=!!(ql.match(/quantos|quantas|numero|media|taxa|tempo|percentual|total|volume|quantidade|medir/));
+  const hasAuto=!!(ql.match(/formulario|form|sheets|planilha|automatico|dashboard|sistema|script/));
+  const hasTime=!!(ql.match(/semana|mes|dia|periodo|mensal|semanal|historico|tendencia/));
   let score=0;
   if(hasMetric)score++;if(hasAuto)score++;if(hasTime)score++;
-  const googleQuery=encodeURIComponent('como criar indicador KPI '+q.substring(0,50)+' google sheets automático');
+  const googleQuery=encodeURIComponent('indicador KPI automatico google sheets '+q.substring(0,40));
+  let html='';
   if(score>=2){
-    return`✅ <strong>Indicador válido!</strong> O que você descreveu tem potencial para funcionar na Copa.<br><br>
-    🔧 <strong>Como automatizar:</strong> Crie um Google Forms para entrada de dados → conecte ao Google Sheets → use gráficos automáticos ou Looker Studio para o painel. Se quiser alertas, use Apps Script ou n8n.<br><br>
-    📊 <strong>Nível estimado:</strong> Depende da complexidade. Se for 1 métrica → Nível 1 (35🪙). Se tiver 3+ métricas relacionadas → Nível 2 (60🪙). Se integrar ferramentas com alertas automáticos → Nível 3 (90🪙).<br><br>
-    💡 <strong>Dica:</strong> Antes de construir, defina: qual pergunta esse indicador responde? Quem vai usar? Com que frequência? Isso garante que o esforço vai valer a pena.<br><br>
-    <a href="https://www.google.com/search?q=${googleQuery}" target="_blank" style="color:var(--or)">🔍 Ver mais no Google →</a>`;
+    html+='<div style="color:#4ade80;font-weight:600;margin-bottom:8px">✅ Indicador com bom potencial!</div>';
+    html+='<p style="margin-bottom:8px">O que você descreveu parece ser uma boa métrica para a Copa.</p>';
+    html+='<p style="margin-bottom:8px"><strong>🔧 Como automatizar:</strong> Crie um Google Forms para coleta de dados → conecte ao Google Sheets → use gráficos automáticos ou Looker Studio para o painel. Para alertas, use Apps Script ou n8n.</p>';
+    html+='<p style="margin-bottom:8px"><strong>📊 Nível estimado:</strong> 1 métrica → Nível 1 (35🪙) · 3+ métricas → Nível 2 (60🪙) · Integração com alertas → Nível 3 (90🪙)</p>';
+    html+='<p style="margin-bottom:10px"><strong>💡 Dica:</strong> Antes de construir, defina: qual pergunta esse indicador responde? Quem vai usar? Com que frequência?</p>';
   } else {
-    return`⚠️ <strong>Indicador pode precisar de ajuste.</strong><br><br>
-    Para ser válido na Copa, o indicador precisa: ser mensurável com números reais, ser alimentado automaticamente (sem planilha manual) e mostrar tendência ao longo do tempo.<br><br>
-    💡 <strong>Refine sua ideia respondendo:</strong><br>
-    — O que exatamente você vai contar ou medir?<br>
-    — Onde esses dados já existem ou podem ser coletados?<br>
-    — Qual ferramenta vai alimentar o painel automaticamente?<br><br>
-    <a href="https://www.google.com/search?q=${googleQuery}" target="_blank" style="color:var(--or)">🔍 Pesquisar no Google →</a> · 
-    <a href="https://claude.ai" target="_blank" style="color:#2E75B6">💬 Perguntar ao Claude →</a>`;
+    html+='<div style="color:#fb923c;font-weight:600;margin-bottom:8px">⚠️ Indicador precisa de ajuste</div>';
+    html+='<p style="margin-bottom:8px">Para ser válido na Copa, o indicador precisa: ser mensurável com números reais, ser alimentado automaticamente e mostrar tendência ao longo do tempo.</p>';
+    html+='<p style="margin-bottom:8px"><strong>💡 Refine sua ideia respondendo:</strong><br>— O que exatamente você vai contar ou medir?<br>— Onde esses dados existem ou podem ser coletados?<br>— Qual ferramenta vai alimentar o painel automaticamente?</p>';
   }
+  html+='<div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px">';
+  html+='<a href="https://www.google.com/search?q='+googleQuery+'" target="_blank" style="color:var(--or);font-size:11px">🔍 Pesquisar no Google →</a>';
+  html+=' &nbsp; ';
+  html+='<a href="https://claude.ai" target="_blank" style="color:#8B9CF4;font-size:11px">💬 Perguntar ao Claude →</a>';
+  html+='</div>';
+  return html;
 }
 
 buildLogin();

@@ -958,7 +958,7 @@ function subscribeMySubmissions(){
   if(unsubSubs)unsubSubs();
   // Load all submissions and filter client-side - avoids OR query issues
   // Limit to 500 for performance; admin sees all, users see only theirs
-  const q=db.collection('submissions').orderBy('ts','desc').limit(500);
+  const q=db.collection('submissions').limit(500); // no orderBy - sort client-side
   unsubSubs=q.onSnapshot(snap=>{
     const all=[];
     snap.forEach(doc=>all.push({id:doc.id,...doc.data()}));
@@ -1353,7 +1353,7 @@ async function confirmAttendees(agendaId){
 async function loadPhotos(){
   const el=document.getElementById('photo-grid');if(!el)return;
   try{
-    const snap=await db.collection('photos').orderBy('ts','desc').get();
+    const snap=await db.collection('photos').get();
     const photos=[];snap.forEach(doc=>photos.push({id:doc.id,...doc.data()}));
     if(!photos.length){el.innerHTML='<p class="empty" style="text-align:center;padding:24px">📸 Nenhuma foto ainda. Em breve!</p>';return;}
     el.innerHTML=photos.map(p=>`<div class="photo-card"><img src="${p.url}" alt="${p.caption}" onerror="this.parentElement.style.display='none'"><div class="photo-caption"><strong>${p.caption}</strong>${p.date?' · '+p.date:''}</div></div>`).join('');
@@ -1581,7 +1581,7 @@ buildLogin();
 async function checkNotifications(){
   if(!currentUser)return;
   try{
-    const snap=await db.collection('notifications').orderBy('ts','desc').limit(5).get();
+    const snap=await db.collection('notifications').limit(10).get();
     const notifs=[];snap.forEach(doc=>notifs.push({id:doc.id,...doc.data()}));
     const unread=notifs.filter(n=>!n.readBy||!n.readBy.includes(currentUser.name));
     if(unread.length>0){

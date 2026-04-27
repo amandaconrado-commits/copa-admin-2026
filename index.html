@@ -181,10 +181,7 @@ tbody td{padding:8px 10px;font-size:12px;color:var(--tx);vertical-align:middle}
 .sub-body{font-size:11px;color:var(--mu);border-top:0.5px solid var(--bd);padding-top:6px;margin-top:5px;line-height:1.5}
 .ai-flag{display:inline-flex;align-items:center;gap:3px;font-size:10px;background:#FCEBEB;color:#791F1F;padding:2px 7px;border-radius:20px;font-weight:600;margin-top:4px}
 /* AI WARN */
-.ai-warn{background:var(--ol);border:0.5px solid var(--om);border-radius:7px;padding:9px 12px;font-size:11px;color:#854F0B;margin-top:7px;display:none}
-.ai-warn.show{display:block}
-.ai-meter{height:4px;background:var(--ow);border-radius:3px;margin:4px 0}
-.ai-fill{height:4px;border-radius:3px;transition:width .3s}
+
 /* PRIZES */
 .pgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px;margin-bottom:15px}
 .pc{background:var(--wh);border:0.5px solid var(--bd);border-radius:9px;padding:13px;text-align:center}
@@ -466,15 +463,9 @@ tbody td{padding:8px 10px;font-size:12px;color:var(--tx);vertical-align:middle}
         </div>
         <!-- RESUMO -->
         <div class="fr" id="f-resumo-row" style="display:none">
-          <label>Resumo / reflexão <span style="color:var(--or);font-size:9px">· mín. 150 palavras · análise de IA</span></label>
-          <textarea id="f-resumo" rows="5" placeholder="Escreva com suas próprias palavras os principais aprendizados e como pretende aplicar no trabalho..." oninput="analyzeText()"></textarea>
-          <div class="ai-warn" id="ai-warning">
-            <div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:3px">
-              <strong>Análise de autenticidade</strong><span style="font-weight:700" id="ai-score">-</span>
-            </div>
-            <div class="ai-meter"><div class="ai-fill" id="ai-fill" style="width:0%"></div></div>
-            <div id="ai-msg" style="font-size:10px;margin-top:2px"></div>
-          </div>
+          <label>Resumo / reflexão <span style="color:var(--or);font-size:9px">· mínimo 150 palavras</span></label>
+          <textarea id="f-resumo" rows="5" placeholder="Escreva com suas próprias palavras os principais aprendizados e como pretende aplicar no trabalho..."></textarea>
+          <div style="font-size:11px;color:var(--mu);margin-top:4px">Escreva em suas próprias palavras — descreva o que aprendeu e como pretende usar no dia a dia.</div>
         </div>
         <!-- COMPROVANTE (não aparece no treinamento) -->
         <div class="fr" id="f-proof-row">
@@ -778,7 +769,7 @@ const BONUS={team:2,lider:5,part:3};
 
 const CHALLENGES={
   livros:{label:'📚 Livros',items:[
-    {t:'📱 Dica: Wellhub + Storytell',d:'Quem tem plano <strong>Wellhub</strong> pode acessar gratuitamente o app <strong>Storytell</strong>, que tem audiobooks de vários livros dessa lista e muito mais. Vale verificar se seu plano inclui! Disponível para iOS e Android.',c:0,rule:true},
+    {t:'📱 Wellhub tem audiobooks gratuitos!',d:'Se você tem plano <strong>Wellhub</strong>, verifique se o seu inclui o app <strong>Storytell</strong> — ele vem gratuito em alguns planos e tem audiobooks em português de vários livros dessa lista, além de muitos outros títulos de negócios, desenvolvimento pessoal e autoconhecimento. Vale muito a pena conferir antes de procurar em outro lugar!',c:0,rule:true},
     // 🎧 Audiobooks: links de busca no YouTube (sempre gratuitos) | 📱 Kindle: link de compra
     // 💡 Dica: quem tem Wellhub pode usar o app Storytell gratuitamente — tem muitos desses títulos!
     {t:'O Código da Cultura — Daniel Coyle',d:'🎧 <a href="https://www.youtube.com/results?search_query=codigo+da+cultura+daniel+coyle+audiobook+completo+portugues" target="_blank">Buscar audiobook no YouTube</a> · 📱 <a href="https://www.amazon.com.br/dp/8550804606" target="_blank">Kindle</a>. Resumo + 3 aprendizados.',c:30},
@@ -866,11 +857,10 @@ const CHALLENGES={
     {t:'Indicador apresentado na reunião de SG&A (+50 🪙)',d:'Espaço fixo nas <strong>reuniões de SG&A de terças-feiras</strong>. Regras: (1) Avise a Amanda com antecedência. (2) O indicador precisa estar aprovado no app antes da apresentação. (3) Leve dados reais e conclusões.',c:50},
   ]},
   templates:{label:'🗂️ Templates',items:[
-    {t:'💡 Estes são apenas exemplos de inspiração',d:'Os indicadores abaixo são <strong>sugestões</strong> para ajudar a entender o que é um bom indicador automatizado. Você não precisa criar exatamente esses — use como ponto de partida para pensar no que faz sentido para a sua área.',c:0,rule:true},
-    {t:'💰 Financeiro — Painel de Contas a Pagar',d:'Acompanha vencimentos, valores e status de pagamento. Gráfico de barras por faixa (vencido / a vencer em 30 dias / a vencer em 60+). Alimentado automaticamente via Google Sheets com dados do sistema financeiro ou lançamento via Forms. Ferramenta sugerida: Google Sheets + gráfico automático.',c:0,rule:true},
-    {t:'👥 Rec. Humanos — Pesquisa de Clima e Engajamento',d:'Formulário de pesquisa periódica (mensal ou quinzenal) → Sheets com NPS interno e tendência ao longo do tempo. Permite acompanhar humor do time, pontos de melhoria e evolução mês a mês. Ferramenta sugerida: Google Forms → Sheets → gráfico de linha.',c:0,rule:true},
-    {t:'📋 Dep. Pessoal — Monitor de Prazos Trabalhistas',d:'Datas-chave de cada colaborador (férias, 13º, FGTS, vencimento de contratos) → alerta automático quando faltam 15 dias. <br><br><div style="background:#E1F5EE;border-radius:6px;padding:8px;font-size:10px;margin-top:6px">📊 <strong>Visualização esperada:</strong> Tabela com semáforo (🔴 vencido, 🟡 próximo, 🟢 ok) + Apps Script enviando e-mail automático de alerta. Ferramenta: Sheets + Apps Script.</div>',c:0,rule:true},
-    {t:'📋 Dep. Pessoal — Monitor de Prazos Trabalhistas',d:'Planilha com datas-chave de cada colaborador (vencimento de férias, prazo do 13º, datas de revisão de contrato) → semáforo automático por proximidade do prazo (🔴 vencido, 🟡 próximos 15 dias, 🟢 ok). Pode usar Apps Script para enviar alerta por e-mail quando um prazo se aproxima. Ferramenta sugerida: Google Sheets + Apps Script.',c:0,rule:true},
+    {t:'💡 São só inspirações — crie o seu próprio!',d:'Os exemplos abaixo mostram como um indicador automatizado pode ser estruturado. Use como referência para imaginar o que faz sentido para a sua área. O seu indicador não precisa ser igual a esses — o importante é que ele meça algo real, seja automático e ajude a tomar decisões.',c:0,rule:true},
+    {t:'💰 Financeiro — Painel de Contas a Pagar',d:'Acompanha vencimentos, valores e status de pagamento por faixa (vencido / a vencer em 30 dias / a vencer em 60+). Os dados entram via Sheets ou Forms e o gráfico se atualiza sozinho. Ferramenta sugerida: Google Sheets + gráfico automático.',c:0,rule:true},
+    {t:'👥 Rec. Humanos — Pesquisa de Clima e Engajamento',d:'Formulário periódico (mensal ou quinzenal) com perguntas de engajamento → painel com NPS interno e evolução ao longo do tempo. Permite acompanhar o humor do time e identificar pontos de atenção antes que virem problema. Ferramenta sugerida: Google Forms → Sheets → gráfico de linha.',c:0,rule:true},
+    {t:'📋 Dep. Pessoal — Monitor de Prazos Trabalhistas',d:'Planilha com as datas-chave de cada colaborador (vencimento de férias, prazo do 13º, revisão de contrato) → semáforo automático que mostra 🔴 vencido, 🟡 próximos 15 dias e 🟢 ok. Apps Script envia alerta por e-mail quando um prazo se aproxima. Ferramenta sugerida: Google Sheets + Apps Script.',c:0,rule:true},
     {t:'🏢 Facilities — Painel de Chamados e SLA',d:'Formulário de abertura de chamado → painel com volume por categoria, tempo médio de atendimento e % dentro do SLA definido. A cada novo chamado aberto via Forms, os dados entram automaticamente no painel. Ferramenta sugerida: Google Forms → Sheets → gráfico automático.',c:0,rule:true},
     {t:'⚖️ Jurídico — Carteira de Contratos e Vencimentos',d:'Base de contratos com datas de início, vencimento e status → alerta automático de renovação com 30 dias de antecedência. Pode usar Apps Script ou n8n para enviar o aviso por e-mail. Ferramenta sugerida: Google Sheets + Apps Script.',c:0,rule:true},
     {t:'🌟 Estratégico — Iniciativas de Melhoria Contínua',d:'Registro de iniciativas de melhoria (kaizen) → painel com status de cada iniciativa, responsável, % de conclusão e impacto estimado. Permite visualizar quantas melhorias estão em andamento, concluídas ou paradas. Ferramenta sugerida: Google Sheets ou Looker Studio.',c:0,rule:true},
@@ -1104,7 +1094,6 @@ async function submitActivity(){
     ['f-book-row','f-outro-livro-row','f-curso-rows','f-outro-curso-row','f-treinamento-rows','f-title-row','f-resumo-row','f-joint-rows'].forEach(id=>{const el=document.getElementById(id);if(el)el.style.display='none';});
     const pr=document.getElementById('f-proof-row');if(pr)pr.style.display='block';
     document.getElementById('f-pts-preview').textContent='';
-    document.getElementById('ai-warning').classList.remove('show');
   }catch(e){showToast('Erro ao enviar.');console.error(e);}
   btn.disabled=false;btn.textContent='Enviar para aprovação';
 }
@@ -1316,37 +1305,6 @@ function loadAdmin(){
 
 // AI
 let aiTimer=null;
-function analyzeText(){
-  clearTimeout(aiTimer);
-  aiTimer=setTimeout(()=>{
-    const txt=document.getElementById('f-resumo').value;
-    const warn=document.getElementById('ai-warning');
-    if(txt.length<60){warn.classList.remove('show');return;}
-    warn.classList.add('show');
-    const score=calcAiScore(txt);
-    const fill=document.getElementById('ai-fill');const scoreEl=document.getElementById('ai-score');const msg=document.getElementById('ai-msg');
-    fill.style.width=score+'%';const clr=score<30?'#1D9E75':score<65?'#FC9801':'#A32D2D';
-    fill.style.background=clr;scoreEl.style.color=clr;
-    scoreEl.textContent=score+'% '+(score<30?'· Autêntico':score<65?'· Atenção':'· Alto risco de IA');
-    msg.textContent=score<30?'Texto parece escrito por você.':score<65?'Revise: use mais voz pessoal.':'Reescreva com suas próprias palavras.';
-  },700);
-}
-function calcAiScore(txt){
-  if(!txt||txt.length<20)return 0;
-  const phrases=['é importante destacar','nesse contexto','no entanto','portanto','em conclusão','dessa forma','assim sendo','é fundamental','podemos observar','é possível perceber','em suma','diante disso','vale ressaltar','cabe destacar','em síntese','além disso','por outro lado','tendo em vista','com isso'];
-  const words=txt.toLowerCase().split(/\s+/);const wc=words.length;if(wc<15)return 0;
-  const avgLen=words.reduce((a,w)=>a+w.replace(/[^a-z]/g,'').length,0)/wc;
-  const sents=txt.split(/[.!?]+/).filter(s=>s.trim().length>5);
-  const sentLens=sents.map(s=>s.split(/\s+/).length);
-  const avgSL=sentLens.reduce((a,b)=>a+b,0)/Math.max(sentLens.length,1);
-  const variance=sentLens.reduce((a,b)=>a+Math.pow(b-avgSL,2),0)/Math.max(sentLens.length,1);
-  const uniformity=Math.max(0,1-variance/50);
-  const phraseHits=phrases.filter(p=>txt.toLowerCase().includes(p)).length;
-  const personal=(txt.match(/\beu\b|\baprendi\b|\bapliquei\b|\btrabalhei\b|\bfiz\b|\bvi\b|\btentei\b|\bminha\b|\bmeu\b|\bpercebo\b|\bsinto\b/gi)||[]).length;
-  let score=0;score+=avgLen>6?25:avgLen>5?12:0;score+=uniformity*28;score+=phraseHits*6;score+=Math.max(0,18-personal*3);
-  return Math.min(99,Math.max(0,Math.round(score)));
-}
-
 function goPage(id,btn){
   document.querySelectorAll('.page').forEach(e=>e.classList.remove('on'));
   document.querySelectorAll('.nb').forEach(e=>e.classList.remove('on'));

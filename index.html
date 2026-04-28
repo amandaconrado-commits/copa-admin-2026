@@ -8,6 +8,8 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 :root{--or:#FC9801;--dk:#101820;--ow:#F4F5FA;--ol:#FFF3DC;--om:#FFD080;--wh:#fff;--bd:#E2E5F0;--mu:#6B7A8D;--tx:#1A202C;--green:#1D9E75;--blue:#2E75B6;--red:#A32D2D;--purple:#534AB7;--gold:#B8860B}
@@ -583,51 +585,23 @@ tbody td{padding:8px 10px;font-size:12px;color:var(--tx);vertical-align:middle}
     <!-- ÁLBUM -->
     <div id="page-album" class="page">
       <div class="sh2">Álbum de figurinhas</div>
-      <div class="thermo-wrap">
-        <div style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:15px;color:var(--dk);margin-bottom:4px">📸 Termômetro — Foto do Time</div>
-        <p style="font-size:11px;color:var(--mu);margin-bottom:14px">Duas condições precisam ser cumpridas por <strong>todos</strong> do seu time:</p>
-        <div style="margin-bottom:12px">
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
-            <span style="font-size:11px;font-weight:600;color:var(--dk)">✅ Condição 1 — Ao menos 1 atividade aprovada</span>
-            <span style="font-size:11px;font-weight:700;color:var(--blue)" id="thermo-act-pct">0%</span>
-          </div>
-          <div class="thermo-bar-bg"><div class="thermo-bar-fill" id="thermo-act-fill" style="width:0%;background:linear-gradient(90deg,#2E75B6,#1D9E75)"></div></div>
-          <div style="font-size:10px;color:var(--mu);margin-top:2px" id="thermo-act-label">0 de 0 membros com atividade aprovada</div>
-        </div>
-        <div style="margin-bottom:14px">
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
-            <span style="font-size:11px;font-weight:600;color:var(--dk)">🪙 Condição 2 — 100+ moedas acumuladas</span>
-            <span style="font-size:11px;font-weight:700;color:var(--or)" id="thermo-coin-pct">0%</span>
-          </div>
-          <div class="thermo-bar-bg"><div class="thermo-bar-fill" id="thermo-coin-fill" style="width:0%;background:linear-gradient(90deg,var(--or),var(--gold))"></div></div>
-          <div style="font-size:10px;color:var(--mu);margin-top:2px" id="thermo-coin-label">0 de 0 membros com 100+ moedas</div>
-        </div>
-        <div style="background:var(--ow);border-radius:8px;padding:10px 12px;margin-bottom:12px">
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
-            <span style="font-size:11px;font-weight:700;color:var(--dk)">🏆 Progresso combinado (ambas as condições)</span>
-            <span style="font-size:12px;font-weight:700;color:var(--green)" id="thermo-pct">0%</span>
-          </div>
-          <div class="thermo-bar-bg"><div class="thermo-bar-fill" id="thermo-fill" style="width:0%;background:linear-gradient(90deg,var(--green),var(--or))"></div></div>
-          <div style="font-size:10px;color:var(--mu);margin-top:2px" id="thermo-left">0 de 0 membros prontos</div>
-        </div>
-        <div class="mc-grid" id="member-coins"></div>
+
+      <!-- PACK PROGRESS -->
+      <div id="album-pack-progress" style="margin-bottom:16px"></div>
+
+      <!-- ALBUM BOOK -->
+      <div id="album-book" style="margin-bottom:16px"></div>
+
+      <!-- EXPORT BUTTON -->
+      <div style="text-align:center;margin-bottom:20px;display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+        <button class="btn" onclick="exportAlbumPNG()" style="background:var(--dk);color:var(--or)">🖼️ Exportar PNG</button>
+        <button class="btn" onclick="exportAlbumPDF()" style="background:var(--red);color:#fff">📄 Exportar PDF</button>
       </div>
-      <div class="stag">raridade & custo em moedas</div>
-      <div class="skgrid">
-        <div class="sk" style="--c:#8A9AB0"><div class="skb" style="background:#8A9AB0">Comum</div><div class="sks">★☆☆☆☆</div><h4>Menor Aprendiz</h4><p>Acumule 60 moedas</p><div class="skpts">🪙 60</div><div class="coin-req">Requer 60 moedas</div></div>
-        <div class="sk" style="--c:#2E75B6"><div class="skb" style="background:#2E75B6">Incomum</div><div class="sks">★★☆☆☆</div><h4>Estagiário(a)</h4><p>Acumule 120 moedas</p><div class="skpts">🪙 120</div><div class="coin-req">Requer 120 moedas</div></div>
-        <div class="sk" style="--c:#1D9E75"><div class="skb" style="background:#1D9E75">Rara</div><div class="sks">★★★☆☆</div><h4>Analista</h4><p>Acumule 220 moedas</p><div class="skpts">🪙 220</div><div class="coin-req">Requer 220 moedas</div></div>
-        <div class="sk" style="--c:#FC9801"><div class="skb" style="background:#FC9801;color:#0D0D0D">Épica</div><div class="sks" style="color:#FC9801">★★★★☆</div><h4>Coordenação</h4><p>Acumule 380 moedas</p><div class="skpts">🪙 380</div><div class="coin-req">Requer 380 moedas</div></div>
-        <div class="sk" style="--c:#534AB7"><div class="skb" style="background:#534AB7">Lendária</div><div class="sks" style="color:#534AB7">★★★★★</div><h4>Gestora / Sócia</h4><p>Acumule 520 moedas</p><div class="skpts">🪙 520</div><div class="coin-req">Requer 520 moedas</div></div>
-        <div class="sk" style="--c:#B8860B;border:1.5px solid var(--or)"><div class="skb" style="background:#B8860B">DOURADA</div><div class="sks" style="color:#B8860B">✦✦✦✦✦</div><h4>Julia & Tumtum 🐾</h4><p>1 livro/curso + 3 ações conjuntas distintas</p><div class="skpts" style="color:#B8860B">🪙 Especial</div></div>
-        <div class="sk" style="--c:#A32D2D;border:1.5px solid var(--or)"><div class="skb" style="background:#A32D2D">ULTRA RARA</div><div class="sks" style="color:var(--or)">✦✦✦✦✦</div><h4>Foto do Time</h4><p>Todos com 100+ moedas + 1 atividade</p><div class="skpts" style="color:var(--or)">🪙 400</div></div>
-      </div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px">
-        <div><div class="stag">figurinhas conquistadas</div><div class="album-grid" id="stickers-owned"></div></div>
-        <div><div class="stag">meu álbum</div><p style="font-size:11px;color:var(--mu);margin-bottom:8px">Figurinhas aparecem ao atingir as moedas necessárias.</p><div class="album-grid" id="album-slots"></div></div>
-      </div>
+
+      <!-- STICKER SHOP -->
+      <div id="album-shop" style="margin-bottom:16px"></div>
     </div>
-    <!-- AGENDA -->
+        <!-- AGENDA -->
     <div id="page-agenda" class="page">
       <div class="sh2">Agenda de treinamentos</div>
       <div class="notice info">📅 Treinamentos acontecem toda <strong>sexta-feira das 13h às 13h30</strong>. Após aprovação da Amanda, o treinamento aparece aqui e todos podem confirmar participação.</div>
@@ -979,6 +953,282 @@ function onUserLoggedIn(user){
   if(isAdmin){document.getElementById('admin-badge').style.display='inline';document.querySelectorAll('.admin-only').forEach(el=>el.style.display='block');}
   buildParticipantsSelect();buildDesafios();subscribeScores();subscribeMySubmissions();loadAgenda();loadPhotos();
 }
+
+// ═══════════════════════════════════
+// ALBUM DATA
+// ═══════════════════════════════════
+const ALBUM_STICKERS = [{"id": 1, "num": 1, "name": "Bárbara Tavares", "pack": "Menor Aprendiz", "packId": 1, "cost": 60, "color": "#8A9AB0", "rarity": "Comum", "team": "FACILITIES"}, {"id": 2, "num": 2, "name": "Bárbara Tavares", "pack": "Menor Aprendiz", "packId": 1, "cost": 60, "color": "#8A9AB0", "rarity": "Comum", "team": "FACILITIES"}, {"id": 3, "num": 3, "name": "João Apolonio", "pack": "Menor Aprendiz", "packId": 1, "cost": 60, "color": "#8A9AB0", "rarity": "Comum", "team": "FACILITIES"}, {"id": 4, "num": 4, "name": "João Apolonio", "pack": "Menor Aprendiz", "packId": 1, "cost": 60, "color": "#8A9AB0", "rarity": "Comum", "team": "FACILITIES"}, {"id": 5, "num": 5, "name": "André Camacho", "pack": "Estagiário", "packId": 2, "cost": 120, "color": "#2E75B6", "rarity": "Incomum", "team": "JURÍDICO"}, {"id": 6, "num": 6, "name": "André Camacho", "pack": "Estagiário", "packId": 2, "cost": 120, "color": "#2E75B6", "rarity": "Incomum", "team": "JURÍDICO"}, {"id": 7, "num": 7, "name": "Esther Rebola", "pack": "Estagiário", "packId": 2, "cost": 120, "color": "#2E75B6", "rarity": "Incomum", "team": "RECURSOS HUMANOS"}, {"id": 8, "num": 8, "name": "Esther Rebola", "pack": "Estagiário", "packId": 2, "cost": 120, "color": "#2E75B6", "rarity": "Incomum", "team": "RECURSOS HUMANOS"}, {"id": 9, "num": 9, "name": "Tais Santarem", "pack": "Estagiário", "packId": 2, "cost": 120, "color": "#2E75B6", "rarity": "Incomum", "team": "DEPARTAMENTO PESSOAL"}, {"id": 10, "num": 10, "name": "Tais Santarem", "pack": "Estagiário", "packId": 2, "cost": 120, "color": "#2E75B6", "rarity": "Incomum", "team": "DEPARTAMENTO PESSOAL"}, {"id": 11, "num": 11, "name": "Yasmin Santos", "pack": "Estagiário", "packId": 2, "cost": 120, "color": "#2E75B6", "rarity": "Incomum", "team": "RECURSOS HUMANOS"}, {"id": 12, "num": 12, "name": "Yasmin Santos", "pack": "Estagiário", "packId": 2, "cost": 120, "color": "#2E75B6", "rarity": "Incomum", "team": "RECURSOS HUMANOS"}, {"id": 13, "num": 13, "name": "Adriana Stall", "pack": "Analista", "packId": 3, "cost": 220, "color": "#1D9E75", "rarity": "Rara", "team": "FINANCEIRO"}, {"id": 14, "num": 14, "name": "Adriana Stall", "pack": "Analista", "packId": 3, "cost": 220, "color": "#1D9E75", "rarity": "Rara", "team": "FINANCEIRO"}, {"id": 15, "num": 15, "name": "Arieska Meurer", "pack": "Analista", "packId": 3, "cost": 220, "color": "#1D9E75", "rarity": "Rara", "team": "ESTRATÉGICO"}, {"id": 16, "num": 16, "name": "Arieska Meurer", "pack": "Analista", "packId": 3, "cost": 220, "color": "#1D9E75", "rarity": "Rara", "team": "ESTRATÉGICO"}, {"id": 17, "num": 17, "name": "Eduardo Vilas Boas", "pack": "Analista", "packId": 3, "cost": 220, "color": "#1D9E75", "rarity": "Rara", "team": "FINANCEIRO"}, {"id": 18, "num": 18, "name": "Eduardo Vilas Boas", "pack": "Analista", "packId": 3, "cost": 220, "color": "#1D9E75", "rarity": "Rara", "team": "FINANCEIRO"}, {"id": 19, "num": 19, "name": "Laís Pereira", "pack": "Analista", "packId": 3, "cost": 220, "color": "#1D9E75", "rarity": "Rara", "team": "FACILITIES"}, {"id": 20, "num": 20, "name": "Laís Pereira", "pack": "Analista", "packId": 3, "cost": 220, "color": "#1D9E75", "rarity": "Rara", "team": "FACILITIES"}, {"id": 21, "num": 21, "name": "Marcela Pauka", "pack": "Analista", "packId": 3, "cost": 220, "color": "#1D9E75", "rarity": "Rara", "team": "FINANCEIRO"}, {"id": 22, "num": 22, "name": "Marcela Pauka", "pack": "Analista", "packId": 3, "cost": 220, "color": "#1D9E75", "rarity": "Rara", "team": "FINANCEIRO"}, {"id": 23, "num": 23, "name": "Michele Yamada", "pack": "Analista", "packId": 3, "cost": 220, "color": "#1D9E75", "rarity": "Rara", "team": "ESTRATÉGICO"}, {"id": 24, "num": 24, "name": "Michele Yamada", "pack": "Analista", "packId": 3, "cost": 220, "color": "#1D9E75", "rarity": "Rara", "team": "ESTRATÉGICO"}, {"id": 25, "num": 25, "name": "Sara Glatz", "pack": "Analista", "packId": 3, "cost": 220, "color": "#1D9E75", "rarity": "Rara", "team": "JURÍDICO"}, {"id": 26, "num": 26, "name": "Sara Glatz", "pack": "Analista", "packId": 3, "cost": 220, "color": "#1D9E75", "rarity": "Rara", "team": "JURÍDICO"}, {"id": 27, "num": 27, "name": "Facilities 1", "pack": "Analista", "packId": 3, "cost": 220, "color": "#1D9E75", "rarity": "Rara", "team": "FACILITIES", "placeholder": true}, {"id": 28, "num": 28, "name": "Facilities 2", "pack": "Analista", "packId": 3, "cost": 220, "color": "#1D9E75", "rarity": "Rara", "team": "FACILITIES", "placeholder": true}, {"id": 29, "num": 29, "name": "Luana Rohling", "pack": "Gestora / Sócia", "packId": 4, "cost": 520, "color": "#534AB7", "rarity": "Lendária", "team": "RECURSOS HUMANOS"}, {"id": 30, "num": 30, "name": "Luana Rohling", "pack": "Gestora / Sócia", "packId": 4, "cost": 520, "color": "#534AB7", "rarity": "Lendária", "team": "RECURSOS HUMANOS"}, {"id": 31, "num": 31, "name": "Amanda Conrado", "pack": "Gestora / Sócia", "packId": 4, "cost": 520, "color": "#534AB7", "rarity": "Lendária", "team": "ADMIN"}, {"id": 32, "num": 32, "name": "Amanda Conrado", "pack": "Gestora / Sócia", "packId": 4, "cost": 520, "color": "#534AB7", "rarity": "Lendária", "team": "ADMIN"}, {"id": 33, "num": 33, "name": "Julia", "pack": "Julia & Tumtum", "packId": 5, "cost": 0, "color": "#B8860B", "rarity": "Dourada", "special": true}, {"id": 34, "num": 34, "name": "Julia", "pack": "Julia & Tumtum", "packId": 5, "cost": 0, "color": "#B8860B", "rarity": "Dourada", "special": true}, {"id": 35, "num": 35, "name": "Tumtum", "pack": "Julia & Tumtum", "packId": 5, "cost": 0, "color": "#B8860B", "rarity": "Dourada", "special": true}, {"id": 36, "num": 36, "name": "Tumtum", "pack": "Julia & Tumtum", "packId": 5, "cost": 0, "color": "#B8860B", "rarity": "Dourada", "special": true}, {"id": 37, "num": 37, "name": "Foto do Time — SG&A", "pack": "Foto do Time", "packId": 6, "cost": 0, "color": "#A32D2D", "rarity": "Ultra Rara", "special": true, "half": true}];
+
+const PACK_INFO = {
+  1:{name:'Menor Aprendiz',color:'#8A9AB0',cost:60,icon:'🌱'},
+  2:{name:'Estagiário',color:'#2E75B6',cost:120,icon:'📝'},
+  3:{name:'Analista',color:'#1D9E75',cost:220,icon:'📊'},
+  4:{name:'Gestora / Sócia',color:'#534AB7',cost:520,icon:'🏅'},
+  5:{name:'Julia & Tumtum',color:'#B8860B',cost:0,icon:'⭐'},
+  6:{name:'Foto do Time',color:'#A32D2D',cost:0,icon:'📸'},
+};
+
+function getMyAlbum(){
+  // Get from Firestore cache or localStorage fallback
+  const key='album_'+( currentUser?.short||'guest');
+  try{ const raw=localStorage.getItem(key); return raw?JSON.parse(raw):[]; }catch(e){return [];}
+}
+function saveMyAlbum(owned){
+  const key='album_'+( currentUser?.short||'guest');
+  try{ localStorage.setItem(key,JSON.stringify(owned)); }catch(e){}
+  // Also save to Firestore
+  if(currentUser){
+    db.collection('albums').doc(currentUser.short||currentUser.name).set({owned,updatedAt:firebase.firestore.FieldValue.serverTimestamp()},{merge:true}).catch(()=>{});
+  }
+}
+async function loadMyAlbumFromFirestore(){
+  if(!currentUser)return;
+  try{
+    const doc=await db.collection('albums').doc(currentUser.short||currentUser.name).get();
+    if(doc.exists){
+      const key='album_'+(currentUser.short||'guest');
+      localStorage.setItem(key,JSON.stringify(doc.data().owned||[]));
+    }
+  }catch(e){}
+}
+
+function getHighestUnlockedPackId(myCoins,owned){
+  // Pack unlocks progressively: next pack appears only when previous is complete
+  const packIds=[1,2,3,4,5,6];
+  let highestVisible=1;
+  for(const pid of packIds){
+    const packStickers=ALBUM_STICKERS.filter(s=>s.packId===pid);
+    const allOwned=packStickers.every(s=>owned.includes(s.id));
+    if(allOwned && pid<6) highestVisible=pid+1;
+    else{ highestVisible=pid; break; }
+  }
+  return highestVisible;
+}
+
+function buildAlbumUI(){
+  if(!currentUser)return;
+  loadMyAlbumFromFirestore().then(()=>{
+    const myCoins=getTotal(currentUser.name)||getTotal(currentUser.short)||0;
+    const owned=getMyAlbum();
+    renderAlbumProgress(myCoins,owned);
+    renderAlbumBook(owned);
+    renderAlbumShop(myCoins,owned);
+  });
+}
+
+function renderAlbumProgress(myCoins,owned){
+  const el=document.getElementById('album-pack-progress');
+  if(!el)return;
+  const visiblePack=getHighestUnlockedPackId(myCoins,owned);
+  const total=ALBUM_STICKERS.filter(s=>!s.half).length + 1; // 37 total
+  const pct=Math.round((owned.length/total)*100);
+  el.innerHTML=`
+    <div style="background:var(--wh);border:0.5px solid var(--bd);border-radius:10px;padding:14px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+        <div style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:15px;color:var(--dk)">📒 Meu Álbum</div>
+        <div style="font-size:13px;font-weight:700;color:var(--or)">${owned.length}/${total} figurinhas</div>
+      </div>
+      <div style="background:var(--ow);border-radius:4px;height:8px;overflow:hidden;margin-bottom:6px">
+        <div style="height:8px;border-radius:4px;background:linear-gradient(90deg,var(--or),var(--gold));width:${pct}%;transition:width .5s"></div>
+      </div>
+      <div style="font-size:11px;color:var(--mu)">${pct}% completo · 🪙 ${myCoins} moedas disponíveis</div>
+    </div>`;
+}
+
+function renderAlbumBook(owned){
+  const el=document.getElementById('album-book');
+  if(!el)return;
+  // Group by pack
+  const packs={};
+  ALBUM_STICKERS.forEach(s=>{ packs[s.packId]=packs[s.packId]||[]; packs[s.packId].push(s); });
+
+  let html='<div id="album-printable" style="background:var(--wh);border:0.5px solid var(--bd);border-radius:12px;padding:16px">';
+  html+='<div style="text-align:center;margin-bottom:16px;padding-bottom:12px;border-bottom:2px solid var(--or)">';
+  html+='<div style="font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:24px;color:var(--dk)">live<span style="color:var(--or)">SEO</span></div>';
+  html+='<div style="font-size:11px;color:var(--mu)">Copa Administrativa 2026 · Álbum de '+(currentUser?.short||'')+'</div></div>';
+
+  Object.entries(packs).forEach(([pid,stickers])=>{
+    const pi=PACK_INFO[pid];
+    html+=`<div style="margin-bottom:20px">`;
+    html+=`<div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;padding:6px 10px;background:${pi.color}18;border-radius:6px;border-left:3px solid ${pi.color}">`;
+    html+=`<span style="font-size:16px">${pi.icon}</span>`;
+    html+=`<div><div style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:14px;color:${pi.color}">${pi.name}</div>`;
+    if(pid<5) html+=`<div style="font-size:10px;color:var(--mu)">🪙 ${pi.cost} moedas por figurinha</div>`;
+    else html+=`<div style="font-size:10px;color:var(--mu)">Conquista especial — não comprada com moedas</div>`;
+    html+=`</div></div>`;
+
+    // Sticker grid
+    const isHalf=stickers.some(s=>s.half);
+    html+=`<div style="display:grid;grid-template-columns:${isHalf?'1fr':'repeat(4,1fr)'};gap:8px">`;
+    stickers.forEach(s=>{
+      const isOwned=owned.includes(s.id);
+      const isPlaceholder=s.placeholder;
+      html+=`<div style="
+        border:1.5px ${isOwned?'solid':'dashed'} ${isOwned?s.color:s.color+'60'};
+        border-radius:8px;padding:${s.half?'20px':'10px 6px'};
+        background:${isOwned?s.color+'15':'var(--ow)'};
+        text-align:center;position:relative;
+        ${s.half?'grid-column:1/-1;':''}
+      ">
+        ${isOwned?`<div style="position:absolute;top:4px;right:4px;background:${s.color};color:#fff;border-radius:50%;width:16px;height:16px;display:flex;align-items:center;justify-content:center;font-size:9px">✓</div>`:''}
+        <div style="font-size:${s.half?'32px':'20px'};margin-bottom:4px">${isOwned?'🌟':'⬜'}</div>
+        <div style="font-size:${s.half?'13px':'9px'};font-weight:700;color:${isOwned?s.color:'var(--mu)'};line-height:1.2">${isPlaceholder?'A contratar':s.name}</div>
+        <div style="font-size:8px;color:var(--mu);margin-top:2px">#${String(s.num).padStart(2,'0')}</div>
+        ${!isOwned&&!s.special?`<div style="font-size:8px;color:${s.color};margin-top:3px;font-weight:600">🪙 ${s.cost}</div>`:''}
+      </div>`;
+    });
+    html+='</div></div>';
+  });
+  html+='</div>';
+  el.innerHTML=html;
+  // Enable drag-and-drop
+  setupAlbumDrag(owned);
+}
+
+function setupAlbumDrag(owned){
+  // Draggable stickers from shop to album slots
+  document.querySelectorAll('.shop-sticker[draggable="true"]').forEach(el=>{
+    el.addEventListener('dragstart',e=>{
+      e.dataTransfer.setData('stickerId',el.dataset.id);
+    });
+  });
+  document.querySelectorAll('.album-slot-drop').forEach(el=>{
+    el.addEventListener('dragover',e=>e.preventDefault());
+    el.addEventListener('drop',e=>{
+      const sid=parseInt(e.dataTransfer.getData('stickerId'));
+      if(sid&&!owned.includes(sid)){
+        const newOwned=[...owned,sid];
+        saveMyAlbum(newOwned);
+        buildAlbumUI();
+        showToast('Figurinha colada no álbum! 🎉');
+      }
+    });
+  });
+}
+
+function renderAlbumShop(myCoins,owned){
+  const el=document.getElementById('album-shop');
+  if(!el)return;
+  const visiblePackId=getHighestUnlockedPackId(myCoins,owned);
+  const availableStickers=ALBUM_STICKERS.filter(s=>s.packId===visiblePackId&&!s.special&&!owned.includes(s.id));
+  const specialStickers=ALBUM_STICKERS.filter(s=>s.special&&!owned.includes(s.id));
+
+  if(!availableStickers.length&&!specialStickers.length){
+    el.innerHTML='<div class="notice green" style="text-align:center">🎉 Pack completo! Parabéns!</div>';
+    return;
+  }
+
+  const pi=PACK_INFO[visiblePackId];
+  let html=`<div style="background:var(--wh);border:0.5px solid var(--bd);border-radius:10px;padding:14px">`;
+  html+=`<div style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:14px;color:var(--dk);margin-bottom:4px">🛒 Comprar figurinha</div>`;
+  html+=`<div style="font-size:11px;color:var(--mu);margin-bottom:12px">Pack atual: <strong style="color:${pi.color}">${pi.icon} ${pi.name}</strong> · 🪙 ${myCoins} moedas disponíveis</div>`;
+  html+=`<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:8px">`;
+
+  availableStickers.forEach(s=>{
+    const canBuy=myCoins>=s.cost;
+    html+=`<div class="shop-sticker" draggable="${canBuy}" data-id="${s.id}"
+      style="border:1.5px dashed ${canBuy?s.color:s.color+'40'};border-radius:8px;padding:10px 6px;
+      text-align:center;background:${canBuy?s.color+'12':'var(--ow)'};
+      cursor:${canBuy?'grab':'not-allowed'};opacity:${canBuy?1:0.5};position:relative">
+      <div style="font-size:20px;margin-bottom:4px">🌟</div>
+      <div style="font-size:9px;font-weight:700;color:${canBuy?s.color:'var(--mu)'};line-height:1.2">${s.placeholder?'A contratar':s.name}</div>
+      <div style="font-size:8px;color:var(--mu);margin-top:2px">#${String(s.num).padStart(2,'0')}</div>
+      <div style="font-size:9px;font-weight:700;color:${canBuy?s.color:'var(--mu)'};margin-top:4px">🪙 ${s.cost}</div>
+      ${canBuy?`<button onclick="buySticker(${s.id})" style="margin-top:6px;width:100%;background:${s.color};color:#fff;border:none;border-radius:5px;padding:4px;font-size:10px;font-weight:700;cursor:pointer">Comprar</button>`:`<div style="font-size:9px;color:var(--red);margin-top:4px">Faltam 🪙${s.cost-myCoins}</div>`}
+    </div>`;
+  });
+  html+='</div></div>';
+  el.innerHTML=html;
+  setupAlbumDrag(owned);
+}
+
+async function buySticker(stickerId){
+  const owned=getMyAlbum();
+  if(owned.includes(stickerId)){showToast('Você já tem esta figurinha!');return;}
+  const s=ALBUM_STICKERS.find(x=>x.id===stickerId);
+  if(!s){return;}
+  const myCoins=getTotal(currentUser?.name)||getTotal(currentUser?.short)||0;
+  if(myCoins<s.cost){showToast('Moedas insuficientes!');return;}
+
+  // Deduct coins in Firestore
+  await db.collection('scores').doc(currentUser.short||currentUser.name).set(
+    {ind:firebase.firestore.FieldValue.increment(-s.cost)},{merge:true}
+  );
+  // Record purchase
+  await db.collection('albumPurchases').add({
+    user:currentUser.short,stickerId,stickerName:s.name,pack:s.pack,cost:s.cost,
+    ts:firebase.firestore.FieldValue.serverTimestamp()
+  });
+
+  const newOwned=[...owned,stickerId];
+  saveMyAlbum(newOwned);
+  showToast('Figurinha #'+s.num+' colada no álbum! 🎉');
+  buildAlbumUI();
+}
+
+async function exportAlbumPNG(){
+  showToast('Gerando PNG...');
+  const el=document.getElementById('album-printable');
+  if(!el){showToast('Álbum não encontrado.');return;}
+  try{
+    if(typeof html2canvas!=='undefined'){
+      const canvas=await html2canvas(el,{scale:2,backgroundColor:'#ffffff',useCORS:true,logging:false});
+      const link=document.createElement('a');
+      link.download='album-copa-'+(currentUser?.short||'liveseo').replace(/\s/g,'-')+'.png';
+      link.href=canvas.toDataURL('image/png');
+      link.click();
+      showToast('PNG baixado! 🖼️');
+    } else {
+      const win=window.open('','_blank');
+      win.document.write('<html><body style="margin:0;padding:16px">'+el.outerHTML+'</body></html>');
+      win.document.close();win.print();
+    }
+  }catch(e){console.error(e);showToast('Erro ao gerar PNG.');}
+}
+
+async function exportAlbumPDF(){
+  showToast('Gerando PDF...');
+  const el=document.getElementById('album-printable');
+  if(!el){showToast('Álbum não encontrado.');return;}
+  try{
+    if(typeof html2canvas!=='undefined'&&typeof window.jspdf!=='undefined'){
+      const {jsPDF}=window.jspdf;
+      // Render at high resolution
+      const canvas=await html2canvas(el,{scale:2,backgroundColor:'#ffffff',useCORS:true,logging:false});
+      const imgData=canvas.toDataURL('image/png');
+      const imgW=canvas.width;
+      const imgH=canvas.height;
+      // A4 dimensions in mm
+      const pdfW=210;
+      const pdfH=Math.round((imgH/imgW)*pdfW);
+      const pdf=new jsPDF({orientation:pdfH>pdfW?'portrait':'landscape',unit:'mm',format:[pdfW,pdfH]});
+      pdf.addImage(imgData,'PNG',0,0,pdfW,pdfH);
+      pdf.save('album-copa-'+(currentUser?.short||'liveseo').replace(/\s/g,'-')+'.pdf');
+      showToast('PDF baixado! 📄');
+    } else {
+      // Fallback: print to PDF via browser dialog
+      const win=window.open('','_blank');
+      win.document.write(`<html><head><style>
+        body{margin:0;padding:0}
+        @page{margin:10mm;size:A4}
+        @media print{body{-webkit-print-color-adjust:exact;print-color-adjust:exact}}
+      </style></head><body>`+el.outerHTML+'</body></html>');
+      win.document.close();
+      win.onload=()=>{win.print();};
+      showToast('Use Ctrl+P → Salvar como PDF');
+    }
+  }catch(e){
+    console.error(e);
+    // Last resort: browser print
+    showToast('Use Ctrl+P → Salvar como PDF');
+    window.print();
+  }
+}
+
+function buildAlbum(){
+  buildAlbumUI();
+}
+
 function buildLogin(){}
 function openLink(url){
   if(!url||!url.startsWith('http')){showToast('Link inválido.');return;}
@@ -1524,6 +1774,282 @@ async function addPhotoLink(){
   }
 }
 
+
+
+// ═══════════════════════════════════
+// ALBUM DATA
+// ═══════════════════════════════════
+const ALBUM_STICKERS = [{"id": 1, "num": 1, "name": "Bárbara Tavares", "pack": "Menor Aprendiz", "packId": 1, "cost": 60, "color": "#8A9AB0", "rarity": "Comum", "team": "FACILITIES"}, {"id": 2, "num": 2, "name": "Bárbara Tavares", "pack": "Menor Aprendiz", "packId": 1, "cost": 60, "color": "#8A9AB0", "rarity": "Comum", "team": "FACILITIES"}, {"id": 3, "num": 3, "name": "João Apolonio", "pack": "Menor Aprendiz", "packId": 1, "cost": 60, "color": "#8A9AB0", "rarity": "Comum", "team": "FACILITIES"}, {"id": 4, "num": 4, "name": "João Apolonio", "pack": "Menor Aprendiz", "packId": 1, "cost": 60, "color": "#8A9AB0", "rarity": "Comum", "team": "FACILITIES"}, {"id": 5, "num": 5, "name": "André Camacho", "pack": "Estagiário", "packId": 2, "cost": 120, "color": "#2E75B6", "rarity": "Incomum", "team": "JURÍDICO"}, {"id": 6, "num": 6, "name": "André Camacho", "pack": "Estagiário", "packId": 2, "cost": 120, "color": "#2E75B6", "rarity": "Incomum", "team": "JURÍDICO"}, {"id": 7, "num": 7, "name": "Esther Rebola", "pack": "Estagiário", "packId": 2, "cost": 120, "color": "#2E75B6", "rarity": "Incomum", "team": "RECURSOS HUMANOS"}, {"id": 8, "num": 8, "name": "Esther Rebola", "pack": "Estagiário", "packId": 2, "cost": 120, "color": "#2E75B6", "rarity": "Incomum", "team": "RECURSOS HUMANOS"}, {"id": 9, "num": 9, "name": "Tais Santarem", "pack": "Estagiário", "packId": 2, "cost": 120, "color": "#2E75B6", "rarity": "Incomum", "team": "DEPARTAMENTO PESSOAL"}, {"id": 10, "num": 10, "name": "Tais Santarem", "pack": "Estagiário", "packId": 2, "cost": 120, "color": "#2E75B6", "rarity": "Incomum", "team": "DEPARTAMENTO PESSOAL"}, {"id": 11, "num": 11, "name": "Yasmin Santos", "pack": "Estagiário", "packId": 2, "cost": 120, "color": "#2E75B6", "rarity": "Incomum", "team": "RECURSOS HUMANOS"}, {"id": 12, "num": 12, "name": "Yasmin Santos", "pack": "Estagiário", "packId": 2, "cost": 120, "color": "#2E75B6", "rarity": "Incomum", "team": "RECURSOS HUMANOS"}, {"id": 13, "num": 13, "name": "Adriana Stall", "pack": "Analista", "packId": 3, "cost": 220, "color": "#1D9E75", "rarity": "Rara", "team": "FINANCEIRO"}, {"id": 14, "num": 14, "name": "Adriana Stall", "pack": "Analista", "packId": 3, "cost": 220, "color": "#1D9E75", "rarity": "Rara", "team": "FINANCEIRO"}, {"id": 15, "num": 15, "name": "Arieska Meurer", "pack": "Analista", "packId": 3, "cost": 220, "color": "#1D9E75", "rarity": "Rara", "team": "ESTRATÉGICO"}, {"id": 16, "num": 16, "name": "Arieska Meurer", "pack": "Analista", "packId": 3, "cost": 220, "color": "#1D9E75", "rarity": "Rara", "team": "ESTRATÉGICO"}, {"id": 17, "num": 17, "name": "Eduardo Vilas Boas", "pack": "Analista", "packId": 3, "cost": 220, "color": "#1D9E75", "rarity": "Rara", "team": "FINANCEIRO"}, {"id": 18, "num": 18, "name": "Eduardo Vilas Boas", "pack": "Analista", "packId": 3, "cost": 220, "color": "#1D9E75", "rarity": "Rara", "team": "FINANCEIRO"}, {"id": 19, "num": 19, "name": "Laís Pereira", "pack": "Analista", "packId": 3, "cost": 220, "color": "#1D9E75", "rarity": "Rara", "team": "FACILITIES"}, {"id": 20, "num": 20, "name": "Laís Pereira", "pack": "Analista", "packId": 3, "cost": 220, "color": "#1D9E75", "rarity": "Rara", "team": "FACILITIES"}, {"id": 21, "num": 21, "name": "Marcela Pauka", "pack": "Analista", "packId": 3, "cost": 220, "color": "#1D9E75", "rarity": "Rara", "team": "FINANCEIRO"}, {"id": 22, "num": 22, "name": "Marcela Pauka", "pack": "Analista", "packId": 3, "cost": 220, "color": "#1D9E75", "rarity": "Rara", "team": "FINANCEIRO"}, {"id": 23, "num": 23, "name": "Michele Yamada", "pack": "Analista", "packId": 3, "cost": 220, "color": "#1D9E75", "rarity": "Rara", "team": "ESTRATÉGICO"}, {"id": 24, "num": 24, "name": "Michele Yamada", "pack": "Analista", "packId": 3, "cost": 220, "color": "#1D9E75", "rarity": "Rara", "team": "ESTRATÉGICO"}, {"id": 25, "num": 25, "name": "Sara Glatz", "pack": "Analista", "packId": 3, "cost": 220, "color": "#1D9E75", "rarity": "Rara", "team": "JURÍDICO"}, {"id": 26, "num": 26, "name": "Sara Glatz", "pack": "Analista", "packId": 3, "cost": 220, "color": "#1D9E75", "rarity": "Rara", "team": "JURÍDICO"}, {"id": 27, "num": 27, "name": "Facilities 1", "pack": "Analista", "packId": 3, "cost": 220, "color": "#1D9E75", "rarity": "Rara", "team": "FACILITIES", "placeholder": true}, {"id": 28, "num": 28, "name": "Facilities 2", "pack": "Analista", "packId": 3, "cost": 220, "color": "#1D9E75", "rarity": "Rara", "team": "FACILITIES", "placeholder": true}, {"id": 29, "num": 29, "name": "Luana Rohling", "pack": "Gestora / Sócia", "packId": 4, "cost": 520, "color": "#534AB7", "rarity": "Lendária", "team": "RECURSOS HUMANOS"}, {"id": 30, "num": 30, "name": "Luana Rohling", "pack": "Gestora / Sócia", "packId": 4, "cost": 520, "color": "#534AB7", "rarity": "Lendária", "team": "RECURSOS HUMANOS"}, {"id": 31, "num": 31, "name": "Amanda Conrado", "pack": "Gestora / Sócia", "packId": 4, "cost": 520, "color": "#534AB7", "rarity": "Lendária", "team": "ADMIN"}, {"id": 32, "num": 32, "name": "Amanda Conrado", "pack": "Gestora / Sócia", "packId": 4, "cost": 520, "color": "#534AB7", "rarity": "Lendária", "team": "ADMIN"}, {"id": 33, "num": 33, "name": "Julia", "pack": "Julia & Tumtum", "packId": 5, "cost": 0, "color": "#B8860B", "rarity": "Dourada", "special": true}, {"id": 34, "num": 34, "name": "Julia", "pack": "Julia & Tumtum", "packId": 5, "cost": 0, "color": "#B8860B", "rarity": "Dourada", "special": true}, {"id": 35, "num": 35, "name": "Tumtum", "pack": "Julia & Tumtum", "packId": 5, "cost": 0, "color": "#B8860B", "rarity": "Dourada", "special": true}, {"id": 36, "num": 36, "name": "Tumtum", "pack": "Julia & Tumtum", "packId": 5, "cost": 0, "color": "#B8860B", "rarity": "Dourada", "special": true}, {"id": 37, "num": 37, "name": "Foto do Time — SG&A", "pack": "Foto do Time", "packId": 6, "cost": 0, "color": "#A32D2D", "rarity": "Ultra Rara", "special": true, "half": true}];
+
+const PACK_INFO = {
+  1:{name:'Menor Aprendiz',color:'#8A9AB0',cost:60,icon:'🌱'},
+  2:{name:'Estagiário',color:'#2E75B6',cost:120,icon:'📝'},
+  3:{name:'Analista',color:'#1D9E75',cost:220,icon:'📊'},
+  4:{name:'Gestora / Sócia',color:'#534AB7',cost:520,icon:'🏅'},
+  5:{name:'Julia & Tumtum',color:'#B8860B',cost:0,icon:'⭐'},
+  6:{name:'Foto do Time',color:'#A32D2D',cost:0,icon:'📸'},
+};
+
+function getMyAlbum(){
+  // Get from Firestore cache or localStorage fallback
+  const key='album_'+( currentUser?.short||'guest');
+  try{ const raw=localStorage.getItem(key); return raw?JSON.parse(raw):[]; }catch(e){return [];}
+}
+function saveMyAlbum(owned){
+  const key='album_'+( currentUser?.short||'guest');
+  try{ localStorage.setItem(key,JSON.stringify(owned)); }catch(e){}
+  // Also save to Firestore
+  if(currentUser){
+    db.collection('albums').doc(currentUser.short||currentUser.name).set({owned,updatedAt:firebase.firestore.FieldValue.serverTimestamp()},{merge:true}).catch(()=>{});
+  }
+}
+async function loadMyAlbumFromFirestore(){
+  if(!currentUser)return;
+  try{
+    const doc=await db.collection('albums').doc(currentUser.short||currentUser.name).get();
+    if(doc.exists){
+      const key='album_'+(currentUser.short||'guest');
+      localStorage.setItem(key,JSON.stringify(doc.data().owned||[]));
+    }
+  }catch(e){}
+}
+
+function getHighestUnlockedPackId(myCoins,owned){
+  // Pack unlocks progressively: next pack appears only when previous is complete
+  const packIds=[1,2,3,4,5,6];
+  let highestVisible=1;
+  for(const pid of packIds){
+    const packStickers=ALBUM_STICKERS.filter(s=>s.packId===pid);
+    const allOwned=packStickers.every(s=>owned.includes(s.id));
+    if(allOwned && pid<6) highestVisible=pid+1;
+    else{ highestVisible=pid; break; }
+  }
+  return highestVisible;
+}
+
+function buildAlbumUI(){
+  if(!currentUser)return;
+  loadMyAlbumFromFirestore().then(()=>{
+    const myCoins=getTotal(currentUser.name)||getTotal(currentUser.short)||0;
+    const owned=getMyAlbum();
+    renderAlbumProgress(myCoins,owned);
+    renderAlbumBook(owned);
+    renderAlbumShop(myCoins,owned);
+  });
+}
+
+function renderAlbumProgress(myCoins,owned){
+  const el=document.getElementById('album-pack-progress');
+  if(!el)return;
+  const visiblePack=getHighestUnlockedPackId(myCoins,owned);
+  const total=ALBUM_STICKERS.filter(s=>!s.half).length + 1; // 37 total
+  const pct=Math.round((owned.length/total)*100);
+  el.innerHTML=`
+    <div style="background:var(--wh);border:0.5px solid var(--bd);border-radius:10px;padding:14px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+        <div style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:15px;color:var(--dk)">📒 Meu Álbum</div>
+        <div style="font-size:13px;font-weight:700;color:var(--or)">${owned.length}/${total} figurinhas</div>
+      </div>
+      <div style="background:var(--ow);border-radius:4px;height:8px;overflow:hidden;margin-bottom:6px">
+        <div style="height:8px;border-radius:4px;background:linear-gradient(90deg,var(--or),var(--gold));width:${pct}%;transition:width .5s"></div>
+      </div>
+      <div style="font-size:11px;color:var(--mu)">${pct}% completo · 🪙 ${myCoins} moedas disponíveis</div>
+    </div>`;
+}
+
+function renderAlbumBook(owned){
+  const el=document.getElementById('album-book');
+  if(!el)return;
+  // Group by pack
+  const packs={};
+  ALBUM_STICKERS.forEach(s=>{ packs[s.packId]=packs[s.packId]||[]; packs[s.packId].push(s); });
+
+  let html='<div id="album-printable" style="background:var(--wh);border:0.5px solid var(--bd);border-radius:12px;padding:16px">';
+  html+='<div style="text-align:center;margin-bottom:16px;padding-bottom:12px;border-bottom:2px solid var(--or)">';
+  html+='<div style="font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:24px;color:var(--dk)">live<span style="color:var(--or)">SEO</span></div>';
+  html+='<div style="font-size:11px;color:var(--mu)">Copa Administrativa 2026 · Álbum de '+(currentUser?.short||'')+'</div></div>';
+
+  Object.entries(packs).forEach(([pid,stickers])=>{
+    const pi=PACK_INFO[pid];
+    html+=`<div style="margin-bottom:20px">`;
+    html+=`<div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;padding:6px 10px;background:${pi.color}18;border-radius:6px;border-left:3px solid ${pi.color}">`;
+    html+=`<span style="font-size:16px">${pi.icon}</span>`;
+    html+=`<div><div style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:14px;color:${pi.color}">${pi.name}</div>`;
+    if(pid<5) html+=`<div style="font-size:10px;color:var(--mu)">🪙 ${pi.cost} moedas por figurinha</div>`;
+    else html+=`<div style="font-size:10px;color:var(--mu)">Conquista especial — não comprada com moedas</div>`;
+    html+=`</div></div>`;
+
+    // Sticker grid
+    const isHalf=stickers.some(s=>s.half);
+    html+=`<div style="display:grid;grid-template-columns:${isHalf?'1fr':'repeat(4,1fr)'};gap:8px">`;
+    stickers.forEach(s=>{
+      const isOwned=owned.includes(s.id);
+      const isPlaceholder=s.placeholder;
+      html+=`<div style="
+        border:1.5px ${isOwned?'solid':'dashed'} ${isOwned?s.color:s.color+'60'};
+        border-radius:8px;padding:${s.half?'20px':'10px 6px'};
+        background:${isOwned?s.color+'15':'var(--ow)'};
+        text-align:center;position:relative;
+        ${s.half?'grid-column:1/-1;':''}
+      ">
+        ${isOwned?`<div style="position:absolute;top:4px;right:4px;background:${s.color};color:#fff;border-radius:50%;width:16px;height:16px;display:flex;align-items:center;justify-content:center;font-size:9px">✓</div>`:''}
+        <div style="font-size:${s.half?'32px':'20px'};margin-bottom:4px">${isOwned?'🌟':'⬜'}</div>
+        <div style="font-size:${s.half?'13px':'9px'};font-weight:700;color:${isOwned?s.color:'var(--mu)'};line-height:1.2">${isPlaceholder?'A contratar':s.name}</div>
+        <div style="font-size:8px;color:var(--mu);margin-top:2px">#${String(s.num).padStart(2,'0')}</div>
+        ${!isOwned&&!s.special?`<div style="font-size:8px;color:${s.color};margin-top:3px;font-weight:600">🪙 ${s.cost}</div>`:''}
+      </div>`;
+    });
+    html+='</div></div>';
+  });
+  html+='</div>';
+  el.innerHTML=html;
+  // Enable drag-and-drop
+  setupAlbumDrag(owned);
+}
+
+function setupAlbumDrag(owned){
+  // Draggable stickers from shop to album slots
+  document.querySelectorAll('.shop-sticker[draggable="true"]').forEach(el=>{
+    el.addEventListener('dragstart',e=>{
+      e.dataTransfer.setData('stickerId',el.dataset.id);
+    });
+  });
+  document.querySelectorAll('.album-slot-drop').forEach(el=>{
+    el.addEventListener('dragover',e=>e.preventDefault());
+    el.addEventListener('drop',e=>{
+      const sid=parseInt(e.dataTransfer.getData('stickerId'));
+      if(sid&&!owned.includes(sid)){
+        const newOwned=[...owned,sid];
+        saveMyAlbum(newOwned);
+        buildAlbumUI();
+        showToast('Figurinha colada no álbum! 🎉');
+      }
+    });
+  });
+}
+
+function renderAlbumShop(myCoins,owned){
+  const el=document.getElementById('album-shop');
+  if(!el)return;
+  const visiblePackId=getHighestUnlockedPackId(myCoins,owned);
+  const availableStickers=ALBUM_STICKERS.filter(s=>s.packId===visiblePackId&&!s.special&&!owned.includes(s.id));
+  const specialStickers=ALBUM_STICKERS.filter(s=>s.special&&!owned.includes(s.id));
+
+  if(!availableStickers.length&&!specialStickers.length){
+    el.innerHTML='<div class="notice green" style="text-align:center">🎉 Pack completo! Parabéns!</div>';
+    return;
+  }
+
+  const pi=PACK_INFO[visiblePackId];
+  let html=`<div style="background:var(--wh);border:0.5px solid var(--bd);border-radius:10px;padding:14px">`;
+  html+=`<div style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:14px;color:var(--dk);margin-bottom:4px">🛒 Comprar figurinha</div>`;
+  html+=`<div style="font-size:11px;color:var(--mu);margin-bottom:12px">Pack atual: <strong style="color:${pi.color}">${pi.icon} ${pi.name}</strong> · 🪙 ${myCoins} moedas disponíveis</div>`;
+  html+=`<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:8px">`;
+
+  availableStickers.forEach(s=>{
+    const canBuy=myCoins>=s.cost;
+    html+=`<div class="shop-sticker" draggable="${canBuy}" data-id="${s.id}"
+      style="border:1.5px dashed ${canBuy?s.color:s.color+'40'};border-radius:8px;padding:10px 6px;
+      text-align:center;background:${canBuy?s.color+'12':'var(--ow)'};
+      cursor:${canBuy?'grab':'not-allowed'};opacity:${canBuy?1:0.5};position:relative">
+      <div style="font-size:20px;margin-bottom:4px">🌟</div>
+      <div style="font-size:9px;font-weight:700;color:${canBuy?s.color:'var(--mu)'};line-height:1.2">${s.placeholder?'A contratar':s.name}</div>
+      <div style="font-size:8px;color:var(--mu);margin-top:2px">#${String(s.num).padStart(2,'0')}</div>
+      <div style="font-size:9px;font-weight:700;color:${canBuy?s.color:'var(--mu)'};margin-top:4px">🪙 ${s.cost}</div>
+      ${canBuy?`<button onclick="buySticker(${s.id})" style="margin-top:6px;width:100%;background:${s.color};color:#fff;border:none;border-radius:5px;padding:4px;font-size:10px;font-weight:700;cursor:pointer">Comprar</button>`:`<div style="font-size:9px;color:var(--red);margin-top:4px">Faltam 🪙${s.cost-myCoins}</div>`}
+    </div>`;
+  });
+  html+='</div></div>';
+  el.innerHTML=html;
+  setupAlbumDrag(owned);
+}
+
+async function buySticker(stickerId){
+  const owned=getMyAlbum();
+  if(owned.includes(stickerId)){showToast('Você já tem esta figurinha!');return;}
+  const s=ALBUM_STICKERS.find(x=>x.id===stickerId);
+  if(!s){return;}
+  const myCoins=getTotal(currentUser?.name)||getTotal(currentUser?.short)||0;
+  if(myCoins<s.cost){showToast('Moedas insuficientes!');return;}
+
+  // Deduct coins in Firestore
+  await db.collection('scores').doc(currentUser.short||currentUser.name).set(
+    {ind:firebase.firestore.FieldValue.increment(-s.cost)},{merge:true}
+  );
+  // Record purchase
+  await db.collection('albumPurchases').add({
+    user:currentUser.short,stickerId,stickerName:s.name,pack:s.pack,cost:s.cost,
+    ts:firebase.firestore.FieldValue.serverTimestamp()
+  });
+
+  const newOwned=[...owned,stickerId];
+  saveMyAlbum(newOwned);
+  showToast('Figurinha #'+s.num+' colada no álbum! 🎉');
+  buildAlbumUI();
+}
+
+async function exportAlbumPNG(){
+  showToast('Gerando PNG...');
+  const el=document.getElementById('album-printable');
+  if(!el){showToast('Álbum não encontrado.');return;}
+  try{
+    if(typeof html2canvas!=='undefined'){
+      const canvas=await html2canvas(el,{scale:2,backgroundColor:'#ffffff',useCORS:true,logging:false});
+      const link=document.createElement('a');
+      link.download='album-copa-'+(currentUser?.short||'liveseo').replace(/\s/g,'-')+'.png';
+      link.href=canvas.toDataURL('image/png');
+      link.click();
+      showToast('PNG baixado! 🖼️');
+    } else {
+      const win=window.open('','_blank');
+      win.document.write('<html><body style="margin:0;padding:16px">'+el.outerHTML+'</body></html>');
+      win.document.close();win.print();
+    }
+  }catch(e){console.error(e);showToast('Erro ao gerar PNG.');}
+}
+
+async function exportAlbumPDF(){
+  showToast('Gerando PDF...');
+  const el=document.getElementById('album-printable');
+  if(!el){showToast('Álbum não encontrado.');return;}
+  try{
+    if(typeof html2canvas!=='undefined'&&typeof window.jspdf!=='undefined'){
+      const {jsPDF}=window.jspdf;
+      // Render at high resolution
+      const canvas=await html2canvas(el,{scale:2,backgroundColor:'#ffffff',useCORS:true,logging:false});
+      const imgData=canvas.toDataURL('image/png');
+      const imgW=canvas.width;
+      const imgH=canvas.height;
+      // A4 dimensions in mm
+      const pdfW=210;
+      const pdfH=Math.round((imgH/imgW)*pdfW);
+      const pdf=new jsPDF({orientation:pdfH>pdfW?'portrait':'landscape',unit:'mm',format:[pdfW,pdfH]});
+      pdf.addImage(imgData,'PNG',0,0,pdfW,pdfH);
+      pdf.save('album-copa-'+(currentUser?.short||'liveseo').replace(/\s/g,'-')+'.pdf');
+      showToast('PDF baixado! 📄');
+    } else {
+      // Fallback: print to PDF via browser dialog
+      const win=window.open('','_blank');
+      win.document.write(`<html><head><style>
+        body{margin:0;padding:0}
+        @page{margin:10mm;size:A4}
+        @media print{body{-webkit-print-color-adjust:exact;print-color-adjust:exact}}
+      </style></head><body>`+el.outerHTML+'</body></html>');
+      win.document.close();
+      win.onload=()=>{win.print();};
+      showToast('Use Ctrl+P → Salvar como PDF');
+    }
+  }catch(e){
+    console.error(e);
+    // Last resort: browser print
+    showToast('Use Ctrl+P → Salvar como PDF');
+    window.print();
+  }
+}
+
+function buildAlbum(){
+  buildAlbumUI();
+}
 
 function buildLogin(){}
 function openLink(url){

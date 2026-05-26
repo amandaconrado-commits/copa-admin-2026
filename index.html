@@ -13,22 +13,22 @@
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 :root{--or:#FC9801;--dk:#101820;--ow:#F4F5FA;--ol:#FFF3DC;--om:#FFD080;--wh:#fff;--bd:#E2E5F0;--mu:#6B7A8D;--tx:#1A202C;--green:#1D9E75;--blue:#2E75B6;--red:#A32D2D;--purple:#534AB7;--gold:#B8860B}
-body{font-family:'Barlow',sans-serif;background:var(--ow);color:var(--tx);min-height:100vh}
+body{font-family:Barlow,sans-serif;background:var(--ow);color:var(--tx);min-height:100vh}
 a{color:var(--blue)}
 /* LOGIN */
 .login-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;background:var(--dk);padding:20px}
 .login-box{background:var(--wh);border-radius:16px;padding:32px;width:100%;max-width:400px;text-align:center}
-.login-logo{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:30px;color:var(--dk);margin-bottom:4px}
+.login-logo{font-family:Barlow Condensed,sans-serif;font-weight:900;font-size:30px;color:var(--dk);margin-bottom:4px}
 .login-logo span{color:var(--or)}
 .login-sub{font-size:12px;color:var(--mu);margin-bottom:24px}
-.login-select{width:100%;padding:10px 12px;border:0.5px solid var(--bd);border-radius:8px;font-size:13px;font-family:'Barlow',sans-serif;color:var(--tx);background:var(--wh);outline:none;margin-bottom:14px;cursor:pointer}
-.login-btn{width:100%;background:var(--or);color:var(--dk);font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:15px;padding:12px;border:none;border-radius:8px;cursor:pointer}
+.login-select{width:100%;padding:10px 12px;border:0.5px solid var(--bd);border-radius:8px;font-size:13px;font-family:Barlow,sans-serif;color:var(--tx);background:var(--wh);outline:none;margin-bottom:14px;cursor:pointer}
+.login-btn{width:100%;background:var(--or);color:var(--dk);font-family:Barlow Condensed,sans-serif;font-weight:700;font-size:15px;padding:12px;border:none;border-radius:8px;cursor:pointer}
 .login-btn:hover{opacity:.88}
 .google-btn-style{transition:background .15s}
 .google-btn-style:hover{background:#F8F9FA!important}
 /* TOPBAR */
 .topbar{background:var(--dk);padding:0 16px;height:50px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:200}
-.logo{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:19px;color:#fff}
+.logo{font-family:Barlow Condensed,sans-serif;font-weight:900;font-size:19px;color:#fff}
 .logo span{color:var(--or)}
 .logo sub{font-size:9px;color:#8A9AB0;font-weight:400;margin-left:5px}
 .ldot{width:6px;height:6px;border-radius:50%;background:var(--green);display:inline-block;margin-left:6px;animation:pulse 2s infinite}
@@ -47,8 +47,8 @@ a{color:var(--blue)}
 /* HERO */
 .hero{background:var(--dk);border-radius:12px;padding:20px 22px;margin-bottom:15px;position:relative;overflow:hidden}
 .hero::before{content:'';position:absolute;right:-20px;top:-20px;width:150px;height:150px;border-radius:50%;background:var(--or);opacity:.07}
-.htag{display:inline-block;background:var(--or);color:var(--dk);font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:9px;letter-spacing:2px;padding:2px 8px;border-radius:3px;margin-bottom:7px}
-.hero h1{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:28px;color:#fff;line-height:1;margin-bottom:3px}
+.htag{display:inline-block;background:var(--or);color:var(--dk);font-family:Barlow Condensed,sans-serif;font-weight:700;font-size:9px;letter-spacing:2px;padding:2px 8px;border-radius:3px;margin-bottom:7px}
+.hero h1{font-family:Barlow Condensed,sans-serif;font-weight:900;font-size:28px;color:#fff;line-height:1;margin-bottom:3px}
 .hero h1 span{color:var(--or)}
 .hero p{color:#8A9AB0;font-size:11px;margin-bottom:12px}
 .hdates{display:flex;gap:8px;flex-wrap:wrap}
@@ -56,15 +56,15 @@ a{color:var(--blue)}
 .hdp strong{display:block;font-weight:700;font-size:14px;color:var(--or)}
 .hdp span{font-size:9px;color:#8A9AB0}
 /* SECTION */
-.stag{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:9px;letter-spacing:2px;color:var(--or);margin-bottom:9px;text-transform:uppercase}
-.sh2{font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:21px;color:var(--dk);margin-bottom:13px}
+.stag{font-family:Barlow Condensed,sans-serif;font-weight:700;font-size:9px;letter-spacing:2px;color:var(--or);margin-bottom:9px;text-transform:uppercase}
+.sh2{font-family:Barlow Condensed,sans-serif;font-weight:900;font-size:21px;color:var(--dk);margin-bottom:13px}
 /* GRIDS */
 .g4{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:8px;margin-bottom:14px}
 .g3{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:9px;margin-bottom:14px}
 .g2{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;margin-bottom:14px}
 /* STAT CARDS */
 .ms{background:var(--wh);border:0.5px solid var(--bd);border-radius:10px;padding:12px;text-align:center}
-.ms .v{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:24px;color:var(--tx);margin-bottom:1px}
+.ms .v{font-family:Barlow Condensed,sans-serif;font-weight:700;font-size:24px;color:var(--tx);margin-bottom:1px}
 .ms .v.or{color:var(--or)}.ms .v.gold{color:var(--gold)}
 .ms .l{font-size:10px;color:var(--mu)}
 /* NOTICE */
@@ -80,7 +80,7 @@ a{color:var(--blue)}
 .rc.hl{background:var(--ol);border-color:var(--om)}
 .rc h4{font-size:12px;font-weight:600;color:var(--dk);margin-bottom:4px}
 .rc p{font-size:11px;color:var(--mu);line-height:1.45}
-.fml{font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;color:var(--or);margin-top:5px}
+.fml{font-family:Barlow Condensed,sans-serif;font-size:12px;font-weight:700;color:var(--or);margin-top:5px}
 /* TABLE */
 .tw{overflow-x:auto;border-radius:9px;border:0.5px solid var(--bd);background:var(--wh);margin-bottom:14px}
 table{width:100%;border-collapse:collapse}
@@ -105,16 +105,16 @@ tbody td{padding:8px 10px;font-size:12px;color:var(--tx);vertical-align:middle}
 .ppct{font-size:10px;color:var(--mu);min-width:26px;text-align:right}
 /* FORM */
 .fc{background:var(--wh);border:0.5px solid var(--bd);border-radius:11px;padding:17px;margin-bottom:13px}
-.fc h3{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:15px;color:var(--dk);margin-bottom:12px}
+.fc h3{font-family:Barlow Condensed,sans-serif;font-weight:700;font-size:15px;color:var(--dk);margin-bottom:12px}
 .fr{margin-bottom:11px}
 .fr label{display:block;font-size:10px;font-weight:600;color:var(--mu);margin-bottom:4px;text-transform:uppercase;letter-spacing:.5px}
-.fr select,.fr input,.fr textarea{width:100%;padding:8px 10px;border:0.5px solid var(--bd);border-radius:7px;font-size:13px;font-family:'Barlow',sans-serif;color:var(--tx);background:var(--wh);outline:none;transition:border .15s}
+.fr select,.fr input,.fr textarea{width:100%;padding:8px 10px;border:0.5px solid var(--bd);border-radius:7px;font-size:13px;font-family:Barlow,sans-serif;color:var(--tx);background:var(--wh);outline:none;transition:border .15s}
 .fr select:focus,.fr input:focus,.fr textarea:focus{border-color:var(--or)}
 .fr textarea{resize:vertical;min-height:80px;line-height:1.5}
-.btn{background:var(--or);color:var(--dk);font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:13px;padding:9px 20px;border:none;border-radius:7px;cursor:pointer}
+.btn{background:var(--or);color:var(--dk);font-family:Barlow Condensed,sans-serif;font-weight:700;font-size:13px;padding:9px 20px;border:none;border-radius:7px;cursor:pointer}
 .btn:hover{opacity:.88}.btn:disabled{opacity:.4;cursor:not-allowed}
-.btn-sec{background:var(--wh);border:0.5px solid var(--bd);color:var(--dk);font-family:'Barlow Condensed',sans-serif;font-weight:600;font-size:12px;padding:8px 16px;border-radius:7px;cursor:pointer}
-.btn-sm{font-size:11px;padding:4px 10px;border-radius:5px;border:0.5px solid var(--bd);background:var(--wh);color:var(--mu);cursor:pointer;font-family:'Barlow',sans-serif}
+.btn-sec{background:var(--wh);border:0.5px solid var(--bd);color:var(--dk);font-family:Barlow Condensed,sans-serif;font-weight:600;font-size:12px;padding:8px 16px;border-radius:7px;cursor:pointer}
+.btn-sm{font-size:11px;padding:4px 10px;border-radius:5px;border:0.5px solid var(--bd);background:var(--wh);color:var(--mu);cursor:pointer;font-family:Barlow,sans-serif}
 .btn-ok{background:#E1F5EE;color:#085041;border-color:#9FE1CB}
 .btn-rej{background:#FCEBEB;color:#791F1F;border-color:#F09595}
 /* CHALLENGES */
@@ -129,7 +129,7 @@ tbody td{padding:8px 10px;font-size:12px;color:var(--tx);vertical-align:middle}
 .chm strong{font-size:12px;font-weight:600;color:var(--dk);display:block;line-height:1.3}
 .chm .desc{font-size:11px;color:var(--mu);line-height:1.45;margin-top:2px}
 .chr{display:flex;flex-direction:column;align-items:flex-end;gap:2px;flex-shrink:0;min-width:70px}
-.chp{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:14px;color:var(--or);white-space:nowrap}
+.chp{font-family:Barlow Condensed,sans-serif;font-weight:700;font-size:14px;color:var(--or);white-space:nowrap}
 .jtag{font-size:9px;background:var(--or);color:var(--dk);padding:1px 6px;border-radius:20px;font-weight:700;white-space:nowrap}
 .btag{font-size:9px;background:var(--dk);color:var(--or);padding:1px 6px;border-radius:20px;font-weight:700;white-space:nowrap}
 /* SEG */
@@ -144,11 +144,11 @@ tbody td{padding:8px 10px;font-size:12px;color:var(--tx);vertical-align:middle}
 .skgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px;margin-bottom:15px}
 .sk{background:var(--wh);border:0.5px solid var(--bd);border-radius:9px;padding:11px;position:relative}
 .sk::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--c);border-radius:9px 9px 0 0}
-.skb{position:absolute;top:8px;right:7px;background:var(--c);color:#fff;font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:8px;padding:2px 5px;border-radius:20px;white-space:nowrap}
+.skb{position:absolute;top:8px;right:7px;background:var(--c);color:#fff;font-family:Barlow Condensed,sans-serif;font-weight:700;font-size:8px;padding:2px 5px;border-radius:20px;white-space:nowrap}
 .sks{font-size:11px;margin-bottom:2px;color:var(--c)}
-.sk h4{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:12px;color:var(--dk);margin-bottom:2px}
+.sk h4{font-family:Barlow Condensed,sans-serif;font-weight:700;font-size:12px;color:var(--dk);margin-bottom:2px}
 .sk p{font-size:10px;color:var(--mu);line-height:1.3}
-.skpts{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:12px;margin-top:5px;color:var(--c)}
+.skpts{font-family:Barlow Condensed,sans-serif;font-weight:700;font-size:12px;margin-top:5px;color:var(--c)}
 .coin-req{font-size:9px;color:var(--gold);font-weight:600;margin-top:2px}
 /* THERMO */
 .thermo-wrap{background:var(--wh);border:0.5px solid var(--bd);border-radius:10px;padding:16px;margin-bottom:14px}
@@ -190,11 +190,11 @@ tbody td{padding:8px 10px;font-size:12px;color:var(--tx);vertical-align:middle}
 .pc.s{border-top:3px solid #A0A0A0}
 .pc.b{border-top:3px solid #CD7F32}
 .pm{font-size:22px;margin-bottom:5px}
-.pc h4{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:13px;color:var(--dk);margin-bottom:2px}
+.pc h4{font-family:Barlow Condensed,sans-serif;font-weight:700;font-size:13px;color:var(--dk);margin-bottom:2px}
 .pc p{font-size:11px;color:var(--mu);line-height:1.4}
 /* ADMIN */
 .admin-box{background:#EEEDFE;border:1px solid #AFA9EC;border-radius:10px;padding:14px;margin-bottom:14px}
-.admin-box h3{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:14px;color:#3C3489;margin-bottom:10px}
+.admin-box h3{font-family:Barlow Condensed,sans-serif;font-weight:700;font-size:14px;color:#3C3489;margin-bottom:10px}
 /* PHOTOS */
 .photo-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px;margin-bottom:14px}
 .photo-card{background:var(--wh);border:0.5px solid var(--bd);border-radius:10px;overflow:hidden}
@@ -219,19 +219,19 @@ tbody td{padding:8px 10px;font-size:12px;color:var(--tx);vertical-align:middle}
 .tmpl-tag{display:inline-block;font-size:9px;background:var(--ow);border:0.5px solid var(--bd);border-radius:20px;padding:2px 8px;color:var(--mu);margin-right:4px}
 /* TREINAMENTO REGRAS BOX */
 .train-rules{background:linear-gradient(135deg,#1D2837,#101820);border-radius:10px;padding:16px;margin-bottom:12px;color:#fff}
-.train-rules h4{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:16px;color:var(--or);margin-bottom:12px}
+.train-rules h4{font-family:Barlow Condensed,sans-serif;font-weight:700;font-size:16px;color:var(--or);margin-bottom:12px}
 .train-rule-item{display:flex;align-items:flex-start;gap:10px;margin-bottom:10px;padding-bottom:10px;border-bottom:0.5px solid rgba(255,255,255,.1)}
 .train-rule-item:last-child{border-bottom:none;margin-bottom:0;padding-bottom:0}
 .train-rule-icon{font-size:18px;flex-shrink:0;margin-top:1px}
 .train-rule-text strong{display:block;font-size:12px;font-weight:600;color:#fff;margin-bottom:2px}
 .train-rule-text span{font-size:11px;color:#8A9AB0;line-height:1.4}
-.coin-badge{display:inline-block;background:var(--or);color:var(--dk);font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:11px;padding:2px 8px;border-radius:20px;margin-left:6px}
+.coin-badge{display:inline-block;background:var(--or);color:var(--dk);font-family:Barlow Condensed,sans-serif;font-weight:700;font-size:11px;padding:2px 8px;border-radius:20px;margin-left:6px}
 /* MODAL / POPUP */
 .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:9998;display:none;align-items:center;justify-content:center;padding:20px}
 .modal-overlay.show{display:flex}
 .modal-box{background:var(--wh);border-radius:12px;padding:24px;max-width:400px;width:100%;text-align:center}
 .modal-icon{font-size:40px;margin-bottom:12px}
-.modal-title{font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:18px;color:var(--dk);margin-bottom:8px}
+.modal-title{font-family:Barlow Condensed,sans-serif;font-weight:700;font-size:18px;color:var(--dk);margin-bottom:8px}
 .modal-msg{font-size:13px;color:var(--mu);line-height:1.5;margin-bottom:16px}
 /* TOAST */
 .toast{position:fixed;bottom:20px;right:20px;background:var(--dk);color:#fff;padding:10px 17px;border-radius:7px;font-size:12px;font-weight:500;z-index:9999;transform:translateY(80px);opacity:0;transition:all .3s;border-left:3px solid var(--or)}
@@ -319,7 +319,7 @@ tbody td{padding:8px 10px;font-size:12px;color:var(--tx);vertical-align:middle}
       <div style="background:var(--dk);border-radius:10px;padding:12px 14px;margin-bottom:14px;display:flex;gap:12px;align-items:flex-start">
         <div style="font-size:22px;flex-shrink:0">📁</div>
         <div>
-          <div style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:13px;color:var(--or);margin-bottom:3px">Drive da Copa — envie suas fotos e certificados aqui</div>
+          <div style="font-family:Barlow Condensed,sans-serif;font-weight:700;font-size:13px;color:var(--or);margin-bottom:3px">Drive da Copa — envie suas fotos e certificados aqui</div>
           <div style="font-size:11px;color:#8A9AB0;margin-bottom:8px">Fotos de treinamentos, ações conjuntas e certificados de cursos devem ser enviados para o Drive da Copa.</div>
           <button class="btn-sm" style="background:rgba(252,152,1,.15);color:var(--or);border-color:rgba(252,152,1,.4)" onclick="openLink('https://drive.google.com/drive/folders/1iHPGXZIHfsiBFu2YDHVVqphZt43hD8wo')">📁 Acessar Drive da Copa →</button>
         </div>
@@ -523,7 +523,7 @@ tbody td{padding:8px 10px;font-size:12px;color:var(--tx);vertical-align:middle}
         </div>
         <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:4px">
           <button class="btn" id="f-submit-btn" onclick="submitActivity()">Enviar para aprovação</button>
-          <span id="f-pts-preview" style="font-family:'Barlow Condensed',sans-serif;font-size:14px;color:var(--or);font-weight:700"></span>
+          <span id="f-pts-preview" style="font-family:Barlow Condensed,sans-serif;font-size:14px;color:var(--or);font-weight:700"></span>
         </div>
       </div>
       <div class="stag">minhas atividades</div>
@@ -578,9 +578,9 @@ tbody td{padding:8px 10px;font-size:12px;color:var(--tx);vertical-align:middle}
 
       <!-- CONSULTOR DE INDICADORES -->
       <div id="ind-consultor" style="display:none;background:linear-gradient(135deg,#101820,#1a2535);border-radius:12px;padding:16px;margin-bottom:14px">
-        <div style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:15px;color:var(--or);margin-bottom:4px">🤖 Consultor de Indicadores</div>
+        <div style="font-family:Barlow Condensed,sans-serif;font-weight:700;font-size:15px;color:var(--or);margin-bottom:4px">🤖 Consultor de Indicadores</div>
         <p style="font-size:12px;color:#8A9AB0;margin-bottom:12px">Descreva com detalhes o indicador que quer criar. Quanto mais específico você for (área, o que quer medir, de onde virão os dados), melhor será a análise.</p>
-        <textarea id="ind-query" rows="4" style="width:100%;padding:9px 11px;border:0.5px solid rgba(255,255,255,.15);border-radius:7px;font-size:12px;font-family:'Barlow',sans-serif;color:var(--tx);background:var(--wh);outline:none;resize:vertical;line-height:1.5;margin-bottom:10px" placeholder="Ex: Sou do Facilities e quero acompanhar quantos chamados de manutenção entram por semana, separados por tipo (elétrico, hidráulico, limpeza) e quanto tempo leva para cada um ser resolvido. Os chamados hoje chegam por WhatsApp e eu registro numa planilha manual."></textarea>
+        <textarea id="ind-query" rows="4" style="width:100%;padding:9px 11px;border:0.5px solid rgba(255,255,255,.15);border-radius:7px;font-size:12px;font-family:Barlow,sans-serif;color:var(--tx);background:var(--wh);outline:none;resize:vertical;line-height:1.5;margin-bottom:10px" placeholder="Ex: Sou do Facilities e quero acompanhar quantos chamados de manutenção entram por semana, separados por tipo (elétrico, hidráulico, limpeza) e quanto tempo leva para cada um ser resolvido. Os chamados hoje chegam por WhatsApp e eu registro numa planilha manual."></textarea>
         <button class="btn" onclick="consultarIndicadorIA()" id="ind-consult-btn" style="width:100%">🔍 Analisar indicador</button>
         <div id="ind-result" style="display:none;margin-top:12px;background:rgba(255,255,255,.06);border-radius:8px;padding:14px">
           <div id="ind-result-content" style="font-size:12px;color:#E0E6F0;line-height:1.7"></div>
@@ -628,7 +628,7 @@ tbody td{padding:8px 10px;font-size:12px;color:var(--tx);vertical-align:middle}
 
       <!-- HOW TO SHARE -->
       <div style="background:var(--wh);border:0.5px solid var(--bd);border-radius:10px;padding:14px;margin-bottom:14px">
-        <div style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:14px;color:var(--dk);margin-bottom:10px">📋 Como compartilhar uma foto</div>
+        <div style="font-family:Barlow Condensed,sans-serif;font-weight:700;font-size:14px;color:var(--dk);margin-bottom:10px">📋 Como compartilhar uma foto</div>
         <div style="font-size:12px;color:var(--mu);line-height:1.8">
           <strong style="color:var(--dk)">1.</strong> Faça o upload da foto no Drive da Copa:
           <button class="btn-sm" style="background:#E6F1FB;color:#0C447C;border-color:#B5D4F4;margin-left:6px" onclick="openLink('https://drive.google.com/drive/folders/1iHPGXZIHfsiBFu2YDHVVqphZt43hD8wo')">📁 Abrir Drive da Copa →</button><br>
@@ -1034,7 +1034,7 @@ function renderAlbumProgress(myCoins,owned){
   el.innerHTML=`
     <div style="background:var(--wh);border:0.5px solid var(--bd);border-radius:10px;padding:14px">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
-        <div style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:15px;color:var(--dk)">📒 Meu Álbum</div>
+        <div style="font-family:Barlow Condensed,sans-serif;font-weight:700;font-size:15px;color:var(--dk)">📒 Meu Álbum</div>
         <div style="font-size:13px;font-weight:700;color:var(--or)">${owned.length}/${total} figurinhas</div>
       </div>
       <div style="background:var(--ow);border-radius:4px;height:8px;overflow:hidden;margin-bottom:6px">
@@ -1053,7 +1053,7 @@ function renderAlbumBook(owned){
 
   let html='<div id="album-printable" style="background:var(--wh);border:0.5px solid var(--bd);border-radius:12px;padding:16px">';
   html+='<div style="text-align:center;margin-bottom:16px;padding-bottom:12px;border-bottom:2px solid var(--or)">';
-  html+='<div style="font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:24px;color:var(--dk)">live<span style="color:var(--or)">SEO</span></div>';
+  html+='<div style="font-family:Barlow Condensed,sans-serif;font-weight:900;font-size:24px;color:var(--dk)">live<span style="color:var(--or)">SEO</span></div>';
   html+='<div style="font-size:11px;color:var(--mu)">Copa Administrativa 2026 · Álbum de '+(currentUser?.short||'')+'</div></div>';
 
   Object.entries(packs).forEach(([pid,stickers])=>{
@@ -1061,7 +1061,7 @@ function renderAlbumBook(owned){
     html+=`<div style="margin-bottom:20px">`;
     html+=`<div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;padding:6px 10px;background:${pi.color}18;border-radius:6px;border-left:3px solid ${pi.color}">`;
     html+=`<span style="font-size:16px">${pi.icon}</span>`;
-    html+=`<div><div style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:14px;color:${pi.color}">${pi.name}</div>`;
+    html+=`<div><div style="font-family:Barlow Condensed,sans-serif;font-weight:700;font-size:14px;color:${pi.color}">${pi.name}</div>`;
     if(pid<5) html+=`<div style="font-size:10px;color:var(--mu)">🪙 ${pi.cost} moedas por figurinha</div>`;
     else html+=`<div style="font-size:10px;color:var(--mu)">Conquista especial — não comprada com moedas</div>`;
     html+=`</div></div>`;
@@ -1129,7 +1129,7 @@ function renderAlbumShop(myCoins,owned){
 
   const pi=PACK_INFO[visiblePackId];
   let html=`<div style="background:var(--wh);border:0.5px solid var(--bd);border-radius:10px;padding:14px">`;
-  html+=`<div style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:14px;color:var(--dk);margin-bottom:4px">🛒 Comprar figurinha</div>`;
+  html+=`<div style="font-family:Barlow Condensed,sans-serif;font-weight:700;font-size:14px;color:var(--dk);margin-bottom:4px">🛒 Comprar figurinha</div>`;
   html+=`<div style="font-size:11px;color:var(--mu);margin-bottom:12px">Pack atual: <strong style="color:${pi.color}">${pi.icon} ${pi.name}</strong> · 🪙 ${myCoins} moedas disponíveis</div>`;
   html+=`<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:8px">`;
 
@@ -1856,7 +1856,7 @@ function renderAlbumProgress(myCoins,owned){
   el.innerHTML=`
     <div style="background:var(--wh);border:0.5px solid var(--bd);border-radius:10px;padding:14px">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
-        <div style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:15px;color:var(--dk)">📒 Meu Álbum</div>
+        <div style="font-family:Barlow Condensed,sans-serif;font-weight:700;font-size:15px;color:var(--dk)">📒 Meu Álbum</div>
         <div style="font-size:13px;font-weight:700;color:var(--or)">${owned.length}/${total} figurinhas</div>
       </div>
       <div style="background:var(--ow);border-radius:4px;height:8px;overflow:hidden;margin-bottom:6px">
@@ -1875,7 +1875,7 @@ function renderAlbumBook(owned){
 
   let html='<div id="album-printable" style="background:var(--wh);border:0.5px solid var(--bd);border-radius:12px;padding:16px">';
   html+='<div style="text-align:center;margin-bottom:16px;padding-bottom:12px;border-bottom:2px solid var(--or)">';
-  html+='<div style="font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:24px;color:var(--dk)">live<span style="color:var(--or)">SEO</span></div>';
+  html+='<div style="font-family:Barlow Condensed,sans-serif;font-weight:900;font-size:24px;color:var(--dk)">live<span style="color:var(--or)">SEO</span></div>';
   html+='<div style="font-size:11px;color:var(--mu)">Copa Administrativa 2026 · Álbum de '+(currentUser?.short||'')+'</div></div>';
 
   Object.entries(packs).forEach(([pid,stickers])=>{
@@ -1883,7 +1883,7 @@ function renderAlbumBook(owned){
     html+=`<div style="margin-bottom:20px">`;
     html+=`<div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;padding:6px 10px;background:${pi.color}18;border-radius:6px;border-left:3px solid ${pi.color}">`;
     html+=`<span style="font-size:16px">${pi.icon}</span>`;
-    html+=`<div><div style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:14px;color:${pi.color}">${pi.name}</div>`;
+    html+=`<div><div style="font-family:Barlow Condensed,sans-serif;font-weight:700;font-size:14px;color:${pi.color}">${pi.name}</div>`;
     if(pid<5) html+=`<div style="font-size:10px;color:var(--mu)">🪙 ${pi.cost} moedas por figurinha</div>`;
     else html+=`<div style="font-size:10px;color:var(--mu)">Conquista especial — não comprada com moedas</div>`;
     html+=`</div></div>`;
@@ -1951,7 +1951,7 @@ function renderAlbumShop(myCoins,owned){
 
   const pi=PACK_INFO[visiblePackId];
   let html=`<div style="background:var(--wh);border:0.5px solid var(--bd);border-radius:10px;padding:14px">`;
-  html+=`<div style="font-family:'Barlow Condensed',sans-serif;font-weight:700;font-size:14px;color:var(--dk);margin-bottom:4px">🛒 Comprar figurinha</div>`;
+  html+=`<div style="font-family:Barlow Condensed,sans-serif;font-weight:700;font-size:14px;color:var(--dk);margin-bottom:4px">🛒 Comprar figurinha</div>`;
   html+=`<div style="font-size:11px;color:var(--mu);margin-bottom:12px">Pack atual: <strong style="color:${pi.color}">${pi.icon} ${pi.name}</strong> · 🪙 ${myCoins} moedas disponíveis</div>`;
   html+=`<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:8px">`;
 

@@ -1238,6 +1238,68 @@ function buildAlbum(){
   buildAlbumUI();
 }
 
+function loadAdmin(){
+  if(!isAdmin)return;
+  const pending=submissions.filter(s=>s.status==='pending'||s.status==='ai_review');
+  const stM={pending:'st-pend',approved:'st-ok',rejected:'st-rej',ai_review:'st-pend'};
+  const stL={pending:'Aguardando aprovação',approved:'Aprovada ✓ — moedas creditadas!',rejected:'Rejeitada',ai_review:'Aguardando aprovação'};
+
+  // Store in pendingMap for safe approve access
+  pending.forEach(s=>{ pendingMap[s.id]=s; });
+
+  const pendEl=document.getElementById('admin-pending');
+  if(pendEl){
+    pendEl.innerHTML=pending.length?pending.map(s=>{
+      return`<div class="sub">
+        <div class="sub-h">
+          <div>
+            <div class="sub-t">${s.userShort||s.user||'?'} — ${s.title||'sem título'}</div>
+            <div class="sub-m">${s.date||''} · ${s.cat||''} · 🪙${s.myPts||0} · ${TC[s.team]?.label||s.team||''}${s.isJoint?' · 🤝':''}</div>
+          </div>
+          <span class="stpill ${stM[s.status]||'st-pend'}">${stL[s.status]||'?'}</span>
+        </div>
+        ${s.resumo?`<div class="sub-body">${s.resumo.substring(0,200)}...</div>`:''}
+        ${s.proof?`<div style="font-size:11px;color:var(--mu);margin-top:4px">📎 ${s.proof}</div>`:''}
+        <div style="display:flex;gap:6px;margin-top:10px">
+          <button class="btn-sm btn-ok" onclick="approveSubmission('${s.id}')">✓ Aprovar +🪙${s.myPts||0}</button>
+          <button class="btn-sm btn-rej" onclick="rejectSubmission('${s.id}')">✗ Rejeitar</button>
+        </div>
+      </div>`;
+    }).join(''):'<p class="empty">Nada aguardando. ✅</p>';
+  }
+
+  // Scores summary
+  const scoresEl=document.getElementById('admin-scores');
+  if(scoresEl){
+    const allP=PEOPLE.filter(p=>p.team!=='ADMIN').map(p=>({
+      ...p,ind:scores[p.name]?.ind||0,bonus:scores[p.name]?.bonus||0,total:getTotal(p.name)
+    })).sort((a,b)=>b.total-a.total);
+    scoresEl.innerHTML=`<div class="tw"><table>
+      <thead><tr><th>#</th><th>Colaborador</th><th>Time</th><th style="text-align:right">Ind.</th><th style="text-align:right">Bônus</th><th style="text-align:right">Total</th></tr></thead>
+      <tbody>${allP.map((p,i)=>`<tr>
+        <td>${i+1}</td><td>${p.short}</td>
+        <td>${TC[p.team]?.label||p.team}</td>
+        <td style="text-align:right">${p.ind}</td>
+        <td style="text-align:right;color:var(--green)">+${p.bonus}</td>
+        <td style="text-align:right;font-weight:700;color:var(--or)">🪙 ${p.total}</td>
+      </tr>`).join('')}</tbody>
+    </table></div>`;
+  }
+
+  // All submissions
+  const subsEl=document.getElementById('admin-subs');
+  if(subsEl){
+    subsEl.innerHTML=submissions.slice(0,50).map(s=>`
+      <div class="sub">
+        <div class="sub-h">
+          <div><div class="sub-t">${s.userShort||s.user} — ${s.title}</div>
+          <div class="sub-m">${s.date||''} · 🪙${s.myPts||0}</div></div>
+          <span class="stpill ${stM[s.status]||'st-pend'}">${stL[s.status]||'?'}</span>
+        </div>
+      </div>`).join('');
+  }
+}
+
 function buildLogin(){}
 function openLink(url){
   if(!url||!url.startsWith('http')){showToast('Link inválido.');return;}
@@ -1784,6 +1846,68 @@ async function addPhotoLink(){
 }
 
 
+
+function loadAdmin(){
+  if(!isAdmin)return;
+  const pending=submissions.filter(s=>s.status==='pending'||s.status==='ai_review');
+  const stM={pending:'st-pend',approved:'st-ok',rejected:'st-rej',ai_review:'st-pend'};
+  const stL={pending:'Aguardando aprovação',approved:'Aprovada ✓ — moedas creditadas!',rejected:'Rejeitada',ai_review:'Aguardando aprovação'};
+
+  // Store in pendingMap for safe approve access
+  pending.forEach(s=>{ pendingMap[s.id]=s; });
+
+  const pendEl=document.getElementById('admin-pending');
+  if(pendEl){
+    pendEl.innerHTML=pending.length?pending.map(s=>{
+      return`<div class="sub">
+        <div class="sub-h">
+          <div>
+            <div class="sub-t">${s.userShort||s.user||'?'} — ${s.title||'sem título'}</div>
+            <div class="sub-m">${s.date||''} · ${s.cat||''} · 🪙${s.myPts||0} · ${TC[s.team]?.label||s.team||''}${s.isJoint?' · 🤝':''}</div>
+          </div>
+          <span class="stpill ${stM[s.status]||'st-pend'}">${stL[s.status]||'?'}</span>
+        </div>
+        ${s.resumo?`<div class="sub-body">${s.resumo.substring(0,200)}...</div>`:''}
+        ${s.proof?`<div style="font-size:11px;color:var(--mu);margin-top:4px">📎 ${s.proof}</div>`:''}
+        <div style="display:flex;gap:6px;margin-top:10px">
+          <button class="btn-sm btn-ok" onclick="approveSubmission('${s.id}')">✓ Aprovar +🪙${s.myPts||0}</button>
+          <button class="btn-sm btn-rej" onclick="rejectSubmission('${s.id}')">✗ Rejeitar</button>
+        </div>
+      </div>`;
+    }).join(''):'<p class="empty">Nada aguardando. ✅</p>';
+  }
+
+  // Scores summary
+  const scoresEl=document.getElementById('admin-scores');
+  if(scoresEl){
+    const allP=PEOPLE.filter(p=>p.team!=='ADMIN').map(p=>({
+      ...p,ind:scores[p.name]?.ind||0,bonus:scores[p.name]?.bonus||0,total:getTotal(p.name)
+    })).sort((a,b)=>b.total-a.total);
+    scoresEl.innerHTML=`<div class="tw"><table>
+      <thead><tr><th>#</th><th>Colaborador</th><th>Time</th><th style="text-align:right">Ind.</th><th style="text-align:right">Bônus</th><th style="text-align:right">Total</th></tr></thead>
+      <tbody>${allP.map((p,i)=>`<tr>
+        <td>${i+1}</td><td>${p.short}</td>
+        <td>${TC[p.team]?.label||p.team}</td>
+        <td style="text-align:right">${p.ind}</td>
+        <td style="text-align:right;color:var(--green)">+${p.bonus}</td>
+        <td style="text-align:right;font-weight:700;color:var(--or)">🪙 ${p.total}</td>
+      </tr>`).join('')}</tbody>
+    </table></div>`;
+  }
+
+  // All submissions
+  const subsEl=document.getElementById('admin-subs');
+  if(subsEl){
+    subsEl.innerHTML=submissions.slice(0,50).map(s=>`
+      <div class="sub">
+        <div class="sub-h">
+          <div><div class="sub-t">${s.userShort||s.user} — ${s.title}</div>
+          <div class="sub-m">${s.date||''} · 🪙${s.myPts||0}</div></div>
+          <span class="stpill ${stM[s.status]||'st-pend'}">${stL[s.status]||'?'}</span>
+        </div>
+      </div>`).join('');
+  }
+}
 
 function buildLogin(){}
 function openLink(url){
